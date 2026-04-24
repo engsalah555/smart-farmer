@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_farm2/features/marketplace/widgets/catalog_chip.dart';
 import 'catalog_products_screen.dart';
 import '../../../core/constants.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
@@ -41,14 +42,13 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final store = context.select<SellerProvider, StoreModel?>(
-      (p) => p.myStore,
-    );
+    final store = context.select<SellerProvider, StoreModel?>((p) => p.myStore);
     final myCatalogsCount = context.select<SellerProvider, int>(
       (p) => p.myCatalogs.length,
     );
-    final allMyProducts = context
-        .select<SellerProvider, List<ProductModel>>((p) => p.myProducts);
+    final allMyProducts = context.select<SellerProvider, List<ProductModel>>(
+      (p) => p.myProducts,
+    );
     final catalogs = context.select<SellerProvider, List<CatalogModel>>(
       (p) => p.myCatalogs,
     );
@@ -275,16 +275,18 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                             child: _buildGlassStatCard(
                               context,
                               title: 'طلبات جديدة',
-                              value: '${context.watch<SellerProvider>().pendingOrdersCount}',
+                              value:
+                                  '${context.watch<SellerProvider>().pendingOrdersCount}',
                               icon: Icons.shopping_bag_outlined,
                               color: Colors.orange,
                               isDark: isDark,
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const SellerOrdersScreen(
-                                    initialStatus: 'pending',
-                                  ),
+                                  builder: (context) =>
+                                      const SellerOrdersScreen(
+                                        initialStatus: 'pending',
+                                      ),
                                 ),
                               ),
                             ),
@@ -345,14 +347,13 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             children: [
-                              _buildCatalogChip(
+                              CatalogChip(
                                 label: 'الكل',
                                 isSelected: _selectedCatalogId == 'all',
                                 onTap: () => _onCatalogSelected('all'),
-                                isDark: isDark,
                               ),
                               ...catalogs.map(
-                                (catalog) => _buildCatalogChip(
+                                (catalog) => CatalogChip(
                                   label: catalog.name,
                                   isSelected: _selectedCatalogId == catalog.id,
                                   onTap: () => Navigator.push(
@@ -365,7 +366,6 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                           ),
                                     ),
                                   ),
-                                  isDark: isDark,
                                   imageUrl: catalog.imageUrl,
                                 ),
                               ),
@@ -637,83 +637,6 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
               style: TextStyle(color: Theme.of(context).hintColor),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCatalogChip({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required bool isDark,
-    String? imageUrl,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(25),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.primary
-                : (isDark
-                      ? Colors.white.withValues(alpha: 0.05)
-                      : Colors.white),
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : (isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.grey.withValues(alpha: 0.2)),
-            ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (imageUrl != null) ...[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: CustomImage(
-                    imageUrl: imageUrl,
-                    width: 20,
-                    height: 20,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ] else if (label != 'الكل') ...[
-                const Icon(
-                  Icons.category_outlined,
-                  size: 16,
-                  color: Colors.grey,
-                ),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.black87),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
