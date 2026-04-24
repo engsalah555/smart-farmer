@@ -28,13 +28,13 @@ subprojects {
 
     // Configure compilation tasks lazily for all projects
     tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_21.toString()
-        targetCompatibility = JavaVersion.VERSION_21.toString()
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
     }
     
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
 
@@ -48,8 +48,8 @@ subprojects {
                         compileSdkVersion(36)
                         
                         compileOptions {
-                            sourceCompatibility = JavaVersion.VERSION_21
-                            targetCompatibility = JavaVersion.VERSION_21
+                            sourceCompatibility = JavaVersion.VERSION_17
+                            targetCompatibility = JavaVersion.VERSION_17
                         }
                     }
                 } catch (e: Exception) {
