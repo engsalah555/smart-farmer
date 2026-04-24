@@ -101,4 +101,5 @@ extension ThemeColors on BuildContext {
   Color get black => AppColors.black;
 
   Color get cardBackground => isDark ? darkCard : cardLight;
+  Color get textColor => isDark ? darkTextPrimary : textPrimary;
 }
