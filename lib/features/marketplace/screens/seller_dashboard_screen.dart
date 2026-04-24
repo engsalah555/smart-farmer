@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import 'package:smart_farm2/features/marketplace/widgets/catalog_chip.dart';
 import 'catalog_products_screen.dart';
 import '../../../core/constants.dart';
@@ -412,10 +413,9 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                             label: const Text('إضافة جديد'),
                             style: TextButton.styleFrom(
                               foregroundColor: AppColors.primary,
-                              textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              textStyle: context.font14.bold,
                             ),
+                            
                           ),
                         ],
                       ),
