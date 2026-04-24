@@ -1,0 +1,6 @@
+analyzer:
+  exclude:
+    - "example/**"
+    - "test/**"
+    - "integration_test/**"
+    - "pigeons/**"
