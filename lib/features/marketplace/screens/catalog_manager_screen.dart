@@ -161,7 +161,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
                     delay: Duration(milliseconds: 50 * index),
                     child: Card(
                       margin: const EdgeInsets.only(bottom: 12),
-                      color: AppColors.cardLight,
+                      color: context.cardBackground,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
