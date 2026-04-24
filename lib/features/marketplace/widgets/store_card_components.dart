@@ -90,18 +90,25 @@ class StoreCoverSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark).withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(12 * scale),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2), width: 1),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.2),
+          width: 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.messenger_outline_rounded, color: AppColors.getTextColor(isDark), size: 11 * scale),
+          Icon(
+            Icons.messenger_outline_rounded,
+            color: AppColors.getTextColor(isDark),
+            size: 11 * scale,
+          ),
           const SizedBox(width: 4),
           Text(
             '${store.reviewsCount}',
             style: TextStyle(
-              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary, 
-              fontWeight: FontWeight.w800, 
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.w800,
               fontSize: 11 * scale,
               fontFamily: 'Cairo',
             ),
@@ -113,18 +120,34 @@ class StoreCoverSection extends StatelessWidget {
 
   Widget _buildCategoryTag(StoreModel store, double scale) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10 * scale, vertical: 4 * scale),
+      padding: EdgeInsets.symmetric(
+        horizontal: 10 * scale,
+        vertical: 4 * scale,
+      ),
       decoration: BoxDecoration(
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(10 * scale),
         boxShadow: [
-          BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 12 * scale, offset: Offset(0, 4 * scale)),
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.4),
+            blurRadius: 12 * scale,
+            offset: Offset(0, 4 * scale),
+          ),
         ],
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 0.5),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 0.5,
+        ),
       ),
       child: Text(
         store.category,
-        style: TextStyle(color: Colors.white, fontSize: (10.5 * scale).clamp(9.5, 12.0), fontWeight: FontWeight.w900, letterSpacing: 0.5, fontFamily: 'Cairo'),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: (10.5 * scale).clamp(9.5, 12.0),
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.5,
+          fontFamily: 'Cairo',
+        ),
       ),
     );
   }
@@ -150,20 +173,29 @@ class StoreInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hintColor = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final hintColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
           top: BorderSide(
-            color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.primary.withValues(alpha: 0.1),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : AppColors.primary.withValues(alpha: 0.1),
             width: 1.5,
           ),
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(horizontalPadding, topPadding + (6.0 * scale), horizontalPadding, verticalPadding),
+        padding: EdgeInsets.fromLTRB(
+          horizontalPadding,
+          topPadding + (6.0 * scale),
+          horizontalPadding,
+          verticalPadding,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -178,7 +210,9 @@ class StoreInfoSection extends StatelessWidget {
                     style: TextStyle(
                       fontSize: (16.0 * scale).clamp(14.0, 18.0),
                       fontWeight: FontWeight.w900,
-                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
                       letterSpacing: -0.5,
                       height: 1.1,
                       fontFamily: 'Cairo',
@@ -189,11 +223,17 @@ class StoreInfoSection extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.location_on_rounded, size: 11 * scale, color: AppColors.primary.withValues(alpha: 0.8)),
+                      Icon(
+                        Icons.location_on_rounded,
+                        size: 11 * scale,
+                        color: AppColors.primary.withValues(alpha: 0.8),
+                      ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          store.location.isNotEmpty ? store.location : 'غير محدد',
+                          store.location.isNotEmpty
+                              ? store.location
+                              : 'غير محدد',
                           style: TextStyle(
                             fontSize: (10.5 * scale).clamp(9.5, 12.0),
                             color: hintColor,
@@ -228,17 +268,27 @@ class StoreInfoSection extends StatelessWidget {
   Widget _buildProductCount(double scale, bool isDark) {
     return Flexible(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10 * scale, vertical: 5 * scale),
+        padding: EdgeInsets.symmetric(
+          horizontal: 10 * scale,
+          vertical: 5 * scale,
+        ),
         margin: EdgeInsetsDirectional.only(end: 8 * scale),
         decoration: BoxDecoration(
           color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
           borderRadius: BorderRadius.circular(10 * scale),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.22), width: 1),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.22),
+            width: 1,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.inventory_2_outlined, size: 11 * scale, color: AppColors.primary),
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 11 * scale,
+              color: AppColors.primary,
+            ),
             const SizedBox(width: 5),
             Flexible(
               child: Text(
@@ -264,13 +314,26 @@ class StoreInfoSection extends StatelessWidget {
       width: 32 * scale,
       height: 32 * scale,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [AppColors.primary, AppColors.secondary], begin: Alignment.topRight, end: Alignment.bottomLeft),
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.secondary],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
         borderRadius: BorderRadius.circular(10 * scale),
         boxShadow: [
-          BoxShadow(color: AppColors.primary.withValues(alpha: 0.45), blurRadius: 10 * scale, offset: Offset(0, 4 * scale)),
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.45),
+            blurRadius: 10 * scale,
+            offset: Offset(0, 4 * scale),
+          ),
         ],
       ),
-      child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 14 * scale, textDirection: TextDirection.ltr),
+      child: Icon(
+        Icons.arrow_back_ios_new_rounded,
+        color: Colors.white,
+        size: 14 * scale,
+        textDirection: TextDirection.ltr,
+      ),
     );
   }
 }
