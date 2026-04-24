@@ -179,14 +179,14 @@ class CommunityService extends BaseApiService {
 
   Future<Comment?> updateComment(String id, String content) async {
     return await put<Comment>(
-      '/community/comments/$id',
+      'community/comments/$id',
       data: {'content': content},
       mapper: (data) => Comment.fromJson(data),
     );
   }
 
   Future<bool> deleteComment(String id) async {
-    return await delete('/community/comments/$id');
+    return await delete('community/comments/$id');
   }
 
   Future<bool> reportPost(String postId, String reason, {String? details}) async {

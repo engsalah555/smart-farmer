@@ -15,7 +15,7 @@ class MarketplaceService extends BaseApiService {
 
   Future<Map<String, dynamic>?> getMetadata() async {
     return await get<Map<String, dynamic>>(
-      '/metadata',
+      'metadata',
       mapper: (data) => data as Map<String, dynamic>,
     );
   }
@@ -52,7 +52,7 @@ class MarketplaceService extends BaseApiService {
           queryParameters: {
             'page': page,
             'per_page': perPage,
-            'catalog_id': ?catalogId,
+            'catalog_id': catalogId,
           },
           mapper: (data) => PaginatedResponse.fromJson(
             data,
@@ -98,7 +98,7 @@ class MarketplaceService extends BaseApiService {
   Future<Map<String, dynamic>> getProductReviews(String productId) async {
     try {
       final response = await dio.get(
-        '${AppConstants.apiBaseUrl}/api${AppConstants.productsUrl}/$productId/reviews',
+        '${AppConstants.productsUrl}/$productId/reviews',
       );
 
       if (response.data['success'] == true) {

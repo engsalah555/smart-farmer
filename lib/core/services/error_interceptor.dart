@@ -31,27 +31,20 @@ class GlobalErrorInterceptor extends Interceptor {
         errorMessage = 'حدث خطأ غير متوقع بالنظام.';
     }
 
-    debugPrint('GlobalErrorInterceptor: $errorMessage');
+    debugPrint('GlobalErrorInterceptor: Error [${err.response?.statusCode}] at [${err.requestOptions.uri}]: $errorMessage');
 
     if (err.response?.statusCode == 401) {
-      debugPrint('401 Unauthorized detected. Forcing logout...');
+      debugPrint('401 Unauthorized detected. Clearing session and redirecting to /auth...');
 
-      // Clear auth data asynchronously
       SharedPreferences.getInstance().then((prefs) {
         prefs.remove('auth_token');
         prefs.remove('user_data');
       });
 
-      // Use the root navigator key to redirect to login
-      // Since we are using GoRouter, we can use go() or pushReplacement()
-      // AppRouter.router.go('/auth') is the preferred way with GoRouter
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AppRouter.router.go('/auth');
       });
     }
-
-    // You could also use a global scaffold messenger key to show a SnackBar here
-    // e.g., globalNavigatorKey.currentContext...
 
     super.onError(err, handler);
   }

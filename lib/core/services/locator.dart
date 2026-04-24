@@ -37,7 +37,7 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<Dio>(() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: '${AppConstants.apiBaseUrl}/api/',
+        baseUrl: '${AppConstants.apiBaseUrl.endsWith('/') ? AppConstants.apiBaseUrl : '${AppConstants.apiBaseUrl}/'}api/',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {

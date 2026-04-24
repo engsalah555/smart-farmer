@@ -9,7 +9,7 @@ import 'base_api_service.dart';
 /// خدمة المصادقة - تتعامل مع تسجيل الدخول، التسجيل، وإدارة الجلسات
 class AuthService extends BaseApiService {
   // Base URL pointing to Laravel Backend
-  static String get _baseUrl => '/auth';
+  static String get _baseUrl => 'auth';
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'user_data';
   static const String _rememberMeKey = 'remember_me';
