@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_farm2/features/marketplace/widgets/catalog_dialog.dart';
+import '../widgets/product_assignment_dialog.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/widgets/fade_in_slide.dart';
@@ -26,115 +27,6 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
-  }
-
-  void _showProductAssignmentDialog(CatalogModel catalog) {
-    final provider = context.read<SellerProvider>();
-    final allProducts = provider.myProducts;
-
-    // Initial selected products (those already in this catalog)
-    List<String> selectedProductIds = allProducts
-        .where((p) => p.catalogId == catalog.id)
-        .map((p) => p.id)
-        .toList();
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          return AlertDialog(
-            title: Text('إضافة منتجات لـ ${catalog.name}'),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: allProducts.isEmpty
-                  ? const Center(child: Text('لا يوجد لديك منتجات حالياً'))
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: allProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = allProducts[index];
-                        final isSelected = selectedProductIds.contains(
-                          product.id,
-                        );
-                        final isInOtherCatalog =
-                            product.catalogId != null &&
-                            product.catalogId != catalog.id;
-
-                        return CheckboxListTile(
-                          title: Text(product.title),
-                          subtitle: isInOtherCatalog
-                              ? const Text(
-                                  'موجود في كتالوج آخر',
-                                  style: TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 12,
-                                  ),
-                                )
-                              : null,
-                          secondary: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CustomImage(
-                              imageUrl: product.images.isNotEmpty
-                                  ? product.images.first
-                                  : '',
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          value: isSelected,
-                          onChanged: (bool? value) {
-                            setDialogState(() {
-                              if (value == true) {
-                                selectedProductIds.add(product.id);
-                              } else {
-                                selectedProductIds.remove(product.id);
-                              }
-                            });
-                          },
-                        );
-                      },
-                    ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => context.pop(),
-                child: const Text('إلغاء'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  context.pop();
-
-                  final success = await provider.assignProductsToCatalog(
-                    catalog.id,
-                    selectedProductIds,
-                  );
-
-                  if (context.mounted) {
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          success
-                              ? 'تم تحديث المنتجات بنجاح'
-                              : 'حدث خطأ في تحديث المنتجات',
-                        ),
-                        backgroundColor: success ? Colors.green : Colors.red,
-                      ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('حفظ'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
   }
 
   @override
@@ -207,8 +99,10 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
                                 Icons.add_shopping_cart,
                                 color: AppColors.primary,
                               ),
-                              onPressed: () =>
-                                  _showProductAssignmentDialog(catalog),
+                              onPressed: () => ProductAssignmentDialog.show(
+                                context,
+                                catalog: catalog,
+                              ),
                               tooltip: 'إدارة المنتجات',
                             ),
                             IconButton(
