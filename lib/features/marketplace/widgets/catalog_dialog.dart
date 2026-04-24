@@ -51,7 +51,9 @@ class _CatalogDialogState extends State<CatalogDialog> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.catalog != null;
+
     return AlertDialog(
+      backgroundColor: context.cardBackground,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Text(
         isEditing ? 'تعديل الكتالوج' : 'إضافة كتالوج جديد',
