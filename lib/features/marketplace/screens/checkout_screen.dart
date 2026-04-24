@@ -230,9 +230,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       hint: 'المدينة، الحي، اسم الشارع ورقم المبنى',
                       icon: Icons.location_on_outlined,
                       maxLines: 2,
-                      validator: (val) => (val == null || val.trim().isEmpty)
-                          ? 'الرجاء إدخال عنوان التوصيل'
-                          : null,
+                      validator: (val) => null,
                     ),
                     const SizedBox(height: 24),
 
