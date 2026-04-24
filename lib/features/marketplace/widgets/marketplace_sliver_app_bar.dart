@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/models/user_model.dart';
@@ -61,14 +62,9 @@ class MarketplaceSliverAppBar extends StatelessWidget {
               iconSize: 18,
             ),
             const SizedBox(width: 12),
-            const Text(
+            Text(
               'المتجر',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-                fontSize: 26,
-                fontFamily: 'Cairo',
-              ),
+              style: context.font24.semiBold.copyWith(color: context.white),
             ),
             const Spacer(),
             _buildActionIcons(context, user),
@@ -104,7 +100,9 @@ class MarketplaceSliverAppBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ProMaxIconButton(
-          icon: isSearchVisible ? Icons.search_off_rounded : Icons.search_rounded,
+          icon: isSearchVisible
+              ? Icons.search_off_rounded
+              : Icons.search_rounded,
           onTap: onToggleSearch,
         ),
         const SizedBox(width: 6),
