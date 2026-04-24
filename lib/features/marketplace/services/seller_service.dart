@@ -157,7 +157,12 @@ class SellerService extends BaseApiService {
   Future<List<Map<String, dynamic>>> getStoreOrders() async {
     return await get<List<Map<String, dynamic>>>(
       AppConstants.storeOrdersUrl,
-      mapper: (data) => (data as List).cast<Map<String, dynamic>>(),
+      mapper: (data) {
+        if (data is Map && data.containsKey('data')) {
+          return (data['data'] as List).cast<Map<String, dynamic>>();
+        }
+        return (data as List).cast<Map<String, dynamic>>();
+      },
     ) ?? [];
   }
 

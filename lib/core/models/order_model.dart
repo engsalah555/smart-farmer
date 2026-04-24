@@ -28,24 +28,23 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
-      id: json['id'] ?? json['_id'] ?? '',
-      userId: json['userId'] ?? '',
-      userName: json['userName'] ?? '',
-      items:
-          (json['items'] as List?)
+      id: json['id']?.toString() ?? '',
+      userId: (json['user_id'] ?? json['userId'] ?? '').toString(),
+      userName: json['user_name'] ?? json['userName'] ?? 'مستخدم',
+      items: (json['items'] as List?)
               ?.map((item) => OrderItem.fromJson(item))
               .toList() ??
           [],
-      totalPrice: (json['totalPrice'] ?? 0).toDouble(),
+      totalPrice: double.tryParse((json['total_price'] ?? json['totalPrice'] ?? 0).toString()) ?? 0.0,
       status: OrderStatus.fromString(json['status'] ?? 'pending'),
-      shippingAddress: json['shippingAddress'] ?? '',
-      phoneNumber: json['phoneNumber'],
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
+      shippingAddress: json['shipping_address'] ?? json['shippingAddress'] ?? '',
+      phoneNumber: json['phone_number'] ?? json['phoneNumber'],
+      createdAt: json['created_at'] != null || json['createdAt'] != null
+          ? DateTime.parse((json['created_at'] ?? json['createdAt']).toString())
           : DateTime.now(),
-      deliveredAt: json['deliveredAt'] != null
-          ? DateTime.parse(json['deliveredAt'])
-          : null,
+      deliveredAt: json['delivered_at'] != null
+          ? DateTime.parse(json['delivered_at'])
+          : (json['deliveredAt'] != null ? DateTime.parse(json['deliveredAt']) : null),
       notes: json['notes'],
     );
   }
@@ -113,11 +112,11 @@ class OrderItem {
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
     return OrderItem(
-      productId: json['productId'] ?? '',
-      productName: json['productName'] ?? '',
+      productId: (json['product_id'] ?? json['productId'] ?? '').toString(),
+      productName: json['product_name'] ?? json['productName'] ?? '',
       quantity: json['quantity'] ?? 1,
-      price: (json['price'] ?? 0).toDouble(),
-      imageUrl: json['imageUrl'],
+      price: double.tryParse((json['price'] ?? 0).toString()) ?? 0.0,
+      imageUrl: json['product_image'] ?? json['imageUrl'],
     );
   }
 

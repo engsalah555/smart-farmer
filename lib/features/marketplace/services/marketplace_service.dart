@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:path/path.dart' as p;
 import '../../../core/constants.dart';
 import '../../../core/models/product_model.dart';
 import '../../../core/models/store_model.dart';
@@ -176,7 +177,7 @@ class MarketplaceService extends BaseApiService {
           'receipt_image',
           await MultipartFile.fromFile(
             receiptImagePath,
-            filename: receiptImagePath.split('/').last,
+            filename: p.basename(receiptImagePath),
           ),
         ),
       );
