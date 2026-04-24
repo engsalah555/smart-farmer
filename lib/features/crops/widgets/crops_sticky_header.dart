@@ -72,7 +72,7 @@ class CropsStickyHeader extends StatelessWidget {
 
   Widget _buildCategoryBar(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Convert tabs strings into categories for styling
     final List<Map<String, dynamic>> categories = tabs.map((t) {
       IconData icon = Icons.grass;
@@ -115,7 +115,9 @@ class CropsStickyHeader extends StatelessWidget {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppColors.primary : AppColors.getSurface(isDark),
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.getSurface(isDark),
                         borderRadius: BorderRadius.circular(25),
                         border: Border.all(
                           color: isSelected
@@ -123,15 +125,6 @@ class CropsStickyHeader extends StatelessWidget {
                               : AppColors.border(isDark),
                           width: isSelected ? 0 : 1.2,
                         ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.3),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ]
-                            : [],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -139,7 +132,9 @@ class CropsStickyHeader extends StatelessWidget {
                           Icon(
                             cat['icon'],
                             size: 16,
-                            color: isSelected ? Colors.white : AppColors.primary,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.primary,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -147,8 +142,12 @@ class CropsStickyHeader extends StatelessWidget {
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : AppColors.getTextColor(isDark).withValues(alpha: 0.7),
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                  : AppColors.getTextColor(
+                                      isDark,
+                                    ).withValues(alpha: 0.7),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w600,
                               fontSize: 14,
                               fontFamily: 'Cairo',
                             ),

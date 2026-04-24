@@ -40,21 +40,8 @@ class ProMaxCard extends StatelessWidget {
           );
 
     Decoration decoration = BoxDecoration(
-      color: applyGradientBorder ? null : bgColor,
+      color: context.cardBackground,
       borderRadius: BorderRadius.circular(borderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: AppColors.primary.withValues(alpha: 0.08),
-          blurRadius: elevation != null ? elevation! * 4 : 16,
-          offset: Offset(0, elevation != null ? elevation! * 1.5 : 6),
-        ),
-        if (!isDark && (elevation == null || elevation! > 0))
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: elevation != null ? elevation! * 2 : 6,
-            offset: Offset(0, elevation != null ? elevation! * 0.5 : 2),
-          ),
-      ],
       border: border,
     );
 
@@ -72,10 +59,7 @@ class ProMaxCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius + 2),
           gradient: const LinearGradient(
-            colors: [
-              AppColors.primary,
-              AppColors.secondary,
-            ],
+            colors: [AppColors.primary, AppColors.secondary],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -108,9 +92,6 @@ class ProMaxCard extends StatelessWidget {
       );
     }
 
-    return Padding(
-      padding: margin ?? EdgeInsets.zero,
-      child: content,
-    );
+    return Padding(padding: margin ?? EdgeInsets.zero, child: content);
   }
 }
