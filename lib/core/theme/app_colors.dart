@@ -58,3 +58,43 @@ class AppColors {
   static Color getTextColor(bool isDark) =>
       isDark ? darkTextPrimary : textPrimary;
 }
+
+extension ThemeColors on BuildContext {
+  bool get isDark => Theme.of(this).brightness == Brightness.dark;
+
+  Color get primary => AppColors.primary;
+  Color get accent => AppColors.accent;
+  Color get secondary => AppColors.secondary;
+  Color get background => AppColors.getBackground(isDark);
+  Color get surface => AppColors.getSurface(isDark);
+  Color get textPrimary => AppColors.getTextColor(isDark);
+  Color get textSecondary => AppColors.textSecondary;
+  Color get textMuted => AppColors.textMuted;
+  Color get error => AppColors.error;
+  Color get success => AppColors.success;
+  Color get warning => AppColors.warning;
+  Color get info => AppColors.info;
+  Color get border => AppColors.border(isDark);
+  Color get glass => AppColors.glass(isDark);
+
+  Color get deepGreen => AppColors.deepGreen;
+  Color get vibrantGreen => AppColors.vibrantGreen;
+
+  Color get darkBackground => AppColors.darkBackground;
+  Color get darkSurface => AppColors.darkSurface;
+  Color get darkBorder => AppColors.darkBorder;
+  Color get darkTextPrimary => AppColors.darkTextPrimary;
+  Color get darkTextSecondary => AppColors.darkTextSecondary;
+  Color get darkCard => AppColors.darkCard;
+
+  Color get cardLight => AppColors.cardLight;
+
+  Color get primaryDeep => AppColors.primaryDeep;
+  Color get primaryMain => AppColors.primaryMain;
+  Color get primaryDark => AppColors.primaryDark;
+
+  Color get white => AppColors.white;
+  Color get black => AppColors.black;
+
+  Color get cardBackground => isDark ? darkCard : cardLight;
+}
