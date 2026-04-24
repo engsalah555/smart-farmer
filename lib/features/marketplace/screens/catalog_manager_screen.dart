@@ -1,13 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
+import 'package:smart_farm2/features/marketplace/widgets/catalog_dialog.dart';
 
 import '../../../core/constants.dart';
-import '../../../core/helpers/image_helper.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
 import '../providers/seller_provider.dart';
@@ -30,184 +26,6 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
-  }
-
-  void _showCatalogDialog({CatalogModel? catalog}) {
-    if (catalog != null) {
-      _nameController.text = catalog.name;
-      _descriptionController.text = catalog.description;
-    } else {
-      _nameController.clear();
-      _descriptionController.clear();
-    }
-
-    String? localImagePath;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          final isEditing = catalog != null;
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Text(
-              isEditing ? 'تعديل الكتالوج' : 'إضافة كتالوج جديد',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            content: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Image Picker Area
-                    GestureDetector(
-                      onTap: () async {
-                        final image = await ImageHelper.pickImage(
-                          context: context,
-                          source: ImageSource.gallery,
-                          cropStyle: CropStyle.rectangle,
-                          aspectRatios: [CropAspectRatioPreset.ratio4x3],
-                        );
-                        if (image != null) {
-                          setDialogState(() {
-                            localImagePath = image.path;
-                          });
-                        }
-                      },
-                      child: Container(
-                        height: 120,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(15),
-                          border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: localImagePath != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Image.file(
-                                  File(localImagePath!),
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : (isEditing &&
-                                  catalog.imageUrl != null &&
-                                  catalog.imageUrl!.isNotEmpty)
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: CustomImage(
-                                  imageUrl: catalog.imageUrl!,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.add_photo_alternate_outlined,
-                                    size: 40,
-                                    color: AppColors.primary,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'صورة الكتالوج (اختياري)',
-                                    style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'اسم الكتالوج (مثل: بذور صيفية)',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) => value == null || value.isEmpty
-                          ? 'يرجى إدخال الاسم'
-                          : null,
-                    ),
-                    const SizedBox(height: 15),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: 'وصف قصير (اختياري)',
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 2,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => context.pop(),
-                child: const Text('إلغاء'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final scaffoldMessenger = ScaffoldMessenger.of(context);
-                    final provider = context.read<SellerProvider>();
-                    context.pop(); // close dialog first
-
-                    bool success;
-                    if (isEditing) {
-                      success = await provider.updateCatalog(
-                        catalog.id,
-                        _nameController.text.trim(),
-                        _descriptionController.text.trim(),
-                        imagePath: localImagePath,
-                      );
-                    } else {
-                      success = await provider.createCatalog(
-                        _nameController.text.trim(),
-                        _descriptionController.text.trim(),
-                        imagePath: localImagePath,
-                      );
-                    }
-
-                    if (context.mounted) {
-                      _nameController.clear();
-                      _descriptionController.clear();
-                      scaffoldMessenger.showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            success
-                                ? (isEditing
-                                      ? 'تم تحديث الكتالوج'
-                                      : 'تمت إضافة الكتالوج')
-                                : 'حدث خطأ ما',
-                          ),
-                          backgroundColor: success ? Colors.green : Colors.red,
-                        ),
-                      );
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(isEditing ? 'حفظ التعديلات' : 'إضافة'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
   }
 
   void _showProductAssignmentDialog(CatalogModel catalog) {
@@ -321,9 +139,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select<SellerProvider, bool>(
-      (p) => p.isLoading,
-    );
+    final isLoading = context.select<SellerProvider, bool>((p) => p.isLoading);
     final catalogs = context.select<SellerProvider, List<CatalogModel>>(
       (p) => p.myCatalogs,
     );
@@ -401,7 +217,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
                                 color: Colors.blue,
                               ),
                               onPressed: () =>
-                                  _showCatalogDialog(catalog: catalog),
+                                  CatalogDialog.show(context, catalog: catalog),
                             ),
                             IconButton(
                               icon: const Icon(
@@ -421,7 +237,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
         floatingActionButton: catalogs.isEmpty
             ? null
             : FloatingActionButton.extended(
-                onPressed: () => _showCatalogDialog(),
+                onPressed: () => CatalogDialog.show(context),
                 backgroundColor: AppColors.primary,
                 icon: const Icon(Icons.add, color: Colors.white),
                 label: const Text(
@@ -495,7 +311,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
-            onPressed: () => _showCatalogDialog(),
+            onPressed: () => CatalogDialog.show(context),
             icon: const Icon(Icons.add),
             label: const Text('إنشاء أول كتالوج'),
             style: ElevatedButton.styleFrom(
