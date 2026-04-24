@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/widgets/fade_in_slide.dart';
@@ -34,9 +35,11 @@ class SellerProductList extends StatelessWidget {
                 Text(
                   'الكتالوجات (التصنيفات)',
                   style: TextStyle(
-                    fontSize: 18, 
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark),
+                    color: AppColors.getTextColor(
+                      Theme.of(context).brightness == Brightness.dark,
+                    ),
                   ),
                 ),
                 GestureDetector(
@@ -55,6 +58,7 @@ class SellerProductList extends StatelessWidget {
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Icon(
                         Icons.add_circle_outline_rounded,
@@ -62,13 +66,10 @@ class SellerProductList extends StatelessWidget {
                         size: 20,
                       ),
                       const SizedBox(width: 6),
-                      const Text(
+                      Text(
                         'إضافة منتج',
-                        style: TextStyle(
+                        style: context.font14.bold.copyWith(
                           color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          fontFamily: 'Cairo',
                         ),
                       ),
                     ],
@@ -142,11 +143,15 @@ class SellerProductList extends StatelessWidget {
                                     errorBuilder:
                                         (context, error, stackTrace) =>
                                             Container(
-                                              color: AppColors.getSurface(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.5),
+                                              color: AppColors.getSurface(
+                                                Theme.of(context).brightness ==
+                                                    Brightness.dark,
+                                              ).withValues(alpha: 0.5),
                                               child: Icon(
                                                 Icons.category,
                                                 size: 50,
-                                                color: AppColors.primary.withValues(alpha: 0.4),
+                                                color: AppColors.primary
+                                                    .withValues(alpha: 0.4),
                                               ),
                                             ),
                                   )
@@ -225,9 +230,11 @@ class SellerProductList extends StatelessWidget {
               child: Text(
                 'جميع المنتجات',
                 style: TextStyle(
-                  fontSize: 18, 
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark),
+                  color: AppColors.getTextColor(
+                    Theme.of(context).brightness == Brightness.dark,
+                  ),
                 ),
               ),
             ),
