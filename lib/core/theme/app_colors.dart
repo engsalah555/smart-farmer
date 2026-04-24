@@ -34,6 +34,9 @@ class AppColors {
   static const Color darkTextSecondary = Color(0xFF94A38F); // Sage Grey
   static const Color darkCard = Color(0xFF141A14);
 
+  static bool isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
   // --- Semantic Status ---
   static const Color error = Color(0xFFEF4444);
   static const Color success = Color(0xFF10B981);
