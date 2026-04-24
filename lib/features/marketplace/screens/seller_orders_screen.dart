@@ -105,7 +105,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.cardBackground,
       isScrollControlled: true,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) => Container(
@@ -229,12 +229,11 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select<SellerProvider, bool>(
-      (p) => p.isLoading,
-    );
-    final storeOrders = context.select<SellerProvider, List<Map<String, dynamic>>>(
-      (p) => p.storeOrders,
-    );
+    final isLoading = context.select<SellerProvider, bool>((p) => p.isLoading);
+    final storeOrders = context
+        .select<SellerProvider, List<Map<String, dynamic>>>(
+          (p) => p.storeOrders,
+        );
 
     // Apply initial status filter if provided (e.g., from Dashboard)
     final filteredOrders = widget.initialStatus != null
@@ -263,7 +262,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
       floating: false,
       pinned: true,
       stretch: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.background,
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: const [
           StretchMode.blurBackground,
@@ -365,23 +364,13 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
   Widget _buildOrderCard(BuildContext context, Map<String, dynamic> order) {
     final items = order['items'] as List? ?? [];
     final user = order['user'] as Map<String, dynamic>?;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
+        color: context.background,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-        border: Border.all(
-          color: isDark ? AppColors.darkBorder : Colors.transparent,
-        ),
+        border: Border.all(color: context.border),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
@@ -391,7 +380,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
             // Header Section
             Container(
               padding: const EdgeInsets.all(16),
-              color: AppColors.primary.withValues(alpha: 0.05),
+              color: context.primary.withValues(alpha: 0.1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -431,18 +420,32 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
                   _buildSectionTitle(
                     context,
                     'معلومات العميل',
-                    Icons.person_outline,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildInfoRow(
-                    context,
                     Icons.account_circle_outlined,
-                    'العميل: ${user?['name'] ?? 'غير معروف'}',
                   ),
-                  _buildInfoRow(
-                    context,
-                    Icons.location_on_outlined,
-                    'العنوان: ${order['shipping_address'] ?? 'غير محدد'}',
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.cardBackground,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildInfoRow(
+                          context,
+                          Icons.account_circle_outlined,
+                          'العميل: ${user?['name'] ?? 'غير معروف'}',
+                        ),
+                        _buildInfoRow(
+                          context,
+                          Icons.location_on_outlined,
+                          'العنوان: ${order['shipping_address'] ?? 'غير محدد'}',
+                        ),
+                      ],
+                    ),
                   ),
 
                   const Divider(height: 32),
@@ -568,7 +571,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).dividerColor.withValues(alpha: 0.03),
+        color: context.cardBackground,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
