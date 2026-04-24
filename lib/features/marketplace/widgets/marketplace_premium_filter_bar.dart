@@ -13,13 +13,23 @@ class MarketplacePremiumFilterBar extends StatefulWidget {
   });
 
   @override
-  State<MarketplacePremiumFilterBar> createState() => _MarketplacePremiumFilterBarState();
+  State<MarketplacePremiumFilterBar> createState() =>
+      _MarketplacePremiumFilterBarState();
 }
 
-class _MarketplacePremiumFilterBarState extends State<MarketplacePremiumFilterBar> {
+class _MarketplacePremiumFilterBarState
+    extends State<MarketplacePremiumFilterBar> {
   final List<Map<String, dynamic>> filters = [
-    {'id': 'trending', 'label': 'الأكثر رواجاً', 'icon': Icons.local_fire_department_rounded},
-    {'id': 'nearest', 'label': 'الأقرب إليك', 'icon': Icons.location_on_rounded},
+    {
+      'id': 'trending',
+      'label': 'الأكثر رواجاً',
+      'icon': Icons.local_fire_department_rounded,
+    },
+    {
+      'id': 'nearest',
+      'label': 'الأقرب إليك',
+      'icon': Icons.location_on_rounded,
+    },
     {'id': 'top_rated', 'label': 'الأعلى تقييماً', 'icon': Icons.star_rounded},
     {'id': 'newest', 'label': 'وصل حديثاً', 'icon': Icons.auto_awesome_rounded},
     {'id': 'offers', 'label': 'عروض حصرية', 'icon': Icons.local_offer_rounded},
@@ -38,7 +48,7 @@ class _MarketplacePremiumFilterBarState extends State<MarketplacePremiumFilterBa
         itemBuilder: (context, index) {
           final filter = filters[index];
           final isSelected = widget.selectedFilter == filter['id'];
-          
+
           return _FilterChip(
             label: filter['label'],
             icon: filter['icon'],
@@ -70,7 +80,7 @@ class _FilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -79,31 +89,16 @@ class _FilterChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.getSurface(isDark),
+            color: isSelected ? context.primary : context.surface,
             borderRadius: BorderRadius.circular(25),
             border: Border.all(
               color: isSelected
-                  ? AppColors.primary
-                  : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05)),
+                  ? context.primary
+                  : (isDark
+                        ? Colors.white10
+                        : Colors.black.withValues(alpha: 0.05)),
               width: 1,
             ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -111,7 +106,9 @@ class _FilterChip extends StatelessWidget {
               Icon(
                 icon,
                 size: 16,
-                color: isSelected ? Colors.white : (isDark ? Colors.white70 : AppColors.textSecondary),
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? Colors.white70 : AppColors.textSecondary),
               ),
               const SizedBox(width: 6),
               Text(
@@ -119,7 +116,9 @@ class _FilterChip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  color: isSelected ? Colors.white : (isDark ? Colors.white70 : AppColors.textPrimary),
+                  color: isSelected
+                      ? Colors.white
+                      : (isDark ? Colors.white70 : AppColors.textPrimary),
                 ),
               ),
             ],
