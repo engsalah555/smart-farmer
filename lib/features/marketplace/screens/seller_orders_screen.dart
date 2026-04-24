@@ -303,11 +303,12 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
       leading: Container(
         margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color?.withValues(alpha: 0.5),
+          color: context.primary,
           shape: BoxShape.circle,
         ),
         child: IconButton(
           icon: const Icon(Icons.arrow_back),
+          color: context.white,
           onPressed: () => context.pop(),
         ),
       ),
