@@ -40,7 +40,7 @@ class MarketplaceStickyHeader extends StatelessWidget {
         minHeight: headerHeight,
         maxHeight: headerHeight,
         child: Container(
-          color: AppColors.primary,
+          color: context.primary,
           child: Container(
             decoration: BoxDecoration(
               color: AppColors.getBackground(isDark),
@@ -48,13 +48,6 @@ class MarketplaceStickyHeader extends StatelessWidget {
                 topLeft: Radius.circular(32),
                 topRight: Radius.circular(32),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
             ),
             child: isBuying
                 ? Column(

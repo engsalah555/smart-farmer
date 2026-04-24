@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 
 class MarketplacePremiumFilterBar extends StatefulWidget {
@@ -113,12 +114,11 @@ class _FilterChip extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                style: context.font12.copyWith(
                   color: isSelected
                       ? Colors.white
-                      : (isDark ? Colors.white70 : AppColors.textPrimary),
+                      : (isDark ? Colors.white70 : AppColors.textSecondary),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                 ),
               ),
             ],
