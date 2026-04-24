@@ -47,6 +47,7 @@ class _ProductAssignmentDialogState extends State<ProductAssignmentDialog> {
       title: Text('إضافة منتجات لـ ${widget.catalog.name}'),
       backgroundColor: context.cardBackground,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      actionsAlignment: MainAxisAlignment.start,
       content: SizedBox(
         width: double.maxFinite,
         child: allProducts.isEmpty
@@ -98,7 +99,6 @@ class _ProductAssignmentDialogState extends State<ProductAssignmentDialog> {
               ),
       ),
       actions: [
-        TextButton(onPressed: () => context.pop(), child: const Text('إلغاء')),
         ElevatedButton(
           onPressed: () async {
             final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -128,6 +128,7 @@ class _ProductAssignmentDialogState extends State<ProductAssignmentDialog> {
           ),
           child: const Text('حفظ'),
         ),
+        TextButton(onPressed: () => context.pop(), child: const Text('إلغاء')),
       ],
     );
   }
