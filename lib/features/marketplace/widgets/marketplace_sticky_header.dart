@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 import '../../../core/utils/icon_helper.dart';
 
@@ -86,11 +87,14 @@ class MarketplaceStickyHeader extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.15),
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.15,
+                                ),
                                 borderRadius: BorderRadius.circular(25),
                               ),
                               child: const Icon(
-                                Icons.storefront_rounded, // Better icon for store management
+                                Icons
+                                    .storefront_rounded, // Better icon for store management
                                 color: AppColors.primary,
                                 size: 26,
                               ),
@@ -101,12 +105,8 @@ class MarketplaceStickyHeader extends StatelessWidget {
                               children: [
                                 Text(
                                   ' منتجاتي',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'Cairo',
-                                    height: 1.2,
-                                    color: AppColors.getTextColor(isDark),
+                                  style: context.font24.semiBold.copyWith(
+                                    color: context.textColor,
                                   ),
                                 ),
                                 Container(
@@ -166,7 +166,9 @@ class MarketplaceStickyHeader extends StatelessWidget {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppColors.primary : AppColors.getSurface(isDark),
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.getSurface(isDark),
                         borderRadius: BorderRadius.circular(25),
                         border: Border.all(
                           color: isSelected
@@ -177,7 +179,9 @@ class MarketplaceStickyHeader extends StatelessWidget {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.3),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
@@ -190,7 +194,9 @@ class MarketplaceStickyHeader extends StatelessWidget {
                           Icon(
                             IconHelper.getIconByName(cat['icon']),
                             size: 16,
-                            color: isSelected ? Colors.white : AppColors.primary,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.primary,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -198,8 +204,12 @@ class MarketplaceStickyHeader extends StatelessWidget {
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : AppColors.getTextColor(isDark).withValues(alpha: 0.7),
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                  : AppColors.getTextColor(
+                                      isDark,
+                                    ).withValues(alpha: 0.7),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w600,
                               fontSize: 14,
                               fontFamily: 'Cairo',
                             ),
