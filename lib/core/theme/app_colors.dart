@@ -19,7 +19,9 @@ class AppColors {
   static const Color surface = Colors.white; // Pure White for Light Surface
   static const Color white = Colors.white;
   static const Color black = Colors.black;
-  static const Color cardLight = Color(0xFFF5F5F5);
+  static const Color cardLight = Color(
+    0xFFF4F8F4,
+  ); // Clearer soft green tint to stand out from white background
 
   // --- Text Colors ---
   static const Color textPrimary = Color(0xFF1E293B);
@@ -32,7 +34,9 @@ class AppColors {
   static const Color darkBorder = Color(0xFF1D261D);
   static const Color darkTextPrimary = Color(0xFFE8EFE8); // Minty Soft White
   static const Color darkTextSecondary = Color(0xFF94A38F); // Sage Grey
-  static const Color darkCard = Color(0xFF141A14);
+  static const Color darkCard = Color(
+    0xFF1E281E,
+  ); // Lighter to be more distinct from background
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
