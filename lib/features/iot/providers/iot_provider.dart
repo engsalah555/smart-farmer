@@ -1,13 +1,10 @@
 import 'package:smart_farm2/core/providers/base_provider.dart';
-import 'package:smart_farm2/core/services/auth_service.dart';
-import 'package:smart_farm2/core/services/locator.dart';
 import '../models/iot_device_model.dart';
 import '../models/irrigation_log_model.dart';
 import '../services/iot_service.dart';
 
 class IotProvider extends BaseProvider {
   final IotService _iotService;
-  final AuthService _authService = locator<AuthService>();
 
   IotProvider(this._iotService);
 

@@ -46,7 +46,14 @@ class SellerService extends BaseApiService {
     String? imagePath,
     List<String>? otherImagePaths,
   }) async {
-    final formData = FormData.fromMap(productData);
+    final filteredData = <String, dynamic>{};
+    productData.forEach((key, value) {
+      if (value != null && value != 'null' && value is! List && value is! Map) {
+        filteredData[key] = value.toString();
+      }
+    });
+
+    final formData = FormData.fromMap(filteredData);
 
     if (imagePath != null && imagePath.isNotEmpty && !imagePath.startsWith('http')) {
       formData.files.add(MapEntry('image', await MultipartFile.fromFile(imagePath, filename: imagePath.split('/').last)));
@@ -73,7 +80,14 @@ class SellerService extends BaseApiService {
     String? imagePath,
     List<String>? otherImagePaths,
   }) async {
-    final formData = FormData.fromMap(updateData);
+    final filteredData = <String, dynamic>{};
+    updateData.forEach((key, value) {
+      if (value != null && value != 'null' && value is! List && value is! Map) {
+        filteredData[key] = value.toString();
+      }
+    });
+
+    final formData = FormData.fromMap(filteredData);
 
     if (imagePath != null && imagePath.isNotEmpty && !imagePath.startsWith('http')) {
       formData.files.add(MapEntry('image', await MultipartFile.fromFile(imagePath, filename: imagePath.split('/').last)));
