@@ -62,7 +62,7 @@ class HomeProvider extends BaseProvider {
       final cachedPosts = await _persistence.get('offline_cache', 'home_posts');
       if (cachedPosts != null) {
         _posts = (cachedPosts as List)
-            .map((p) => PostModel.fromJson(p))
+            .map((p) => PostModel.fromJson(Map<String, dynamic>.from(p)))
             .toList();
       }
 
