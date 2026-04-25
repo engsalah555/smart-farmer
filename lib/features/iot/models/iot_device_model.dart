@@ -13,6 +13,8 @@ class IotDevice {
   final double? temperature;
   final double? humidity;
   final double? soilMoisture;
+  final double? waterLevel;
+  final double? rainLevel;
 
   IotDevice({
     required this.id,
@@ -27,6 +29,8 @@ class IotDevice {
     this.temperature,
     this.humidity,
     this.soilMoisture,
+    this.waterLevel,
+    this.rainLevel,
   });
 
   IotDevice copyWith({
@@ -42,6 +46,8 @@ class IotDevice {
     double? temperature,
     double? humidity,
     double? soilMoisture,
+    double? waterLevel,
+    double? rainLevel,
   }) {
     return IotDevice(
       id: id ?? this.id,
@@ -56,6 +62,8 @@ class IotDevice {
       temperature: temperature ?? this.temperature,
       humidity: humidity ?? this.humidity,
       soilMoisture: soilMoisture ?? this.soilMoisture,
+      waterLevel: waterLevel ?? this.waterLevel,
+      rainLevel: rainLevel ?? this.rainLevel,
     );
   }
 
@@ -76,6 +84,8 @@ class IotDevice {
       temperature: (json['temperature'] as num?)?.toDouble(),
       humidity: (json['humidity'] as num?)?.toDouble(),
       soilMoisture: (json['soil_moisture'] as num?)?.toDouble(),
+      waterLevel: (json['water_level'] as num?)?.toDouble(),
+      rainLevel: (json['rain_level'] as num?)?.toDouble(),
     );
   }
 
@@ -93,6 +103,8 @@ class IotDevice {
       'temperature': temperature,
       'humidity': humidity,
       'soil_moisture': soilMoisture,
+      'water_level': waterLevel,
+      'rain_level': rainLevel,
     };
   }
 }

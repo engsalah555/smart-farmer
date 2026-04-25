@@ -31,9 +31,10 @@ To ensure high performance and maintainability (TDD-friendly):
 - **Offline-First**:
     - Use `Hive` for caching sensor data and crop guides.
     - Sync strategy: Load from Hive first, then update from WebSocket/API.
-- **WebSocket Management**:
-    - Centralized `WebSocketService` with auto-reconnection and exponential backoff.
-    - Stream-based updates to minimize widget rebuilds (using `Selector` or `StreamBuilder`).
+- **Real-time Strategy**:
+    - Use `Firebase Realtime Database` for IoT telemetry and sensor updates.
+    - Simplified logic: The app fetches data via Laravel API which bridges with Firebase for consistency.
+
 - **Lifecycle Optimization**:
     - Pause non-critical syncs when the app is in the background.
     - Re-validate stale data immediately upon `resumed` state without blocking the UI thread.

@@ -61,7 +61,7 @@ class SellerService extends BaseApiService {
     }
 
     return await post<ProductModel>(
-      AppConstants.productsUrl,
+      AppConstants.sellerProductsUrl,
       data: formData,
       mapper: (data) => ProductModel.fromJson(data),
     );
@@ -90,14 +90,14 @@ class SellerService extends BaseApiService {
     formData.fields.add(const MapEntry('_method', 'PUT'));
 
     return await post<ProductModel>(
-      '${AppConstants.productsUrl}/$productId',
+      '${AppConstants.sellerProductsUrl}/$productId',
       data: formData,
       mapper: (data) => ProductModel.fromJson(data),
     );
   }
 
   Future<bool> deleteProduct(String productId) async {
-    return await delete('${AppConstants.productsUrl}/$productId');
+    return await delete('${AppConstants.sellerProductsUrl}/$productId');
   }
 
   // --- Catalog Management ---

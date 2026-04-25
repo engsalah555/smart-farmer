@@ -24,6 +24,7 @@ class AppConstants {
   static const String farmCropsUrl = 'farm/crops';
 
   static const String productsUrl = 'marketplace/products';
+  static const String sellerProductsUrl = 'marketplace/seller/products';
   static const String storesUrl = 'marketplace/stores';
   static const String myStoreUrl = 'marketplace/seller/my-store';
   static const String storeUpdateUrl = 'marketplace/seller/my-store/update';

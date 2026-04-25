@@ -17,7 +17,7 @@ import 'farm_service.dart';
 import 'notification_service.dart';
 import 'persistence_service.dart';
 import 'hive_persistence_service.dart';
-import 'websocket_service.dart';
+
 import 'weather_service.dart';
 import 'update_service.dart';
 
@@ -118,8 +118,7 @@ Future<void> setupLocator() async {
     () => HomeService(locator<Dio>()),
   );
 
-  // WebSocket Service
-  locator.registerSingleton<WebSocketService>(WebSocketService());
+
 
   // Weather Service
   locator.registerLazySingleton<WeatherService>(() => WeatherService());

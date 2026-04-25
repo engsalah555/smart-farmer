@@ -1,6 +1,5 @@
 import 'package:smart_farm2/core/providers/base_provider.dart';
 import 'package:smart_farm2/core/services/auth_service.dart';
-import 'package:smart_farm2/core/services/websocket_service.dart';
 import 'package:smart_farm2/core/services/locator.dart';
 import '../models/iot_device_model.dart';
 import '../models/irrigation_log_model.dart';
@@ -8,7 +7,6 @@ import '../services/iot_service.dart';
 
 class IotProvider extends BaseProvider {
   final IotService _iotService;
-  final WebSocketService _wsService = locator<WebSocketService>();
   final AuthService _authService = locator<AuthService>();
 
   IotProvider(this._iotService);
@@ -35,44 +33,12 @@ class IotProvider extends BaseProvider {
               .map((i) => IrrigationLog.fromJson(i))
               .toList();
         }
-
-        // Initialize and listen to WebSocket for real-time updates
-        await _initWebSocket();
       } else {
         _message = data['message'];
       }
     }, showLoading: showLoading);
   }
 
-  Future<void> _initWebSocket() async {
-    final user = _authService.currentUser;
-    if (user != null) {
-      if (!_wsService.isConnected) {
-        await _wsService.init();
-        _wsService.connect();
-      }
-      
-      // Listen for telemetry (sensor data, irrigation status)
-      _wsService.listenToDeviceUpdates(user.id, (data) {
-        final telemetry = data['telemetry'];
-        if (_device != null && telemetry != null) {
-          _device = _device!.copyWith(
-            temperature: telemetry['temperature']?.toDouble(),
-            humidity: telemetry['humidity']?.toDouble(),
-            soilMoisture: telemetry['soil_moisture']?.toDouble(),
-            isIrrigationOn: telemetry['is_irrigation_on'],
-          );
-          notifyListeners();
-        }
-      });
-
-      // Listen for status changes (pending -> active)
-      _wsService.listenToStatusUpdates(user.id, (data) {
-        // When status changes, re-fetch everything from API silently
-        fetchStatus(showLoading: false);
-      });
-    }
-  }
 
   Future<bool> toggleIrrigation(bool status) async {
     final previousStatus = _device?.isIrrigationOn;
