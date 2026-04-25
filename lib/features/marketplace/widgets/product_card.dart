@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/product_model.dart';
+import '../../../core/widgets/app_fonts.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
 import '../../../core/widgets/molecules/pro_max_card.dart';
 
@@ -17,16 +19,15 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
-
     if (isFeatured) {
-      return _buildFeaturedCard(context, isDark, textPrimary, textSecondary);
+      return _buildFeaturedCard(context);
     }
 
     return ProMaxCard(
-      onTap: () => context.push('/product_details', extra: product),
+      onTap: () {
+        HapticFeedback.selectionClick();
+        context.push('/product_details', extra: product);
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -36,7 +37,7 @@ class ProductCard extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Container(
-                  color: AppColors.primary.withValues(alpha: 0.05),
+                  color: context.primary.withValues(alpha: 0.05),
                   child: Hero(
                     tag: 'product_store_${product.id}',
                     child: _buildProductImage(product),
@@ -51,7 +52,7 @@ class ProductCard extends StatelessWidget {
                         stops: const [0.7, 1.0],
                         colors: [
                           Colors.transparent,
-                          AppColors.neutralBlack.withValues(alpha: isDark ? 0.6 : 0.3),
+                          AppColors.neutralBlack.withValues(alpha: context.isDark ? 0.6 : 0.3),
                         ],
                       ),
                     ),
@@ -59,19 +60,25 @@ class ProductCard extends StatelessWidget {
                 ),
                 PositionedDirectional(
                   top: 10,
-                  end: 10,
+                  start: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: AppColors.neutralWhite.withValues(alpha: 0.95),
-                      borderRadius: BorderRadius.circular(8),
+                      color: context.primary,
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.primary.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Text(
                       product.category,
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                      style: context.font10.bold.copyWith(
+                        color: Colors.white,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
@@ -82,59 +89,58 @@ class ProductCard extends StatelessWidget {
           Expanded(
             flex: 4,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     product.title,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: textPrimary,
-                      letterSpacing: -0.2,
+                    style: context.font14.bold.copyWith(
+                      color: context.textPrimary,
+                      height: 1.2,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          Icons.add_shopping_cart_rounded,
-                          color: AppColors.neutralWhite,
-                          size: 16,
-                        ),
-                      ),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${product.price} ريال',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 14,
+                            '${product.price}',
+                            style: context.font16.bold.copyWith(
+                              color: context.primary,
+                              letterSpacing: -0.5,
                             ),
                           ),
                           Text(
-                            product.unit,
-                            style: TextStyle(
-                              color: textSecondary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                            '/ ${product.unit}',
+                            style: context.font10.medium.copyWith(
+                              color: context.textSecondary,
                             ),
                           ),
                         ],
+                      ),
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: context.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: context.primary.withValues(alpha: 0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.add_shopping_cart_rounded,
+                          color: context.primary,
+                          size: 18,
+                        ),
                       ),
                     ],
                   ),
@@ -147,12 +153,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedCard(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-  ) {
+  Widget _buildFeaturedCard(BuildContext context) {
     return ProMaxCard(
       onTap: () => context.push('/product_details', extra: product),
       padding: EdgeInsets.zero,
@@ -164,7 +165,7 @@ class ProductCard extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Container(
-                  color: AppColors.primary.withValues(alpha: 0.05),
+                  color: context.primary.withValues(alpha: 0.05),
                   child: Hero(
                     tag: 'product_store_${product.id}',
                     child: _buildProductImage(product),
@@ -179,27 +180,33 @@ class ProductCard extends StatelessWidget {
                         stops: const [0.6, 1.0],
                         colors: [
                           Colors.transparent,
-                          AppColors.neutralBlack.withValues(alpha: isDark ? 0.5 : 0.25),
+                          AppColors.neutralBlack.withValues(alpha: context.isDark ? 0.5 : 0.25),
                         ],
                       ),
                     ),
                   ),
                 ),
                 PositionedDirectional(
-                  top: 8,
-                  start: 8,
+                  top: 10,
+                  start: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(8),
+                      color: context.primary,
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Text(
                       'مميز',
-                      style: TextStyle(
-                        color: AppColors.neutralWhite,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                      style: context.font10.bold.copyWith(
+                        color: Colors.white,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
@@ -210,62 +217,79 @@ class ProductCard extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    product.category,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
-                      letterSpacing: 0.5,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: context.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      product.category,
+                      style: context.font10.semiBold.copyWith(
+                        color: context.primary,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Text(
                     product.title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: textPrimary,
-                      height: 1.3,
+                    style: context.font16.bold.copyWith(
+                      color: context.textPrimary,
+                      height: 1.2,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '${product.price} ريال',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    product.unit,
-                    style: TextStyle(
-                      color: textSecondary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.add_shopping_cart_rounded,
-                      color: AppColors.neutralWhite,
-                      size: 18,
-                    ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${product.price}',
+                            style: context.font18.bold.copyWith(
+                              color: context.primary,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          Text(
+                            product.unit,
+                            style: context.font12.medium.copyWith(
+                              color: context.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: context.primary,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: context.primary.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.add_shopping_cart_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

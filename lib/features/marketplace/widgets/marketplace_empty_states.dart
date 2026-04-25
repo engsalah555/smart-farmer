@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 
 class NoStoreSliver extends StatelessWidget {
@@ -14,41 +15,47 @@ class NoStoreSliver extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.storefront_outlined,
-                size: 100,
-                color: AppColors.primary.withValues(alpha: 0.2),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'ليس لديك متجر حالياً',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'تحتاج إلى التسجيل كتاجر موثق لتبدأ ببيع منتجاتك.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.storefront_rounded,
+                  size: 64,
+                  color: AppColors.primary,
+                ),
               ),
               const SizedBox(height: 32),
+              Text(
+                'ليس لديك متجر حالياً',
+                style: context.font24.bold.copyWith(color: context.textPrimary),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'تحتاج إلى التسجيل كتاجر موثق لتبدأ ببيع منتجاتك والوصول إلى آلاف المشترين.',
+                textAlign: TextAlign.center,
+                style: context.font14.copyWith(color: context.textSecondary, height: 1.6),
+              ),
+              const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 15,
+                    horizontal: 48,
+                    vertical: 18,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  elevation: 10,
-                  shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                  elevation: 0,
                 ),
-                child: const Text(
+                child: Text(
                   'توثيق حساب التاجر',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: context.font16.bold,
                 ),
               ),
             ],
@@ -70,15 +77,22 @@ class NoProductsSliver extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.inventory_2_outlined,
-              size: 80,
-              color: AppColors.primary.withValues(alpha: 0.3),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: context.primary.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Icon(
+                Icons.inventory_2_rounded,
+                size: 52,
+                color: context.primary.withValues(alpha: 0.4),
+              ),
             ),
-            const SizedBox(height: 16),
-            const Text(
+            const SizedBox(height: 20),
+            Text(
               'لم تضف أي منتج بعد',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              style: context.font16.medium.copyWith(color: context.textSecondary),
             ),
           ],
         ),
@@ -87,7 +101,6 @@ class NoProductsSliver extends StatelessWidget {
   }
 }
 
-/// Empty state for buyer view when no stores match the search/filter
 class NoStoresEmptyState extends StatelessWidget {
   const NoStoresEmptyState({super.key});
 
@@ -100,31 +113,30 @@ class NoStoresEmptyState extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 100,
-              height: 100,
+              width: 120,
+              height: 120,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
+                color: AppColors.primary.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.storefront_outlined,
+                Icons.search_off_rounded,
                 size: 52,
-                color: AppColors.primary.withValues(alpha: 0.35),
+                color: AppColors.primary.withValues(alpha: 0.5),
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'لا توجد متاجر مطابقة',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 32),
             Text(
-              'جرّب تغيير طريقة البحث أو اختر تصنيفاً مختلفاً',
+              'لا توجد متاجر مطابقة',
+              style: context.font20.bold.copyWith(color: context.textPrimary),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'جرّب تغيير طريقة البحث أو اختر تصنيفاً مختلفاً للوصول لنتائج أفضل.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: Theme.of(context).hintColor,
-                height: 1.5,
+              style: context.font14.copyWith(
+                color: context.textSecondary,
+                height: 1.6,
               ),
             ),
           ],

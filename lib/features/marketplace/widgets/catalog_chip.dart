@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
+import '../../../core/widgets/app_fonts.dart';
 
 class CatalogChip extends StatelessWidget {
   final String label;
@@ -18,34 +19,30 @@ class CatalogChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.isDark;
-
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(25),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppColors.primary
-                : (isDark
-                      ? Colors.white.withValues(alpha: 0.05)
-                      : Colors.white),
-            borderRadius: BorderRadius.circular(25),
+                ? context.primary
+                : context.surface,
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected
-                  ? AppColors.primary
-                  : (isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.grey.withValues(alpha: 0.2)),
+                  ? context.primary
+                  : context.border,
+              width: 1.5,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
+                      color: context.primary.withValues(alpha: 0.3),
+                      blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ]
@@ -56,31 +53,30 @@ class CatalogChip extends StatelessWidget {
             children: [
               if (imageUrl != null) ...[
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(6),
                   child: CustomImage(
                     imageUrl: imageUrl!,
-                    width: 20,
-                    height: 20,
+                    width: 18,
+                    height: 18,
                     fit: BoxFit.cover,
                   ),
                 ),
                 const SizedBox(width: 8),
               ] else if (label != 'الكل') ...[
-                const Icon(
+                Icon(
                   Icons.category_outlined,
                   size: 16,
-                  color: Colors.grey,
+                  color: isSelected ? Colors.white : context.textSecondary,
                 ),
                 const SizedBox(width: 8),
               ],
               Text(
                 label,
-                style: TextStyle(
+                style: context.font14.copyWith(
                   color: isSelected
                       ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.black87),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  fontSize: 13,
+                      : context.textPrimary,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                 ),
               ),
             ],
