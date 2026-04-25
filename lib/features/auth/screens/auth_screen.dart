@@ -144,9 +144,8 @@ class _AuthScreenState extends State<AuthScreen> {
         content: Text(
           message,
           textAlign: TextAlign.right,
-          style: const TextStyle(),
         ),
-        backgroundColor: Colors.red.shade400,
+        backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -155,13 +154,14 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Force light mode for this design if strictly "Minimal White",
-    // or adapt carefully. The prompt said "Minimal White", implying light theme is dominant.
-    // However, I will support dark mode by checking brightness but keeping the layout clean.
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.darkBackground : AppColors.background;
+    final borderColor = AppColors.border(isDark);
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF181E14) : Colors.white,
+      backgroundColor: bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -172,8 +172,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  // Enlarged Logo as requested
-                  const SmartFarmLogo(width: 150, height: 150),
+                  Semantics(
+                    label: ' شعار مزرعة الذكية',
+                    child: const SmartFarmLogo(width: 150, height: 150),
+                  ),
                   const SizedBox(height: 30),
 
                   // Role Selector (User/Merchant)
@@ -249,19 +251,11 @@ class _AuthScreenState extends State<AuthScreen> {
                   const SizedBox(height: 12),
 
                   // Remember Me & Forgot Password Row
-                  Row(
-                    children: [
-                      // Remember Me Checkbox
-                      Theme(
-                        data: ThemeData(
-                          unselectedWidgetColor: Colors.grey.shade400,
-                          checkboxTheme: CheckboxThemeData(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                        ),
-                        child: Checkbox(
+                  Semantics(
+                    label: 'تذكرني',
+                    child: Row(
+                      children: [
+                        Checkbox(
                           value: _rememberMe,
                           activeColor: AppColors.primary,
                           onChanged: (val) {
@@ -270,31 +264,30 @@ class _AuthScreenState extends State<AuthScreen> {
                             });
                           },
                         ),
-                      ),
-                      Text(
-                        'تذكرني', // Remember me
-                        style: TextStyle(
-                          color: isDark ? Colors.grey.shade400 : Colors.black87,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const Spacer(),
-                      // Forgot Password Link
-                      TextButton(
-                        onPressed: () {
-                          context.push('/forgot_password');
-                        },
-                        child: const Text(
-                          'نسيت كلمة المرور؟', // Forgot Password?
+                        Text(
+                          'تذكرني',
                           style: TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
+                            color: textSecondary,
+                            fontWeight: FontWeight.w500,
                             fontSize: 14,
                           ),
                         ),
-                      ),
-                    ],
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            context.push('/forgot_password');
+                          },
+                          child: Text(
+                            'نسيت كلمة المرور؟',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 24),
 
@@ -344,36 +337,32 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   const SizedBox(height: 32),
 
-                  // "Or login with" Divider
                   Row(
                     children: [
-                      Expanded(child: Divider(color: Colors.grey.shade200)),
+                      Expanded(child: Divider(color: borderColor)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'أو تسجيل الدخول عبر',
                           style: TextStyle(
-                            color: isDark
-                                ? Colors.grey.shade500
-                                : Colors.black54,
+                            color: textSecondary,
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
                           ),
                         ),
                       ),
-                      Expanded(child: Divider(color: Colors.grey.shade200)),
+                      Expanded(child: Divider(color: borderColor)),
                     ],
                   ),
                   const SizedBox(height: 24),
 
-                  // Social Buttons Row
                   Row(
                     children: [
                       Expanded(
                         child: _buildSocialButton(
                           text: 'Google',
                           icon: Icons.g_mobiledata,
-                          iconColor: Colors.red, // Google Red
+                          iconColor: const Color(0xFFEA4335),
                           isDark: isDark,
                           onTap: () {},
                         ),
@@ -383,7 +372,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         child: _buildSocialButton(
                           text: 'Apple',
                           icon: Icons.apple,
-                          iconColor: isDark ? Colors.white : Colors.black,
+                          iconColor: textPrimary,
                           isDark: isDark,
                           onTap: () {},
                         ),
@@ -393,16 +382,13 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   const SizedBox(height: 40),
 
-                  // Switch Auth Mode
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        isLogin ? 'ليس لديك حساب؟ ' : 'لديك حساب بالفعل؟ ',
+                        isLogin ? 'ليس لديك حساب؟ ' : '��ديك حساب بالفعل؟ ',
                         style: TextStyle(
-                          color: isDark
-                              ? Colors.grey.shade400
-                              : Colors.grey.shade600,
+                          color: textSecondary,
                           fontSize: 14,
                         ),
                       ),
@@ -410,7 +396,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         onTap: () => setState(() => isLogin = !isLogin),
                         child: Text(
                           isLogin ? 'سجل الآن' : 'تسجيل الدخول',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -439,60 +425,44 @@ class _AuthScreenState extends State<AuthScreen> {
     bool? obscureText,
     VoidCallback? onToggleVisibility,
   }) {
+    final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final borderColor = AppColors.border(isDark);
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final hintColor = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF27272A) : Colors.white,
-        borderRadius: BorderRadius.circular(30), // Pill shape from design
-        border: Border.all(
-          color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE2E8F0),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        color: fillColor,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: borderColor),
       ),
       child: TextField(
         controller: controller,
         keyboardType: inputType,
         obscureText: obscureText ?? false,
-        textAlign: TextAlign.right, // Arabic alignment
+        textAlign: TextAlign.right,
         style: TextStyle(
-          color: isDark ? Colors.white : Colors.black87,
+          color: textColor,
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(
-            color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: AppColors.primary, // Green Icon
-            size: 22,
-          ),
+          hintStyle: TextStyle(color: hintColor, fontSize: 14),
+          prefixIcon: Icon(icon, color: AppColors.primary, size: 22),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
                     (obscureText ?? false)
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: Colors.grey.shade400,
+                    color: hintColor,
                     size: 20,
                   ),
                   onPressed: onToggleVisibility,
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 20,
-          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         ),
       ),
     );
@@ -505,24 +475,19 @@ class _AuthScreenState extends State<AuthScreen> {
     required bool isDark,
     required VoidCallback onTap,
   }) {
+    final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final borderColor = AppColors.border(isDark);
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(30),
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF27272A) : Colors.white,
+          color: fillColor,
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE2E8F0),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 5,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: borderColor),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -532,7 +497,7 @@ class _AuthScreenState extends State<AuthScreen> {
             Text(
               text,
               style: TextStyle(
-                color: isDark ? Colors.white : Colors.black87,
+                color: textColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
@@ -544,22 +509,27 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildRoleSelector(bool isDark) {
+    final containerColor = isDark ? AppColors.darkSurface : const Color(0xFFF1F5F4);
+    final borderColor = AppColors.border(isDark);
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF1F5F9),
+        color: containerColor,
         borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: borderColor),
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
         children: [
-          _buildRoleItem('مستخدم', 'user', isDark),
-          _buildRoleItem('بائع', 'seller', isDark),
+          _buildRoleItem('مستخدم', 'user', isDark, textSecondary),
+          _buildRoleItem('بائع', 'seller', isDark, textSecondary),
         ],
       ),
     );
   }
 
-  Widget _buildRoleItem(String label, String value, bool isDark) {
+  Widget _buildRoleItem(String label, String value, bool isDark, Color secondaryColor) {
     final isSelected = userType == value;
     return Expanded(
       child: GestureDetector(
@@ -569,15 +539,6 @@ class _AuthScreenState extends State<AuthScreen> {
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(26),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : [],
           ),
           padding: const EdgeInsets.symmetric(vertical: 12),
           alignment: Alignment.center,
@@ -585,8 +546,8 @@ class _AuthScreenState extends State<AuthScreen> {
             label,
             style: TextStyle(
               color: isSelected
-                  ? Colors.white
-                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                  ? AppColors.neutralWhite
+                  : secondaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -597,6 +558,10 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildStoreTypeSelector(bool isDark) {
+    final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final borderColor = AppColors.border(isDark);
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -605,7 +570,7 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Text(
             'تصنيف المتجر',
             style: TextStyle(
-              color: isDark ? Colors.white : Colors.black87,
+              color: textColor,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -613,43 +578,21 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF27272A) : Colors.white,
+            color: fillColor,
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(
-              color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE2E8F0),
-            ),
-            boxShadow: isDark
-                ? []
-                : [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+            border: Border.all(color: borderColor),
           ),
           child: DropdownButtonFormField<String>(
             initialValue: storeType,
             icon: Icon(Icons.keyboard_arrow_down, color: AppColors.primary),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 16,
-                horizontal: 20,
-              ),
-              prefixIcon: const Icon(
-                Icons.store_outlined,
-                color: AppColors.primary,
-                size: 22,
-              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              prefixIcon: Icon(Icons.store_outlined, color: AppColors.primary, size: 22),
             ),
-            dropdownColor: isDark ? const Color(0xFF27272A) : Colors.white,
+            dropdownColor: fillColor,
             borderRadius: BorderRadius.circular(20),
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black87,
-              fontWeight: FontWeight.w500,
-               // Ensure font is correct
-            ),
+            style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
             items: const [
               DropdownMenuItem(value: 'بذور', child: Text('بذور')),
               DropdownMenuItem(value: 'اسمدة', child: Text('اسمدة')),

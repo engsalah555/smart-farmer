@@ -7,8 +7,8 @@ class ProMaxCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final double borderRadius;
-  final bool applyGradientBorder;
   final Color? backgroundColor;
+  @Deprecated('Use boxShadow from softShadow() instead')
   final double? elevation;
 
   const ProMaxCard({
@@ -18,7 +18,6 @@ class ProMaxCard extends StatelessWidget {
     this.padding,
     this.margin,
     this.borderRadius = 22.0,
-    this.applyGradientBorder = false,
     this.backgroundColor,
     this.elevation,
   });
@@ -26,57 +25,20 @@ class ProMaxCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final defaultBgColor = isDark ? AppColors.darkCard : Colors.white;
-    final bgColor = backgroundColor ?? defaultBgColor;
-
-    final border = applyGradientBorder
-        ? null
-        : Border.all(
-            color: isDark
-                ? AppColors.darkBorder.withValues(alpha: 0.6)
-                : AppColors.primary.withValues(alpha: 0.05),
-            width: 1.2,
-          );
-
-    Decoration decoration = BoxDecoration(
-      color: context.cardBackground,
-      borderRadius: BorderRadius.circular(borderRadius),
-      border: border,
-    );
+    final bgColor = backgroundColor ?? (isDark ? AppColors.darkCard : AppColors.surface);
+    final borderColor = AppColors.border(isDark);
 
     Widget content = Container(
-      padding: padding,
-      decoration: decoration,
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(color: borderColor, width: 1.0),
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: child,
       ),
     );
-
-    if (applyGradientBorder) {
-      content = Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius + 2),
-          gradient: const LinearGradient(
-            colors: [AppColors.primary, AppColors.secondary],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        padding: const EdgeInsets.all(1.5),
-        child: Container(
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: child,
-          ),
-        ),
-      );
-    }
 
     if (onTap != null) {
       return Padding(

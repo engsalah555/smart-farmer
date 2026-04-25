@@ -179,6 +179,7 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
                 ),
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final product = products[index];
+                  final isFeatured = index < 2 && products.length > 2;
                   return FadeInSlide(
                     duration: Duration(milliseconds: 500 + (index * 100)),
                     child: widget.isSeller
@@ -190,7 +191,10 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
                             onDelete: () =>
                                 _showDeleteConfirmation(context, product),
                           )
-                        : ProductCard(product: product),
+                        : ProductCard(
+                            product: product,
+                            isFeatured: isFeatured,
+                          ),
                   );
                 }, childCount: products.length),
               ),

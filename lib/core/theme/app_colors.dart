@@ -1,66 +1,66 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // --- Core Brand Colors (Pro Max) ---
-  static const Color primary = Color(0xFF69A14B); // Fresh Green (Brand Primary)
-  static const Color accent = Color(0xFF76C748); // Vibrant Green
-  static const Color secondary = Color(0xFF4A9B2B); // Natural Green
+  // --- Core Brand Colors ---
+  // Brand hue: ~110 (green). Tinted neutrals converge here.
+  static const Color primary = Color(0xFF69A14B);
+  static const Color accent = Color(0xFF76C748);
+  static const Color secondary = Color(0xFF4A9B2B);
 
   static const Color primaryDeep = Color(0xFF4F7A38);
   static const Color primaryMain = primary;
   static const Color primaryDark = Color(0xFF2D4520);
-
-  // --- Aliases ---
-  static const Color deepGreen = primary;
+  static const Color deepGreen = primaryDeep;
   static const Color vibrantGreen = accent;
 
-  // --- Neutral Palette (Unification) ---
-  static const Color background = Color(0xFFFFFFFF); // Pure White Background
-  static const Color surface = Colors.white; // Pure White for Light Surface
-  static const Color white = Colors.white;
-  static const Color black = Colors.black;
-  static const Color cardLight = Color(
-    0xFFF4F8F4,
-  ); // Clearer soft green tint to stand out from white background
+  // --- Tinted Neutral Palette (Restrained) ---
+  // No pure #fff or #000. All neutrals carry subtle brand hue (chroma 0.005-0.01).
+  static const Color neutralWhite = Color(0xFFFDFDFC);
+  static const Color neutralBlack = Color(0xFF0C0C0B);
+  static const Color white = neutralWhite;
+  static const Color black = neutralBlack;
+  static const Color neutralDark = Color(0xFF0A0D09); // Deep forest
+  static const Color neutralSurface = Color(0xFF141714); // Dark surface
+
+  // --- Light Mode Palette ---
+  static const Color background = neutralWhite;
+  static const Color surface = Color(0xFFF9FAF8); // Subtle warm tint
+  static const Color cardLight = Color(0xFFF4F7F2); // Soft green tint
 
   // --- Text Colors ---
-  static const Color textPrimary = Color(0xFF1E293B);
-  static const Color textSecondary = Color(0xFF64748B);
-  static const Color textMuted = Color(0xFF94A3B8);
+  static const Color textPrimary = Color(0xFF1A1D1A);
+  static const Color textSecondary = Color(0xFF4A5248);
+  static const Color textMuted = Color(0xFF6B7B6B);
 
-  // --- Dark Mode Palette (Deep Forest Black) ---
-  static const Color darkBackground = Color(0xFF0A110A); // Deep Forest Black
-  static const Color darkSurface = Color(0xFF141A14); // Dark Leaf Surface
+  // --- Dark Mode Palette ---
+  static const Color darkBackground = neutralDark;
+  static const Color darkSurface = neutralSurface;
   static const Color darkBorder = Color(0xFF1D261D);
-  static const Color darkTextPrimary = Color(0xFFE8EFE8); // Minty Soft White
-  static const Color darkTextSecondary = Color(0xFF94A38F); // Sage Grey
-  static const Color darkCard = Color(
-    0xFF1E281E,
-  ); // Lighter to be more distinct from background
+  static const Color darkTextPrimary = Color(0xFFE8EEE8); // Minty soft
+  static const Color darkTextSecondary = Color(0xFF8A9B85); // Sage
+  static const Color darkCard = Color(0xFF1A221A); // Subtle green tint
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
 
   // --- Semantic Status ---
-  static const Color error = Color(0xFFEF4444);
-  static const Color success = Color(0xFF10B981);
-  static const Color warning = Color(0xFFF59E0B);
-  static const Color info = Color(0xFF3B82F6);
+  static const Color error = Color(0xFFDC4545);
+  static const Color success = Color(0xFF2E9B5C);
+  static const Color warning = Color(0xFFD99A0B);
+  static const Color info = Color(0xFF3B7DD8);
 
   // --- Functional Methods ---
-  static Color glass(bool isDark) => isDark
-      ? Colors.white.withValues(alpha: 0.05)
-      : Colors.white.withValues(alpha: 0.4);
-
   static Color border(bool isDark) => isDark
-      ? Colors.white.withValues(alpha: 0.1)
-      : Colors.grey.withValues(alpha: 0.2);
+      ? darkTextSecondary.withValues(alpha: 0.15)
+      : textMuted.withValues(alpha: 0.3);
 
   static Color getBackground(bool isDark) =>
       isDark ? darkBackground : background;
   static Color getSurface(bool isDark) => isDark ? darkSurface : surface;
   static Color getTextColor(bool isDark) =>
       isDark ? darkTextPrimary : textPrimary;
+  static Color glass(bool isDark) =>
+      neutralWhite.withValues(alpha: isDark ? 0.05 : 0.15);
 }
 
 extension ThemeColors on BuildContext {
@@ -79,10 +79,6 @@ extension ThemeColors on BuildContext {
   Color get warning => AppColors.warning;
   Color get info => AppColors.info;
   Color get border => AppColors.border(isDark);
-  Color get glass => AppColors.glass(isDark);
-
-  Color get deepGreen => AppColors.deepGreen;
-  Color get vibrantGreen => AppColors.vibrantGreen;
 
   Color get darkBackground => AppColors.darkBackground;
   Color get darkSurface => AppColors.darkSurface;
@@ -90,16 +86,11 @@ extension ThemeColors on BuildContext {
   Color get darkTextPrimary => AppColors.darkTextPrimary;
   Color get darkTextSecondary => AppColors.darkTextSecondary;
   Color get darkCard => AppColors.darkCard;
-
   Color get cardLight => AppColors.cardLight;
-
-  Color get primaryDeep => AppColors.primaryDeep;
-  Color get primaryMain => AppColors.primaryMain;
-  Color get primaryDark => AppColors.primaryDark;
-
-  Color get white => AppColors.white;
-  Color get black => AppColors.black;
-
   Color get cardBackground => isDark ? darkCard : cardLight;
   Color get textColor => isDark ? darkTextPrimary : textPrimary;
+
+  Color get white => AppColors.neutralWhite;
+  Color get deepGreen => AppColors.primaryDeep;
+  Color get glass => AppColors.glass(isDark);
 }

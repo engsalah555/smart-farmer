@@ -20,6 +20,10 @@ class GlassmorphicSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final borderColor = AppColors.border(isDark);
+    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final hintColor = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -29,38 +33,22 @@ class GlassmorphicSearchBar extends StatelessWidget {
             child: Container(
               height: 52,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                color: fillColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.05),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+                border: Border.all(color: borderColor, width: 1.5),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: TextField(
                   controller: controller,
                   onChanged: onChanged,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black87,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(color: textColor, fontSize: 15),
                   decoration: InputDecoration(
                     hintText: hintText,
-                    hintStyle: TextStyle(
-                      color: isDark ? Colors.white38 : Colors.black38,
-                      fontSize: 14,
-                    ),
+                    hintStyle: TextStyle(color: hintColor, fontSize: 14),
                     prefixIcon: Icon(
                       Icons.search_rounded,
-                      color: isDark ? AppColors.secondary : AppColors.primary,
+                      color: AppColors.primary,
                       size: 22,
                     ),
                     border: InputBorder.none,
@@ -89,6 +77,11 @@ class GlassmorphicSearchBar extends StatelessWidget {
     bool isPrimary = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final borderColor = AppColors.border(isDark);
+    final iconColor = isPrimary
+        ? AppColors.neutralWhite
+        : (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary);
     
     return GestureDetector(
       onTap: onTap,
@@ -96,31 +89,11 @@ class GlassmorphicSearchBar extends StatelessWidget {
         height: 52,
         width: 52,
         decoration: BoxDecoration(
-          color: isPrimary 
-              ? (isDark ? AppColors.secondary : AppColors.primary) 
-              : (isDark ? const Color(0xFF2C2C2C) : Colors.white),
+          color: isPrimary ? AppColors.primary : fillColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isPrimary 
-                  ? (isDark ? AppColors.secondary.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.3))
-                  : Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          border: Border.all(color: borderColor, width: 1.5),
         ),
-        child: Icon(
-          icon,
-          color: isPrimary 
-              ? (isDark ? Colors.black : Colors.white)
-              : (isDark ? Colors.white : Colors.black87),
-          size: 20,
-        ),
+        child: Icon(icon, color: iconColor, size: 20),
       ),
     );
   }
