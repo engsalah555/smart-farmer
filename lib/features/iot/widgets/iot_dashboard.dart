@@ -50,9 +50,17 @@ class IotDashboard extends StatelessWidget {
                   
                   _buildSectionTitle('المؤشرات الحيوية', isDark),
                   const SizedBox(height: 16),
-                  Selector<IotProvider, (double?, double?, double?)>(
-                    selector: (_, p) => (p.device?.temperature, p.device?.humidity, p.device?.soilMoisture),
-                    builder: (context, sensors, _) => _buildSensorReadings(sensors.$1, sensors.$2, sensors.$3, isDark),
+                  Selector<IotProvider, (double?, double?, double?, double?, double?)>(
+                    selector: (_, p) => (
+                      p.device?.temperature, 
+                      p.device?.humidity, 
+                      p.device?.soilMoisture,
+                      p.device?.waterLevel,
+                      p.device?.rainLevel
+                    ),
+                    builder: (context, sensors, _) => _buildSensorReadings(
+                      sensors.$1, sensors.$2, sensors.$3, sensors.$4, sensors.$5, isDark
+                    ),
                   ),
                   
                   const SizedBox(height: 28),
@@ -271,14 +279,26 @@ class IotDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildSensorReadings(double? temp, double? humidity, double? soil, bool isDark) {
-    return Row(
+  Widget _buildSensorReadings(double? temp, double? humidity, double? soil, double? water, double? rain, bool isDark) {
+    return Column(
       children: [
-        Expanded(child: _buildSensorItem('الحرارة', '${temp ?? "--"}°C', Icons.thermostat_rounded, const Color(0xFFFF8008), const Color(0xFFFFC837), isDark)),
-        const SizedBox(width: 16),
-        Expanded(child: _buildSensorItem('الرطوبة', '${humidity ?? "--"}%', Icons.water_drop_rounded, const Color(0xFF2193b0), const Color(0xFF6dd5ed), isDark)),
-        const SizedBox(width: 16),
-        Expanded(child: _buildSensorItem('التربة', '${soil ?? "--"}%', Icons.grass_rounded, const Color(0xFF11998e), const Color(0xFF38ef7d), isDark)),
+        Row(
+          children: [
+            Expanded(child: _buildSensorItem('الحرارة', '${temp?.toStringAsFixed(1) ?? "--"}°C', Icons.thermostat_rounded, const Color(0xFFFF8008), const Color(0xFFFFC837), isDark)),
+            const SizedBox(width: 16),
+            Expanded(child: _buildSensorItem('الرطوبة', '${humidity?.round() ?? "--"}%', Icons.water_drop_rounded, const Color(0xFF2193b0), const Color(0xFF6dd5ed), isDark)),
+            const SizedBox(width: 16),
+            Expanded(child: _buildSensorItem('التربة', '${soil?.round() ?? "--"}%', Icons.grass_rounded, const Color(0xFF11998e), const Color(0xFF38ef7d), isDark)),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(child: _buildSensorItem('خزان المياه', '${water?.round() ?? "--"}%', Icons.waves_rounded, const Color(0xFF4facfe), const Color(0xFF00f2fe), isDark)),
+            const SizedBox(width: 16),
+            Expanded(child: _buildSensorItem('مستوى المطر', '${rain?.round() ?? "--"}%', Icons.umbrella_rounded, const Color(0xFF6a11cb), const Color(0xFF2575fc), isDark)),
+          ],
+        ),
       ],
     );
   }
