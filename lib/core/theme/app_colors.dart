@@ -92,5 +92,4 @@ extension ThemeColors on BuildContext {
 
   Color get white => AppColors.neutralWhite;
   Color get deepGreen => AppColors.primaryDeep;
-  Color get glass => AppColors.glass(isDark);
 }

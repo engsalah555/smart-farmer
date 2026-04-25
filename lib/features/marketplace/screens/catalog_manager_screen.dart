@@ -18,7 +18,6 @@ class CatalogManagerScreen extends StatefulWidget {
 }
 
 class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
 
