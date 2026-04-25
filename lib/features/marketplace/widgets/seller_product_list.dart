@@ -78,7 +78,10 @@ class SellerProductList extends StatelessWidget {
               child: SizedBox(
                 height: 180,
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: myCatalogs.length,
@@ -90,10 +93,10 @@ class SellerProductList extends StatelessWidget {
                         padding: const EdgeInsetsDirectional.only(end: 16),
                         child: InkWell(
                           onTap: () {
-                            context.push('/catalog_products', extra: {
-                              'catalog': catalog,
-                              'isSeller': true,
-                            });
+                            context.push(
+                              '/catalog_products',
+                              extra: {'catalog': catalog, 'isSeller': true},
+                            );
                           },
                           borderRadius: BorderRadius.circular(24),
                           child: Container(
@@ -118,18 +121,28 @@ class SellerProductList extends StatelessWidget {
                                     Image.network(
                                       catalog.imageUrl!,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) =>
-                                          Container(
-                                            color: context.primary.withValues(alpha: 0.05),
-                                            child: Icon(Icons.category_outlined,
-                                                color: context.primary, size: 40),
-                                          ),
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                                color: context.primary
+                                                    .withValues(alpha: 0.05),
+                                                child: Icon(
+                                                  Icons.category_outlined,
+                                                  color: context.primary,
+                                                  size: 40,
+                                                ),
+                                              ),
                                     )
                                   else
                                     Container(
-                                      color: context.primary.withValues(alpha: 0.05),
-                                      child: Icon(Icons.style_outlined,
-                                          color: context.primary, size: 40),
+                                      color: context.primary.withValues(
+                                        alpha: 0.05,
+                                      ),
+                                      child: Icon(
+                                        Icons.style_outlined,
+                                        color: context.primary,
+                                        size: 40,
+                                      ),
                                     ),
                                   // Premium Gradient Overlay
                                   Positioned.fill(
@@ -141,7 +154,9 @@ class SellerProductList extends StatelessWidget {
                                           stops: const [0.4, 1.0],
                                           colors: [
                                             Colors.transparent,
-                                            Colors.black.withValues(alpha: 0.85),
+                                            Colors.black.withValues(
+                                              alpha: 0.85,
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -153,7 +168,8 @@ class SellerProductList extends StatelessWidget {
                                     left: 12,
                                     right: 12,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           catalog.name,
@@ -168,9 +184,11 @@ class SellerProductList extends StatelessWidget {
                                           const SizedBox(height: 4),
                                           Text(
                                             catalog.description,
-                                            style: context.font10.medium.copyWith(
-                                              color: Colors.white.withValues(alpha: 0.7),
-                                            ),
+                                            style: context.font10.medium
+                                                .copyWith(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.7),
+                                                ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -203,7 +221,10 @@ class SellerProductList extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: context.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -220,7 +241,7 @@ class SellerProductList extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final product = myProducts[index];
@@ -364,10 +385,7 @@ class SellerProductList extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Text(
-                        'حذف الآن',
-                        style: context.font14.bold,
-                      ),
+                      child: Text('حذف الآن', style: context.font14.bold),
                     ),
                   ),
                 ],
@@ -388,12 +406,16 @@ class SellerProductList extends StatelessWidget {
       scaffoldMessenger.showSnackBar(
         SnackBar(
           content: Text(
-            success ? 'تم حذف المنتج بنجاح' : (provider.errorMessage ?? 'فشل في عملية الحذف'),
+            success
+                ? 'تم حذف المنتج بنجاح'
+                : (provider.errorMessage ?? 'فشل في عملية الحذف'),
           ),
           backgroundColor: success ? AppColors.success : AppColors.error,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }
