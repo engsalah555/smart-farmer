@@ -26,10 +26,10 @@ class ProMaxIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Logic for circular vs rounded square
     final effectiveRadius = borderRadius ?? 12.0;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -37,16 +37,13 @@ class ProMaxIconButton extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: backgroundColor ?? (isGlass 
-              ? Colors.white.withValues(alpha: isDark ? 0.1 : 0.2)
-              : (color ?? AppColors.primary).withValues(alpha: 0.15)),
-          borderRadius: borderRadius == null && size > 0 
+          color: backgroundColor,
+          borderRadius: borderRadius == null && size > 0
               ? BorderRadius.circular(effectiveRadius)
-              : (borderRadius != null ? BorderRadius.circular(borderRadius!) : BorderRadius.circular(size / 2)),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.4),
-            width: 1.5,
-          ),
+              : (borderRadius != null
+                    ? BorderRadius.circular(borderRadius!)
+                    : BorderRadius.circular(size / 2)),
+          border: Border.all(color: context.primary, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
@@ -58,8 +55,8 @@ class ProMaxIconButton extends StatelessWidget {
         ),
         child: Center(
           child: Icon(
-            icon, 
-            color: color ?? (isGlass ? Colors.white : AppColors.primary), 
+            icon,
+            color: color ?? (isGlass ? Colors.white : AppColors.primary),
             size: iconSize,
           ),
         ),

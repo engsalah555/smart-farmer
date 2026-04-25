@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_farm2/core/widgets/app_fonts.dart';
+import '../app_fonts.dart';
 import '../../constants.dart';
 
 class ProMaxToggle extends StatelessWidget {
@@ -82,7 +82,7 @@ class ProMaxToggle extends StatelessWidget {
               style: context.font14.semiBold.copyWith(
                 color: isActive
                     ? context.primary
-                    : context.white.withValues(alpha: 0.9),
+                    : AppColors.white.withValues(alpha: 0.9),
               ),
             ),
           ),

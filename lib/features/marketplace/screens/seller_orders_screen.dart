@@ -308,7 +308,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
         ),
         child: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: context.white,
+          color: AppColors.white,
           onPressed: () => context.pop(),
         ),
       ),

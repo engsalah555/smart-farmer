@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smart_farm2/core/widgets/app_fonts.dart';
-import 'package:smart_farm2/core/widgets/fade_in_slide.dart';
+import '../../../core/widgets/app_fonts.dart';
+import '../../../core/widgets/fade_in_slide.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/services/alerts_service.dart';
@@ -132,7 +132,7 @@ class _HomeAlertsState extends State<HomeAlerts> {
                       decoration: BoxDecoration(
                         color: isDark 
                             ? Color.alphaBlend(severityColor.withValues(alpha: 0.08), AppColors.darkSurface)
-                            : Color.alphaBlend(severityColor.withValues(alpha: 0.05), context.white),
+                            : Color.alphaBlend(severityColor.withValues(alpha: 0.05), AppColors.white),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
                           color: severityColor.withValues(alpha: 0.2),
@@ -171,7 +171,7 @@ class _HomeAlertsState extends State<HomeAlerts> {
                                   style: TextStyle(
                                     fontSize: context.sp(14).clamp(12, 18),
                                     fontWeight: FontWeight.bold,
-                                    color: isDark ? context.white : AppColors.textPrimary,
+                                    color: isDark ? AppColors.white : AppColors.textPrimary,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,

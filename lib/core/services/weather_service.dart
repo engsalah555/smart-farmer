@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:smart_farm2/core/models/weather_model.dart';
-import 'package:smart_farm2/core/services/locator.dart';
+import '../models/weather_model.dart';
+import 'locator.dart';
 
 class WeatherService {
   final Dio _dio = locator<Dio>();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants.dart';
+import '../../../core/widgets/fade_in_slide.dart';
 
 class SettingsInfoScreen extends StatelessWidget {
   final String title;
@@ -15,52 +16,80 @@ class SettingsInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: isDark ? AppColors.darkBackground : Colors.white,
-        appBar: AppBar(
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new),
-            onPressed: () => Navigator.pop(context),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          title,
+          style: AppTypography.h3(isDark: isDark),
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FadeInSlide(
+              duration: const Duration(milliseconds: 500),
+              child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkSurface : Colors.grey[50],
-                  borderRadius: BorderRadius.circular(20),
+                  color: isDark ? AppColors.darkCard : AppColors.cardLight,
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: isDark ? AppColors.darkBorder : Colors.grey[200]!,
+                    color: AppColors.border(isDark),
+                    width: 1,
                   ),
+                  boxShadow: [
+                    if (!isDark)
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                  ],
                 ),
                 child: Text(
                   content,
-                  style: TextStyle(
-                    fontSize: 16,
-                    height: 1.6,
-                    color: isDark ? Colors.white.withValues(alpha: 0.9) : Colors.black87,
+                  style: AppTypography.bodyLarge(isDark: isDark).copyWith(
+                    height: 1.8,
+                    letterSpacing: 0.2,
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
-              Center(
-                child: Text(
-                  'آخر تحديث: 18 أبريل 2026',
-                  style: TextStyle(color: Colors.grey[500], fontSize: 12),
+            ),
+            const SizedBox(height: 48),
+            FadeInSlide(
+              duration: const Duration(milliseconds: 600),
+              delay: const Duration(milliseconds: 200),
+              child: Center(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'آخر تحديث: 25 أبريل 2026',
+                      style: AppTypography.bodySmall(isDark: isDark).copyWith(
+                        color: isDark
+                            ? AppColors.darkTextSecondary.withValues(alpha: 0.5)
+                            : AppColors.textMuted,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
