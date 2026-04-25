@@ -160,7 +160,7 @@ class _HomeAlertsState extends State<HomeAlerts> {
                                   fontSize: context.sp(14).clamp(12, 18),
                                   fontWeight: FontWeight.bold,
                                   color: isDark ? Colors.white : AppColors.textPrimary,
-                                  fontFamily: 'Cairo',
+                                  
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -177,7 +177,7 @@ class _HomeAlertsState extends State<HomeAlerts> {
                               fontWeight: FontWeight.w500,
                               color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                               height: 1.4,
-                              fontFamily: 'Cairo',
+                              
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,

@@ -47,7 +47,7 @@ class ForumList extends StatelessWidget {
                     fontSize: context.sp(20).clamp(18, 26),
                     fontWeight: FontWeight.bold,
                     color: AppColors.getTextColor(isDark),
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
                 InkWell(
@@ -68,7 +68,7 @@ class ForumList extends StatelessWidget {
                         fontSize: context.sp(14).clamp(12, 18),
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
-                        fontFamily: 'Cairo',
+                        
                       ),
                     ),
                   ),

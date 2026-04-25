@@ -144,7 +144,7 @@ class _AuthScreenState extends State<AuthScreen> {
         content: Text(
           message,
           textAlign: TextAlign.right,
-          style: const TextStyle(fontFamily: 'Cairo'),
+          style: const TextStyle(),
         ),
         backgroundColor: Colors.red.shade400,
         behavior: SnackBarBehavior.floating,
@@ -648,7 +648,7 @@ class _AuthScreenState extends State<AuthScreen> {
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black87,
               fontWeight: FontWeight.w500,
-              fontFamily: 'Cairo', // Ensure font is correct
+               // Ensure font is correct
             ),
             items: const [
               DropdownMenuItem(value: 'بذور', child: Text('بذور')),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// AppFonts provides a structured way to manage text styles in the app.
 /// It uses a BuildContext extension for easy access and chainable weights.
@@ -14,8 +15,9 @@ class AppFonts {
 }
 
 extension AppFontsExtension on BuildContext {
-  TextStyle _text(double size) =>
-      Theme.of(this).textTheme.bodyMedium!.copyWith(fontSize: size);
+  TextStyle _text(double size) => GoogleFonts.cairo(
+        textStyle: Theme.of(this).textTheme.bodyMedium!.copyWith(fontSize: size),
+      );
 
   TextStyle get font32 => _text(AppFonts.size32);
   TextStyle get font24 => _text(AppFonts.size24);

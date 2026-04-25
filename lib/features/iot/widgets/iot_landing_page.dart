@@ -66,7 +66,7 @@ class IotLandingPage extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Cairo',
+              
             ),
           ),
         ],
@@ -96,7 +96,7 @@ class IotLandingPage extends StatelessWidget {
       style: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.w900,
-        fontFamily: 'Cairo',
+        
         color: AppColors.getTextColor(isDark),
         height: 1.2,
       ),
@@ -110,7 +110,7 @@ class IotLandingPage extends StatelessWidget {
       style: TextStyle(
         fontSize: 16,
         color: Colors.grey,
-        fontFamily: 'Cairo',
+        
       ),
     );
   }
@@ -172,7 +172,7 @@ class IotLandingPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Cairo',
+                  
                   color: AppColors.getTextColor(isDark),
                 ),
               ),
@@ -181,7 +181,7 @@ class IotLandingPage extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.grey,
-                  fontFamily: 'Cairo',
+                  
                 ),
               ),
             ],
@@ -219,7 +219,7 @@ class IotLandingPage extends StatelessWidget {
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            fontFamily: 'Cairo',
+            
           ),
         ),
       ),
@@ -234,7 +234,7 @@ class IotLandingPage extends StatelessWidget {
         fontSize: 12,
         color: Colors.grey,
         fontStyle: FontStyle.italic,
-        fontFamily: 'Cairo',
+        
       ),
     );
   }
@@ -245,7 +245,7 @@ class IotLandingPage extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('تم إرسال طلبك بنجاح. سنقوم بمراجعته قريباً.', style: TextStyle(fontFamily: 'Cairo')),
+            content: Text('تم إرسال طلبك بنجاح. سنقوم بمراجعته قريباً.', style: TextStyle()),
             backgroundColor: Colors.green,
           ),
         );

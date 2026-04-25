@@ -100,7 +100,7 @@ class IotDashboard extends StatelessWidget {
       style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w900,
-        fontFamily: 'Cairo',
+        
         letterSpacing: 0.3,
         color: AppColors.getTextColor(isDark),
       ),
@@ -139,7 +139,7 @@ class IotDashboard extends StatelessWidget {
               Text(
                 'جدولة الري الذكية',
                 style: TextStyle(
-                  fontFamily: 'Cairo',
+                  
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -169,7 +169,7 @@ class IotDashboard extends StatelessWidget {
             color: AppColors.getTextColor(isDark),
             fontWeight: FontWeight.w900,
             fontSize: 26,
-            fontFamily: 'Cairo',
+            
             letterSpacing: -0.5,
           ),
         ),
@@ -254,14 +254,14 @@ class IotDashboard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
-                    fontFamily: 'Cairo',
+                    
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'آخر مزامنة: ${lastSyncAt?.toString().substring(0, 16) ?? "غير متوفر"}',
-                  style: const TextStyle(fontSize: 13, color: Colors.white70, fontFamily: 'Cairo', fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 13, color: Colors.white70, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -300,13 +300,13 @@ class IotDashboard extends StatelessWidget {
               fontSize: 22,
               fontWeight: FontWeight.w900,
               color: AppColors.getTextColor(isDark),
-              fontFamily: 'Cairo',
+              
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(fontSize: 13, color: Colors.grey, fontFamily: 'Cairo', fontWeight: FontWeight.w700),
+            style: const TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -379,7 +379,7 @@ class IotDashboard extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 18,
-                    fontFamily: 'Cairo',
+                    
                     color: AppColors.getTextColor(isDark),
                   ),
                 ),
@@ -389,7 +389,7 @@ class IotDashboard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13, 
                     color: value ? activeColor1 : Colors.grey, 
-                    fontFamily: 'Cairo', 
+                     
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -441,14 +441,14 @@ class IotDashboard extends StatelessWidget {
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w900,
-              fontFamily: 'Cairo',
+              
               color: AppColors.getTextColor(isDark),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Cairo', fontWeight: FontWeight.w700),
+            style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -465,7 +465,7 @@ class IotDashboard extends StatelessWidget {
             children: [
               Icon(Icons.history_rounded, size: 56, color: Colors.grey.withValues(alpha: 0.2)),
               const SizedBox(height: 16),
-              const Text('لا توجد سجلات حالياً', style: TextStyle(fontFamily: 'Cairo', color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600)),
+              const Text('لا توجد سجلات حالياً', style: TextStyle( color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600)),
             ],
           ),
         ),
@@ -507,11 +507,11 @@ class IotDashboard extends StatelessWidget {
         ),
         title: Text(
           _getLogText(log.action),
-          style: TextStyle(fontWeight: FontWeight.w800, fontFamily: 'Cairo', color: AppColors.getTextColor(isDark), fontSize: 15),
+          style: TextStyle(fontWeight: FontWeight.w800, color: AppColors.getTextColor(isDark), fontSize: 15),
         ),
         subtitle: Text(
           log.createdAt.toString().substring(11, 16),
-          style: const TextStyle(fontSize: 12, fontFamily: 'Cairo', color: Colors.grey, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w600),
         ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -521,7 +521,7 @@ class IotDashboard extends StatelessWidget {
           ),
           child: Text(
             '${log.waterUsed}L',
-            style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.blue, fontFamily: 'Cairo', fontSize: 14),
+            style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.blue, fontSize: 14),
           ),
         ),
       ),

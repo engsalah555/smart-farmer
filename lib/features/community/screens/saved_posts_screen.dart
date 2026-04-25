@@ -42,7 +42,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
             'المنشورات المحفوظة',
             style: TextStyle(
               fontWeight: FontWeight.bold, 
-              fontFamily: 'Cairo',
+              
               fontSize: context.sp(18).clamp(16, 22),
             ),
           ),
@@ -72,7 +72,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                       style: TextStyle(
                         color: Theme.of(context).hintColor,
                         fontSize: context.sp(16).clamp(14, 18),
-                        fontFamily: 'Cairo',
+                        
                       ),
                     ),
                   ],

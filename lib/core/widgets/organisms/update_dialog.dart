@@ -49,7 +49,7 @@ class UpdateDialog extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
-              fontFamily: 'Cairo',
+              
             ),
           ),
           const SizedBox(height: 8),
@@ -58,7 +58,7 @@ class UpdateDialog extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.white70 : Colors.black54,
-              fontFamily: 'Cairo',
+              
             ),
           ),
           const SizedBox(height: 16),
@@ -75,7 +75,7 @@ class UpdateDialog extends StatelessWidget {
                 fontSize: 14,
                 height: 1.5,
                 color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ),
@@ -89,7 +89,7 @@ class UpdateDialog extends StatelessWidget {
                     child: Text(
                       'لاحقاً',
                       style: TextStyle(
-                        fontFamily: 'Cairo',
+                        
                         color: Colors.grey,
                         fontWeight: FontWeight.w600,
                       ),
@@ -117,7 +117,7 @@ class UpdateDialog extends StatelessWidget {
                   child: Text(
                     'تحديث الآن',
                     style: TextStyle(
-                      fontFamily: 'Cairo',
+                      
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
@@ -133,7 +133,7 @@ class UpdateDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 color: Colors.redAccent,
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ],

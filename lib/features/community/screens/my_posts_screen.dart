@@ -43,7 +43,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
             'منشوراتي',
             style: TextStyle(
               fontWeight: FontWeight.bold, 
-              fontFamily: 'Cairo',
+              
               fontSize: context.sp(18).clamp(16, 22),
             ),
           ),
@@ -73,7 +73,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
                       style: TextStyle(
                         color: Theme.of(context).hintColor,
                         fontSize: context.sp(16).clamp(14, 18),
-                        fontFamily: 'Cairo',
+                        
                       ),
                     ),
                     SizedBox(height: context.hp(3)),
@@ -83,7 +83,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
                       label: Text(
                         'أنشئ أول منشور لك',
                         style: TextStyle(
-                          fontFamily: 'Cairo',
+                          
                           fontSize: context.sp(14).clamp(12, 16),
                         ),
                       ),

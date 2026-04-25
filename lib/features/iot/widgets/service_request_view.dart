@@ -49,7 +49,7 @@ class ServiceRequestView extends StatelessWidget {
                   Text(
                     'خدمة الري الذكي',
                     style: TextStyle(
-                      fontFamily: 'Cairo',
+                      
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: AppColors.getTextColor(isDark),
@@ -60,7 +60,7 @@ class ServiceRequestView extends StatelessWidget {
                   Text(
                     'تحكم بمزرعتك عن بُعد، وفر المياه، وضاعف إنتاجك مع نظام الري الذكي المتطور.',
                     style: TextStyle(
-                      fontFamily: 'Cairo',
+                      
                       fontSize: 16,
                       color: Colors.grey[isDark ? 400 : 700],
                       height: 1.5,
@@ -83,7 +83,7 @@ class ServiceRequestView extends StatelessWidget {
                             const SnackBar(
                               content: Text(
                                 'تم إرسال طلبك بنجاح! سنتواصل معك قريباً.',
-                                style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+                                style: TextStyle( fontWeight: FontWeight.bold),
                               ),
                               backgroundColor: AppColors.primary,
                             ),
@@ -101,7 +101,7 @@ class ServiceRequestView extends StatelessWidget {
                       child: const Text(
                         'طلب الخدمة الآن',
                         style: TextStyle(
-                          fontFamily: 'Cairo',
+                          
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -152,7 +152,7 @@ class ServiceRequestView extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 26,
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ],
@@ -178,7 +178,7 @@ class ServiceRequestView extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
-              fontFamily: 'Cairo',
+              
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: AppColors.getTextColor(isDark),

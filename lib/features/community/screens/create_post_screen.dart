@@ -150,7 +150,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 const SizedBox(width: 12),
                 Text(
                   widget.postToEdit != null ? 'تم تعديل المنشور بنجاح' : 'تم نشر المنشور بنجاح',
-                  style: const TextStyle(fontFamily: 'Cairo'),
+                  style: const TextStyle(),
                 ),
               ],
             ),
@@ -165,7 +165,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             behavior: SnackBarBehavior.floating,
             backgroundColor: Colors.redAccent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            content: Text('حدث خطأ أثناء النشر: $e', style: const TextStyle(fontFamily: 'Cairo')),
+            content: Text('حدث خطأ أثناء النشر: $e', style: const TextStyle()),
           ),
         );
       }
@@ -201,7 +201,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: context.sp(20).clamp(18, 24),
-              fontFamily: 'Cairo',
+              
               color: isDark ? Colors.white : Colors.black87,
             ),
           ),
@@ -228,7 +228,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       )
                     : Text(
                         widget.postToEdit != null ? 'تحديث' : 'نشر',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Cairo', fontSize: 14),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                       ),
               ),
             ),
@@ -263,7 +263,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               hintStyle: TextStyle(
                                 color: Colors.grey.shade400,
                                 fontSize: context.sp(18).clamp(16, 22),
-                                fontFamily: 'Cairo',
+                                
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -273,7 +273,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             style: TextStyle(
                               fontSize: context.sp(16).clamp(14, 18),
                               height: 1.6,
-                              fontFamily: 'Cairo',
+                              
                               color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
@@ -298,7 +298,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             style: TextStyle(
                               fontSize: context.sp(12).clamp(10, 14),
                               color: _charCount > _maxChars * 0.9 ? Colors.orange : Colors.grey,
-                              fontFamily: 'Cairo',
+                              
                             ),
                           ),
                         ],
@@ -353,7 +353,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: context.sp(16).clamp(14, 18),
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
                 Text(
@@ -361,7 +361,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   style: TextStyle(
                     fontSize: context.sp(13).clamp(11, 15),
                     color: Colors.grey,
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
               ],
@@ -481,7 +481,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 color: AppColors.primary,
                 fontSize: context.sp(14).clamp(12, 16),
                 fontWeight: FontWeight.w600,
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ],

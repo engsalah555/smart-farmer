@@ -145,12 +145,12 @@ class ResponsivePostList extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'حدث خطأ: $errorMessage',
-            style: const TextStyle(fontFamily: 'Cairo', fontSize: 16),
+            style: const TextStyle( fontSize: 16),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: onRefresh,
-            child: const Text('إعادة المحاولة', style: TextStyle(fontFamily: 'Cairo')),
+            child: const Text('إعادة المحاولة', style: TextStyle()),
           ),
         ],
       ),
@@ -166,7 +166,7 @@ class ResponsivePostList extends StatelessWidget {
           const SizedBox(height: 16),
           const Text(
             'لا توجد منشورات حتى الآن',
-            style: TextStyle(fontFamily: 'Cairo', fontSize: 16, color: Colors.grey),
+            style: TextStyle( fontSize: 16, color: Colors.grey),
           ),
         ],
       ),

@@ -133,7 +133,7 @@ class MainScreen extends StatelessWidget {
                 fontSize: 10,
                 color: isSelected ? activeColor : inactiveColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ],

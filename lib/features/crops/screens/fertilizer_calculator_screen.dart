@@ -244,7 +244,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 26,
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ],

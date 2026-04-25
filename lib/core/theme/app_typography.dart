@@ -3,15 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTypography {
-  // --- Font Families ---
-  static const String arabicFont = 'Cairo';
-  static const String englishFont = 'Outfit';
+  static String get fontFamily => GoogleFonts.cairo().fontFamily!;
 
-  // --- Base Text Styles ---
-  static TextStyle get cairo => GoogleFonts.cairo();
-  static TextStyle get outfit => GoogleFonts.outfit();
-
-  // --- Heading Font Styles ---
   static TextStyle h1({required bool isDark}) => GoogleFonts.cairo(
     fontSize: 32,
     fontWeight: FontWeight.w900,
@@ -32,7 +25,6 @@ class AppTypography {
     color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
   );
 
-  // --- Body Font Styles ---
   static TextStyle bodyLarge({required bool isDark}) => GoogleFonts.cairo(
     fontSize: 16,
     fontWeight: FontWeight.w600,
@@ -51,7 +43,6 @@ class AppTypography {
     color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
   );
 
-  // --- Specialized Styles ---
   static TextStyle valueLabel({required bool isDark}) => GoogleFonts.outfit(
     fontSize: 18,
     fontWeight: FontWeight.w700,

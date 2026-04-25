@@ -43,7 +43,6 @@ class ProfileScreen extends StatelessWidget {
               color: Theme.of(context).textTheme.titleLarge?.color,
               fontWeight: FontWeight.bold,
               fontSize: 24,
-              fontFamily: 'Cairo',
             ),
           ),
           centerTitle: false,
@@ -79,7 +78,7 @@ class ProfileScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Cairo',
+                              
                             ),
                           ),
                           if (user?.isVerified ?? false) ...[
@@ -97,7 +96,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           color: Theme.of(context).hintColor,
-                          fontFamily: 'Cairo',
+                          
                         ),
                       ),
                     ],

@@ -116,7 +116,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                           style: TextStyle(
                             fontSize: context.sp(18).clamp(16, 22),
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Cairo',
+                            
                           ),
                         );
                       },
@@ -199,7 +199,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                 style: TextStyle(
                   fontSize: context.sp(18).clamp(16, 20), 
                   fontWeight: FontWeight.bold, 
-                  fontFamily: 'Cairo'
+                  
                 ),
               ),
               SizedBox(height: context.hp(1)),
@@ -208,7 +208,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                 style: TextStyle(
                   fontSize: context.sp(14).clamp(12, 16),
                   color: Theme.of(context).hintColor, 
-                  fontFamily: 'Cairo'
+                  
                 ),
               ),
             ],
@@ -247,14 +247,14 @@ class _CommentsSheetState extends State<CommentsSheet> {
               minLines: 1,
               style: TextStyle(
                 fontSize: context.sp(15).clamp(13, 17), 
-                fontFamily: 'Cairo'
+                
               ),
               decoration: InputDecoration(
                 hintText: 'اكتب تعليقاً...',
                 hintStyle: TextStyle(
                   color: Theme.of(context).hintColor.withValues(alpha: 0.6),
                   fontSize: context.sp(14).clamp(12, 16),
-                  fontFamily: 'Cairo',
+                  
                 ),
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
@@ -386,7 +386,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: context.sp(14).clamp(12, 16),
-                                fontFamily: 'Cairo',
+                                
                               ),
                             ),
                             if (comment.isVerified) ...[
@@ -409,7 +409,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                       style: TextStyle(
                         fontSize: context.sp(14).clamp(12, 16), 
                         height: 1.5,
-                        fontFamily: 'Cairo',
+                        
                       ),
                     ),
                   ],
@@ -424,7 +424,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                       style: TextStyle(
                         fontSize: 11,
                         color: Theme.of(context).hintColor,
-                        fontFamily: 'Cairo',
+                        
                       ),
                     ),
                     const SizedBox(width: 16),

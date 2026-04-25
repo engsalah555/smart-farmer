@@ -77,7 +77,7 @@ class HomeHeader extends StatelessWidget {
                                 color: Colors.white,
                                 fontSize: context.sp(20).clamp(18, 26),
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'Cairo',
+                                
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -100,7 +100,7 @@ class HomeHeader extends StatelessWidget {
                           color: Colors.white.withValues(alpha: 0.9),
                           fontSize: context.sp(14).clamp(12, 18),
                           fontWeight: FontWeight.w500,
-                          fontFamily: 'Cairo',
+                          
                         ),
                       ),
                     ],
@@ -247,7 +247,7 @@ class HomeHeader extends StatelessWidget {
                             color: Colors.white,
                             fontSize: context.sp(14).clamp(12, 18),
                             fontWeight: FontWeight.w500,
-                            fontFamily: 'Cairo',
+                            
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -263,7 +263,7 @@ class HomeHeader extends StatelessWidget {
                       fontSize: context.sp(44).clamp(36, 56),
                       fontWeight: FontWeight.w900,
                       height: 1.1,
-                      fontFamily: 'Cairo',
+                      
                       shadows: [
                         Shadow(
                           color: isNight ? Colors.blue : Colors.white,
@@ -279,7 +279,7 @@ class HomeHeader extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.95),
                       fontSize: context.sp(13).clamp(11, 16),
                       fontWeight: FontWeight.w600,
-                      fontFamily: 'Cairo',
+                      
                     ),
                   ),
                 ],
@@ -341,7 +341,7 @@ class HomeHeader extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.7),
                   fontSize: context.sp(11).clamp(10, 13),
-                  fontFamily: 'Cairo',
+                  
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -358,7 +358,7 @@ class HomeHeader extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: context.sp(11).clamp(10, 13),
-                      fontFamily: 'Cairo',
+                      
                       fontWeight: FontWeight.w600,
                     ),
                   ),

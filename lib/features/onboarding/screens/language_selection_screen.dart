@@ -85,7 +85,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).textTheme.titleLarge?.color,
-                          fontFamily: 'Tajawal',
+                          
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -97,7 +97,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                           color: Theme.of(
                             context,
                           ).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
-                          fontFamily: 'Tajawal',
+                          
                         ),
                       ),
                     ],
@@ -168,7 +168,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  fontFamily: 'Tajawal',
+                                  
                                   color: isSelected
                                       ? Colors.white
                                       : Theme.of(
@@ -219,7 +219,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontFamily: 'Tajawal',
+                              
                             ),
                           ),
                           const SizedBox(width: 8),

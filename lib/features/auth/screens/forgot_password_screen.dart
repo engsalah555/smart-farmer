@@ -46,7 +46,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         content: Text(
           message,
           textAlign: TextAlign.right,
-          style: const TextStyle(fontFamily: 'Cairo'),
+          style: const TextStyle(),
         ),
         backgroundColor: isError ? Colors.red.shade400 : Colors.green.shade400,
         behavior: SnackBarBehavior.floating,

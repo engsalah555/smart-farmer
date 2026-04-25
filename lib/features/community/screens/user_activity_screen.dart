@@ -40,7 +40,7 @@ class _UserActivityScreenState extends State<UserActivityScreen> {
           ),
           title: const Text(
             'نشاطاتي',
-            style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -67,7 +67,7 @@ class _UserActivityScreenState extends State<UserActivityScreen> {
                       style: TextStyle(
                         color: Theme.of(context).hintColor,
                         fontSize: 16,
-                        fontFamily: 'Cairo',
+                        
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -76,7 +76,7 @@ class _UserActivityScreenState extends State<UserActivityScreen> {
                       icon: const Icon(Icons.explore),
                       label: const Text(
                         'استكشف المنتدى',
-                        style: TextStyle(fontFamily: 'Cairo'),
+                        style: TextStyle(),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,

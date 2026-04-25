@@ -110,7 +110,6 @@ class StoreCoverSection extends StatelessWidget {
               color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
               fontWeight: FontWeight.w800,
               fontSize: 11 * scale,
-              fontFamily: 'Cairo',
             ),
           ),
         ],
@@ -146,7 +145,7 @@ class StoreCoverSection extends StatelessWidget {
           fontSize: (10.5 * scale).clamp(9.5, 12.0),
           fontWeight: FontWeight.w900,
           letterSpacing: 0.5,
-          fontFamily: 'Cairo',
+          
         ),
       ),
     );
@@ -215,7 +214,7 @@ class StoreInfoSection extends StatelessWidget {
                           : AppColors.textPrimary,
                       letterSpacing: -0.5,
                       height: 1.1,
-                      fontFamily: 'Cairo',
+                      
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -238,7 +237,7 @@ class StoreInfoSection extends StatelessWidget {
                             fontSize: (10.5 * scale).clamp(9.5, 12.0),
                             color: hintColor,
                             height: 1.2,
-                            fontFamily: 'Cairo',
+                            
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -297,7 +296,7 @@ class StoreInfoSection extends StatelessWidget {
                   color: AppColors.primary,
                   fontSize: (10.5 * scale).clamp(9.5, 12.0),
                   fontWeight: FontWeight.w800,
-                  fontFamily: 'Cairo',
+                  
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

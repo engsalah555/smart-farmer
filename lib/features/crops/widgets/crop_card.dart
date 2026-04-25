@@ -200,7 +200,7 @@ class _CropCardState extends State<CropCard>
                           color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                           letterSpacing: -0.5,
                           height: 1.1,
-                          fontFamily: 'Cairo',
+                          
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -236,7 +236,7 @@ class _CropCardState extends State<CropCard>
                                   style: const TextStyle(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w800,
-                                    fontFamily: 'Cairo',
+                                    
                                     color: AppColors.primary,
                                   ),
                                 ),

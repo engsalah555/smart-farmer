@@ -71,13 +71,13 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                       style: TextStyle(
                           color: Colors.white70,
                           fontSize: 18,
-                          fontFamily: 'Cairo')),
+                          )),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     onPressed: () => provider.fetchWeather(),
                     icon: const Icon(Icons.refresh_rounded),
                     label: const Text('تحديث',
-                        style: TextStyle(fontFamily: 'Cairo')),
+                        style: TextStyle()),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                     ),
@@ -123,7 +123,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Cairo',
+                  
                 ),
               ),
               centerTitle: true,
@@ -149,12 +149,12 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.white38,
                   labelStyle: const TextStyle(
-                    fontFamily: 'Cairo',
+                    
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
                   unselectedLabelStyle: const TextStyle(
-                    fontFamily: 'Cairo',
+                    
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
@@ -215,7 +215,7 @@ class _WeatherHeroSection extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 72,
                         fontWeight: FontWeight.w900,
-                        fontFamily: 'Cairo',
+                        
                         height: 1,
                         shadows: [
                           Shadow(
@@ -230,7 +230,7 @@ class _WeatherHeroSection extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 18,
-                        fontFamily: 'Cairo',
+                        
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -240,7 +240,7 @@ class _WeatherHeroSection extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white54,
                           fontSize: 14,
-                          fontFamily: 'Cairo',
+                          
                         ),
                       ),
                   ],
@@ -311,7 +311,7 @@ class _HourlyTabState extends State<_HourlyTab> with AutomaticKeepAliveClientMix
     if (widget.hourlyData.isEmpty) {
       return const Center(
         child: Text('لا توجد بيانات ساعية',
-            style: TextStyle(color: Colors.white54, fontFamily: 'Cairo')),
+            style: TextStyle(color: Colors.white54)),
       );
     }
 
@@ -346,7 +346,7 @@ class _HourlyCard extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 13,
-                fontFamily: 'Cairo',
+                
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -368,7 +368,7 @@ class _HourlyCard extends StatelessWidget {
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              fontFamily: 'Cairo',
+              
             ),
           ),
 
@@ -381,7 +381,7 @@ class _HourlyCard extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white38,
                 fontSize: 12,
-                fontFamily: 'Cairo',
+                
               ),
             ),
 
@@ -399,7 +399,7 @@ class _HourlyCard extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
-                  fontFamily: 'Cairo',
+                  
                 ),
               ),
             ],
@@ -420,7 +420,7 @@ class _HourlyCard extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
               ],
@@ -456,7 +456,7 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
     if (widget.dailyForecasts.isEmpty) {
       return const Center(
         child: Text('لا توجد توقعات يومية',
-            style: TextStyle(color: Colors.white54, fontFamily: 'Cairo')),
+            style: TextStyle(color: Colors.white54)),
       );
     }
 
@@ -501,7 +501,7 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
                                 ? Colors.white
                                 : Colors.white70,
                             fontSize: 12,
-                            fontFamily: 'Cairo',
+                            
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -517,7 +517,7 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
                             color: isSelected ? Colors.white : Colors.white54,
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            fontFamily: 'Cairo',
+                            
                           ),
                         ),
                       ],
@@ -564,7 +564,7 @@ class _DayDetailCard extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
                 const Spacer(),
@@ -573,7 +573,7 @@ class _DayDetailCard extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white60,
                     fontSize: 13,
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
               ],
@@ -705,7 +705,7 @@ class _AppBarRow extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                fontFamily: 'Cairo',
+                
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -751,7 +751,7 @@ class _QuickStat extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                fontFamily: 'Cairo',
+                
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -761,7 +761,7 @@ class _QuickStat extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white38,
                 fontSize: 10,
-                fontFamily: 'Cairo',
+                
               ),
               maxLines: 1,
             ),
@@ -816,7 +816,7 @@ class _InfoCard extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    fontFamily: 'Cairo',
+                    
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -826,7 +826,7 @@ class _InfoCard extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white54,
                     fontSize: 11,
-                    fontFamily: 'Cairo',
+                    
                   ),
                   maxLines: 1,
                 ),

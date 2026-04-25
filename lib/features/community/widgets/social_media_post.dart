@@ -57,7 +57,7 @@ class SocialMediaPost extends StatelessWidget {
                       color: isDark
                           ? AppColors.darkTextPrimary
                           : AppColors.textPrimary,
-                      fontFamily: 'Cairo',
+                      
                       letterSpacing: 0.1,
                     ),
                   ),
@@ -99,7 +99,7 @@ class SocialMediaPost extends StatelessWidget {
                           color: isDark
                               ? AppColors.darkTextPrimary
                               : AppColors.textPrimary,
-                          fontFamily: 'Cairo',
+                          
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -122,7 +122,7 @@ class SocialMediaPost extends StatelessWidget {
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
                     fontSize: context.sp(11).clamp(10, 14),
-                    fontFamily: 'Cairo',
+                    
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -273,7 +273,7 @@ class SocialMediaPost extends StatelessWidget {
               children: [
                 Icon(Icons.edit_outlined, size: 20),
                 SizedBox(width: 8),
-                Text('تعديل', style: TextStyle(fontFamily: 'Cairo')),
+                Text('تعديل', style: TextStyle()),
               ],
             ),
           ),
@@ -288,7 +288,7 @@ class SocialMediaPost extends StatelessWidget {
                   isAdmin && !isMyPost ? 'حذف (إشراف)' : 'حذف',
                   style: const TextStyle(
                     color: Colors.red,
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
               ],
@@ -305,7 +305,7 @@ class SocialMediaPost extends StatelessWidget {
                   size: 20,
                 ),
                 SizedBox(width: 8),
-                Text('إبلاغ عن محتوى', style: TextStyle(fontFamily: 'Cairo')),
+                Text('إبلاغ عن محتوى', style: TextStyle()),
               ],
             ),
           ),
@@ -342,13 +342,13 @@ class SocialMediaPost extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Cairo',
+                      
                     ),
                   ),
                   const SizedBox(height: 16),
                   const Text(
                     'لماذا تريد الإبلاغ عن هذا المنشور؟',
-                    style: TextStyle(fontFamily: 'Cairo'),
+                    style: TextStyle(),
                   ),
                   const SizedBox(height: 16),
                   RadioGroup<String>(
@@ -385,7 +385,7 @@ class SocialMediaPost extends StatelessWidget {
                                     title: Text(
                                       e.value,
                                       style: const TextStyle(
-                                        fontFamily: 'Cairo',
+                                        
                                         fontSize: 14,
                                       ),
                                     ),
@@ -401,11 +401,11 @@ class SocialMediaPost extends StatelessWidget {
                   TextField(
                     controller: detailsController,
                     maxLines: 3,
-                    style: const TextStyle(fontFamily: 'Cairo', fontSize: 14),
+                    style: const TextStyle( fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'تفاصيل إضافية (اختياري)',
                       hintStyle: TextStyle(
-                        fontFamily: 'Cairo',
+                        
                         fontSize: 13,
                         color: Colors.grey.withValues(alpha: 0.6),
                       ),
@@ -439,7 +439,7 @@ class SocialMediaPost extends StatelessWidget {
                           child: Text(
                             'تراجع',
                             style: TextStyle(
-                              fontFamily: 'Cairo',
+                              
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w600,
                             ),
@@ -484,7 +484,7 @@ class SocialMediaPost extends StatelessWidget {
                             'إرسال',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Cairo',
+                              
                             ),
                           ),
                         ),
@@ -553,7 +553,7 @@ class SocialMediaPost extends StatelessWidget {
             style: TextStyle(
               color: Colors.grey[400],
               fontSize: 12,
-              fontFamily: 'Cairo',
+              
             ),
           ),
         ],
@@ -595,14 +595,14 @@ class SocialMediaPost extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Cairo',
+                    
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontFamily: 'Cairo'),
+                  style: const TextStyle(),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -612,7 +612,7 @@ class SocialMediaPost extends StatelessWidget {
                         onPressed: () => Navigator.pop(ctx),
                         child: const Text(
                           'تراجع',
-                          style: TextStyle(fontFamily: 'Cairo'),
+                          style: TextStyle(),
                         ),
                       ),
                     ),
@@ -636,7 +636,7 @@ class SocialMediaPost extends StatelessWidget {
                           'حذف',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Cairo',
+                            
                           ),
                         ),
                       ),
@@ -699,7 +699,7 @@ class _ActionButton extends StatelessWidget {
                   color: color,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  fontFamily: 'Cairo',
+                  
                 ),
               ),
             ],

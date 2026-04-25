@@ -79,7 +79,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 color: Theme.of(context).textTheme.titleLarge?.color,
                 fontWeight: FontWeight.w900,
                 fontSize: context.sp(18).clamp(16, 24),
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ),
@@ -144,18 +144,18 @@ class _ForumScreenState extends State<ForumScreen> {
                     const SizedBox(height: 24),
                     const Text(
                       'المنتدى هادئ جداً اليوم',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'كن أول من يشارك خبرته الزراعية مع المجتمع',
-                      style: TextStyle(color: Colors.grey[600], fontFamily: 'Cairo'),
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 32),
                     OutlinedButton.icon(
                       onPressed: () => context.push('/create_post'),
                       icon: const Icon(Icons.edit_note_rounded),
-                      label: const Text('اكتب منشوراً الآن', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Cairo')),
+                      label: const Text('اكتب منشوراً الآن', style: TextStyle(fontWeight: FontWeight.bold)),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                         side: const BorderSide(color: AppColors.primary, width: 2),
@@ -184,7 +184,7 @@ class _ForumScreenState extends State<ForumScreen> {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Cairo',
+            
           ),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

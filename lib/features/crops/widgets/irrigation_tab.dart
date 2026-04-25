@@ -87,7 +87,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: widget.isDark ? Colors.white : AppColors.textPrimary,
-              fontFamily: 'Cairo',
+              
             ),
           ),
           const SizedBox(height: 16),
@@ -121,7 +121,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               style: TextStyle(
                 color: widget.isDark ? Colors.white24 : Colors.grey[400],
                 fontSize: 12,
-                fontFamily: 'Cairo',
+                
               ),
             ),
           ),
@@ -144,7 +144,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.white70,
-              fontFamily: 'Cairo',
+              
             ),
           ),
           const SizedBox(height: 24),
@@ -172,7 +172,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
-                      fontFamily: 'Cairo',
+                      
                     ),
                   ),
                   Text(
@@ -180,7 +180,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
                     style: const TextStyle(
                       fontSize: 14, 
                       color: Colors.white70,
-                      fontFamily: 'Cairo',
+                      
                     ),
                   ),
                 ],
@@ -211,7 +211,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 10, color: Colors.white60, fontFamily: 'Cairo'),
+          style: const TextStyle(fontSize: 10, color: Colors.white60),
         ),
         Text(
           value,
@@ -219,7 +219,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             fontSize: 12,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            fontFamily: 'Cairo',
+            
           ),
         ),
       ],
@@ -263,7 +263,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             style: TextStyle(
               fontSize: 12,
               color: widget.isDark ? Colors.white60 : Colors.grey[600],
-              fontFamily: 'Cairo',
+              
             ),
           ),
           Text(
@@ -272,7 +272,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               fontSize: 20,
               fontWeight: FontWeight.w900,
               color: widget.isDark ? Colors.white : AppColors.textPrimary,
-              fontFamily: 'Cairo',
+              
             ),
           ),
         ],
@@ -379,7 +379,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             ),
             child: Text(
               isWatering ? 'إيقاف الري' : 'تشغيل الري',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

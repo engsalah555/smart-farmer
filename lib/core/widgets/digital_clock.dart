@@ -108,7 +108,7 @@ class _DigitalClockState extends State<DigitalClock> with SingleTickerProviderSt
                   color: Colors.white,
                   fontSize: widget.fontSize * 0.75,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Cairo',
+                  
                 ),
               ),
             ],

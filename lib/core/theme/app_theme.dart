@@ -9,6 +9,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+      fontFamily: AppTypography.fontFamily,
       scaffoldBackgroundColor: AppColors.background,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
@@ -38,7 +39,7 @@ class AppTheme {
       ),
 
       // Text Theme
-      textTheme: GoogleFonts.cairoTextTheme().apply(
+      textTheme: GoogleFonts.cairoTextTheme(ThemeData.light().textTheme).apply(
         bodyColor: AppColors.textPrimary,
         displayColor: AppColors.textPrimary,
       ),
@@ -91,6 +92,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      fontFamily: AppTypography.fontFamily,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.darkBackground,
       colorScheme: ColorScheme.fromSeed(

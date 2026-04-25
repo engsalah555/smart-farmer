@@ -64,7 +64,7 @@ class IotPendingPage extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Cairo',
+              
             ),
           ),
         ],
@@ -108,7 +108,7 @@ class IotPendingPage extends StatelessWidget {
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        fontFamily: 'Cairo',
+        
         color: AppColors.getTextColor(isDark),
       ),
     );
@@ -121,7 +121,7 @@ class IotPendingPage extends StatelessWidget {
       style: TextStyle(
         fontSize: 16,
         color: Colors.grey,
-        fontFamily: 'Cairo',
+        
         height: 1.5,
       ),
     );
@@ -156,13 +156,13 @@ class IotPendingPage extends StatelessWidget {
                   'هل لديك استفسار؟',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Cairo',
+                    
                     color: AppColors.getTextColor(isDark),
                   ),
                 ),
                 const Text(
                   'فريق الدعم الفني جاهز لمساعدتك',
-                  style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'Cairo'),
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
@@ -182,7 +182,7 @@ class IotPendingPage extends StatelessWidget {
         style: TextStyle(
           color: AppColors.primary,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Cairo',
+          
         ),
       ),
     );

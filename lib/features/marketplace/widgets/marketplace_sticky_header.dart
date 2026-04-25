@@ -204,7 +204,6 @@ class MarketplaceStickyHeader extends StatelessWidget {
                                   ? FontWeight.bold
                                   : FontWeight.w600,
                               fontSize: 14,
-                              fontFamily: 'Cairo',
                             ),
                           ),
                         ],
