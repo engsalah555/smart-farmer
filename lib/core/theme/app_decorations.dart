@@ -110,7 +110,7 @@ class AppDecorations {
         ),
       );
 
-  static BoxDecoration selectedGradientDecoration({double radius = 20.0}) =>
+  static BoxDecoration selectedDecoration({double radius = 20.0}) =>
       BoxDecoration(
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(radius),
@@ -128,10 +128,4 @@ class AppDecorations {
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
   );
-
-  static BoxDecoration selectedDecoration({double radius = 20.0, required bool isDark}) =>
-      BoxDecoration(
-        color: isDark ? AppColors.primaryDark : AppColors.primary,
-        borderRadius: BorderRadius.circular(radius),
-      );
 }

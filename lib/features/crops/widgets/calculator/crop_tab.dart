@@ -47,7 +47,7 @@ class CropTab extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 10),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: isSelected
-                      ? AppDecorations.selectedGradientDecoration(
+                      ? AppDecorations.selectedDecoration(
                           radius: 25,
                         ).copyWith(
                           boxShadow: [
@@ -110,7 +110,7 @@ class CropTab extends StatelessWidget {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
                         decoration: isSel
-                            ? AppDecorations.selectedGradientDecoration(
+                            ? AppDecorations.selectedDecoration(
                                 radius: 24,
                               ).copyWith(
                                 boxShadow: [

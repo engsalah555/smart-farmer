@@ -419,9 +419,14 @@ class IotDashboard extends StatelessWidget {
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
             activeTrackColor: activeColor2,
-            inactiveTrackColor: isDark ? Colors.white24 : Colors.black12,
+            inactiveTrackColor: isDark ? AppColors.neutralWhite.withValues(alpha: 0.15) : AppColors.textMuted.withValues(alpha: 0.1),
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return AppColors.neutralWhite;
+              }
+              return null;
+            }),
           ),
         ],
       ),
