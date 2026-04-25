@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../core/widgets/atoms/custom_image.dart';
-import '../../../core/constants.dart';
-import '../../../core/services/locator.dart';
-import '../services/marketplace_service.dart';
-import '../../../core/models/product_model.dart';
-import '../../../core/models/review_model.dart';
-import '../widgets/rating_stars.dart';
-import '../providers/cart_provider.dart';
-import '../providers/marketplace_provider.dart';
-import 'all_reviews_screen.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/providers/auth_provider.dart';
+import '../../../core/constants.dart';
+import '../../../core/models/product_model.dart';
+import '../providers/cart_provider.dart';
 
-/// شاشة تفاصيل المنتج
 class ProductDetailsScreen extends StatefulWidget {
   final ProductModel product;
 
@@ -25,631 +15,293 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  int quantity = 1;
-  List<ReviewModel> _reviews = [];
-  bool _reviewsLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadReviews();
-  }
-
-  Future<void> _loadReviews() async {
-    try {
-      final marketplaceService = locator<MarketplaceService>();
-      final data = await marketplaceService.getProductReviews(
-        widget.product.id,
-      );
-      if (mounted) {
-        setState(() {
-          final rawList = data['reviews'] as List? ?? [];
-          _reviews = rawList
-              .map((e) => ReviewModel.fromJson(e as Map<String, dynamic>))
-              .toList();
-          _reviewsLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) setState(() => _reviewsLoading = false);
-    }
-  }
-
-  String _formatDate(DateTime date) {
-    final diff = DateTime.now().difference(date);
-    if (diff.inDays > 30) return 'منذ ${(diff.inDays / 30).round()} شهر';
-    if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
-    if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
-    return 'الآن';
-  }
-
-  Future<void> _showAddReviewDialog() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => _AddReviewDialog(productId: widget.product.id),
-    );
-
-    if (result == true) {
-      await _loadReviews();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إرسال تقييمك بنجاح! شكراً لك'),
-            backgroundColor: AppColors.primary,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
-  }
+  int _currentImageIndex = 0;
+  int _quantity = 1;
 
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardTheme.color,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -5),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkSurface : Colors.black,
-                    borderRadius: BorderRadius.circular(20),
-                    border: isDark
-                        ? Border.all(color: AppColors.darkBorder)
-                        : null,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove, color: Colors.white),
-                        onPressed: () {
-                          if (quantity > 1) setState(() => quantity--);
-                        },
-                      ),
-                      Text(
-                        '$quantity',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        onPressed: () {
-                          if (quantity < product.quantity) {
-                            setState(() => quantity++);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'تم الوصول للحد الأقصى للمخزون المتوفر',
-                                ),
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                flex: 3,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final cart = context.read<CartProvider>();
-                    cart.addItem(product, quantity: quantity);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'تم إضافة $quantity ${product.title} للسلة',
-                        ),
-                        backgroundColor: AppColors.primary,
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        action: SnackBarAction(
-                          label: 'عرض السلة',
-                          textColor: Colors.white,
-                          onPressed: () => context.push('/cart'),
-                        ),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    fixedSize: const Size.fromHeight(60),
-                    elevation: 5,
-                  ),
-                  child: const Text(
-                    'إضافة للسلة',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      backgroundColor: context.backgroundColor,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            expandedHeight: MediaQuery.sizeOf(context).height * 0.4,
-            pinned: true,
-            backgroundColor: isDark
-                ? AppColors.darkSurface
-                : Colors.green.shade50,
-            leading: Container(
-              margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardTheme.color,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
-                onPressed: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go('/marketplace');
-                  }
-                },
-              ),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Hero(
-                tag: 'product_image_${product.id}',
-                child: CustomImage(
-                  imageUrl: product.images.isNotEmpty ? product.images.first : '',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-
+          _buildAppBar(context, product),
           SliverToBoxAdapter(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${product.price} ريال',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            if (product.unit.isNotEmpty)
-                              Text(
-                                product.unit,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                          ],
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                product.title,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.titleLarge?.color,
-                                ),
-                                textAlign: TextAlign.right,
-                              ),
-                              Text(
-                                product.storeName,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).hintColor,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '(${product.reviewsCount})',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Theme.of(context).hintColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  RatingStars(rating: product.rating),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    const Text(
-                      'الوصف',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      product.description,
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Reviews Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => AllReviewsScreen(
-                                productId: product.id,
-                                productTitle: product.title,
-                                averageRating: product.rating,
-                                reviewsCount: product.reviewsCount,
-                              ),
-                            ),
-                          ),
-                          child: const Text('عرض الكل'),
-                        ),
-                        const Text(
-                          'المراجعات والتقييمات',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    if (_reviewsLoading)
-                      const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                        ),
-                      )
-                    else if (_reviews.isEmpty)
-                      Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.rate_review_outlined,
-                              size: 48,
-                              color: Colors.grey.withValues(alpha: 0.3),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'لا توجد مراجعات بعد. كن أول من يقيم!',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      )
-                    else
-                      Column(
-                        children: _reviews
-                            .take(2)
-                            .map(
-                              (review) => Column(
-                                children: [
-                                  _ReviewItem(
-                                    userName: review.userName,
-                                    rating: review.rating,
-                                    comment: review.comment,
-                                    date: _formatDate(review.createdAt),
-                                  ),
-                                  const Divider(),
-                                ],
-                              ),
-                            )
-                            .toList(),
-                      ),
-
-                    if (context
-                            .read<AuthProvider>()
-                            .currentUser
-                            ?.id
-                            .toString() !=
-                        product.sellerId)
-                      ElevatedButton.icon(
-                        onPressed: _showAddReviewDialog,
-                        icon: const Icon(Icons.star_border),
-                        label: const Text('أضف تقييمك'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(double.infinity, 52),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          elevation: 2,
-                        ),
-                      ),
-                    const SizedBox(height: 48),
-                  ],
-                ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(context, product),
+                  const SizedBox(height: 24),
+                  _buildStoreInfo(context, product),
+                  const SizedBox(height: 24),
+                  _buildDescription(context, product),
+                  const SizedBox(height: 100), // Spacer for bottom bar
+                ],
               ),
             ),
           ),
         ],
       ),
+      bottomSheet: _buildBottomBar(context, product),
     );
   }
-}
 
-class _ReviewItem extends StatelessWidget {
-  final String userName;
-  final double rating;
-  final String comment;
-  final String date;
-
-  const _ReviewItem({
-    required this.userName,
-    required this.rating,
-    required this.comment,
-    required this.date,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                date,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-              Row(
-                children: [
-                  Text(
-                    userName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+  Widget _buildAppBar(BuildContext context, ProductModel product) {
+    return SliverAppBar(
+      expandedHeight: 350,
+      pinned: true,
+      backgroundColor: context.backgroundColor,
+      elevation: 0,
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleAvatar(
+          backgroundColor: Colors.black.withValues(alpha: 0.3),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+            onPressed: () => context.pop(),
+          ),
+        ),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Stack(
+          children: [
+            // Image Carousel
+            Positioned.fill(
+              child: PageView.builder(
+                onPageChanged: (index) => setState(() => _currentImageIndex = index),
+                itemCount: product.images.length,
+                itemBuilder: (context, index) => Image.network(
+                  product.images[index],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: context.primary.withValues(alpha: 0.1),
+                    child: Icon(Icons.image_not_supported_rounded, size: 50, color: context.primary),
                   ),
-                  const SizedBox(width: 8),
-                  CircleAvatar(
-                    radius: 14,
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-                    child: Text(
-                      userName.isNotEmpty ? userName[0] : 'م',
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                ),
+              ),
+            ),
+            // Image Indicator
+            if (product.images.length > 1)
+              Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    product.images.length,
+                    (index) => Container(
+                      width: _currentImageIndex == index ? 20 : 8,
+                      height: 8,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: _currentImageIndex == index ? context.primary : Colors.white70,
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, ProductModel product) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: context.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                product.category,
+                style: TextStyle(color: context.primary, fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+            ),
+            Row(
+              children: [
+                const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+                const SizedBox(width: 4),
+                Text(
+                  product.rating.toStringAsFixed(1),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: context.textPrimary),
+                ),
+                Text(
+                  ' (${product.reviewsCount}+)',
+                  style: TextStyle(color: context.textSecondary, fontSize: 12),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Text(
+          product.title,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: context.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '${product.price} ر.ي / ${product.unit}',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: context.primary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStoreInfo(BuildContext context, ProductModel product) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.isDark ? AppColors.darkCard : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: context.isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 25,
+            backgroundImage: NetworkImage(product.storeLogo),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.storeName,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: context.textPrimary),
+                ),
+                Text(
+                  product.location,
+                  style: TextStyle(color: context.textSecondary, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              // Navigation to store logic would go here
+            },
+            child: Text('زيارة المتجر', style: TextStyle(color: context.primary)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDescription(BuildContext context, ProductModel product) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'الوصف',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: context.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          product.description,
+          style: TextStyle(
+            color: context.textSecondary,
+            height: 1.6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomBar(BuildContext context, ProductModel product) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: context.isDark ? AppColors.darkSurface : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            // Quantity Selector
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () => setState(() => _quantity = _quantity > 1 ? _quantity - 1 : 1),
+                  ),
+                  Text(
+                    _quantity.toString(),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () => setState(() => _quantity++),
                   ),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          RatingStars(rating: rating, size: 14),
-          const SizedBox(height: 4),
-          Text(
-            comment,
-            textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AddReviewDialog extends StatefulWidget {
-  final String productId;
-
-  const _AddReviewDialog({required this.productId});
-
-  @override
-  State<_AddReviewDialog> createState() => _AddReviewDialogState();
-}
-
-class _AddReviewDialogState extends State<_AddReviewDialog> {
-  double selectedRating = 5.0;
-  final commentController = TextEditingController();
-  bool isSubmitting = false;
-
-  @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          'أضف تقييمك',
-          textAlign: TextAlign.right,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Text(
-              'اختر تقييمك:',
-              style: TextStyle(fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(5, (i) {
-                final starRating = (i + 1).toDouble();
-                return GestureDetector(
-                  onTap: () => setState(() => selectedRating = starRating),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Icon(
-                      selectedRating >= starRating
-                          ? Icons.star
-                          : Icons.star_border,
-                      color: Colors.amber,
-                      size: 36,
+            const SizedBox(width: 16),
+            // Add to Cart
+            Expanded(
+              child: SizedBox(
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: () {
+                    context.read<CartProvider>().addItem(product, quantity: _quantity);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('تمت الإضافة للسلة')),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                );
-              }),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: commentController,
-              maxLines: 3,
-              textDirection: TextDirection.rtl,
-              decoration: InputDecoration(
-                hintText: 'شاركنا رأيك بهذا المنتج...',
-                hintStyle: const TextStyle(fontSize: 13),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.primary),
+                  child: const Text(
+                    'إضافة للسلة',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
               ),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء', style: TextStyle(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onPressed: isSubmitting
-                ? null
-                : () async {
-                    setState(() => isSubmitting = true);
-                    try {
-                      final provider = context.read<MarketplaceProvider>();
-                      final success = await provider.submitReview(
-                        widget.productId,
-                        selectedRating,
-                        comment: commentController.text.trim(),
-                      );
-
-                      if (success && context.mounted) {
-                        Navigator.pop(context, true);
-                      } else if (context.mounted) {
-                        setState(() => isSubmitting = false);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              provider.errorMessage?.replaceAll('Exception:', '').replaceAll('BusinessLogicException:', '').trim() ?? 
-                              'فشل إرسال التقييم. حاول مجدداً.',
-                            ),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        setState(() => isSubmitting = false);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('حدث خطأ غير متوقع. حاول مجدداً.'),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      }
-                    }
-                  },
-            child: isSubmitting
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : const Text('إرسال', style: TextStyle(color: Colors.white)),
-          ),
-        ],
       ),
     );
   }

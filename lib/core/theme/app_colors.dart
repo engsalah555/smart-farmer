@@ -61,6 +61,15 @@ class AppColors {
       isDark ? darkTextPrimary : textPrimary;
   static Color glass(bool isDark) =>
       neutralWhite.withValues(alpha: isDark ? 0.05 : 0.15);
+
+  // --- Shimmer Colors ---
+  static const Color shimmerBaseLight = Color(0xFFE2E8E1);
+  static const Color shimmerHighlightLight = Color(0xFFF3F7F2);
+  static const Color shimmerBaseDark = Color(0xFF2A332A);
+  static const Color shimmerHighlightDark = Color(0xFF384538);
+
+  static Color shimmerBase(bool isDark) => isDark ? shimmerBaseDark : shimmerBaseLight;
+  static Color shimmerHighlight(bool isDark) => isDark ? shimmerHighlightDark : shimmerHighlightLight;
 }
 
 extension ThemeColors on BuildContext {
@@ -91,5 +100,12 @@ extension ThemeColors on BuildContext {
   Color get textColor => isDark ? darkTextPrimary : textPrimary;
 
   Color get white => AppColors.neutralWhite;
+  Color get black => AppColors.neutralBlack;
   Color get deepGreen => AppColors.primaryDeep;
+
+  Color get shimmerBase => AppColors.shimmerBase(isDark);
+  Color get shimmerHighlight => AppColors.shimmerHighlight(isDark);
+  Color get glass => AppColors.glass(isDark);
+  Color get backgroundColor => isDark ? AppColors.darkBackground : AppColors.background;
+  Color get hintColor => Theme.of(this).hintColor;
 }

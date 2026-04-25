@@ -85,27 +85,30 @@ class _HomeAlertsState extends State<HomeAlerts> {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: context.wp(5), vertical: context.hp(1)),
-            child: Row(
-              children: [
-                Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: context.wp(5)),
-                SizedBox(width: context.wp(2)),
-                Text(
-                  'التنبيهات العاجلة',
-                  style: context.font18.bold.copyWith(color: AppColors.getTextColor(isDark)),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+            child: Semantics(
+              label: 'تنبيهات نشطة',
+              child: Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: context.wp(5)),
+                  SizedBox(width: context.wp(2)),
+                  Text(
+                    'التنبيهات العاجلة',
+                    style: context.font18.bold.copyWith(color: AppColors.getTextColor(isDark)),
                   ),
-                  child: Text(
-                    '${_alerts.length} تنبيه',
-                    style: context.font12.bold.copyWith(color: AppColors.error),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${_alerts.length} تنبيه',
+                      style: context.font12.bold.copyWith(color: AppColors.error),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           SizedBox(
@@ -120,78 +123,84 @@ class _HomeAlertsState extends State<HomeAlerts> {
                 final severityColor = _getColorForSeverity(alert['severity']);
 
                 return RepaintBoundary(
-                  child: Container(
-                    width: context.wp(75).clamp(280.0, 400.0),
-                    margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                    padding: EdgeInsets.all(context.wp(4).clamp(12.0, 20.0)),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkSurface.withValues(alpha: 0.8) : Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+                  child: Semantics(
+                    label: 'تنبيه: ${alert['title']}. ${alert['message']}',
+                    child: Container(
+                      width: context.wp(75).clamp(280.0, 400.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                      padding: EdgeInsets.all(context.wp(4).clamp(12.0, 20.0)),
+                      decoration: BoxDecoration(
+                        color: isDark 
+                            ? Color.alphaBlend(severityColor.withValues(alpha: 0.08), AppColors.darkSurface)
+                            : Color.alphaBlend(severityColor.withValues(alpha: 0.05), context.white),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: severityColor.withValues(alpha: 0.2),
+                          width: 1.5,
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: severityColor.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                _getIconForType(alert['type']),
-                                color: severityColor,
-                                size: context.sp(16).clamp(14, 20),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                alert['title'],
-                                style: TextStyle(
-                                  fontSize: context.sp(14).clamp(12, 18),
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white : AppColors.textPrimary,
-                                  
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Expanded(
-                          child: Text(
-                            alert['message'],
-                            style: TextStyle(
-                              fontSize: context.sp(12).clamp(10, 16),
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
-                              height: 1.4,
-                              
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                        boxShadow: [
+                          BoxShadow(
+                            color: severityColor.withValues(alpha: 0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                            spreadRadius: -4,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: severityColor.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  _getIconForType(alert['type']),
+                                  color: severityColor,
+                                  size: context.sp(16).clamp(14, 20),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  alert['title'],
+                                  style: TextStyle(
+                                    fontSize: context.sp(14).clamp(12, 18),
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? context.white : AppColors.textPrimary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: Text(
+                              alert['message'],
+                              style: TextStyle(
+                                fontSize: context.sp(12).clamp(10, 16),
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                                height: 1.4,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
-
-
         ],
       ),
     );

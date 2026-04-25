@@ -12,6 +12,13 @@ class AppFonts {
   static const double size14 = 14.0;
   static const double size12 = 12.0;
   static const double size10 = 10.0;
+
+  static TextStyle heading1(BuildContext context) => context.font32.bold;
+  static TextStyle heading2(BuildContext context) => context.font24.bold;
+  static TextStyle heading3(BuildContext context) => context.font20.bold;
+  static TextStyle bodyLarge(BuildContext context) => context.font18;
+  static TextStyle bodyMedium(BuildContext context) => context.font16;
+  static TextStyle bodySmall(BuildContext context) => context.font14;
 }
 
 extension AppFontsExtension on BuildContext {

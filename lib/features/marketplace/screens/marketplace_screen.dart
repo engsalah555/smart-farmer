@@ -124,22 +124,19 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-        systemNavigationBarColor: AppColors.getBackground(isDark),
-        systemNavigationBarIconBrightness: isDark
+        statusBarIconBrightness: context.isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarColor: context.backgroundColor,
+        systemNavigationBarIconBrightness: context.isDark
             ? Brightness.light
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.getBackground(
-          isDark,
-        ), // [Fixed] Dynamic background
+        backgroundColor: context.backgroundColor,
         body: RefreshIndicator(
+          color: AppColors.primary,
           onRefresh: _onRefresh,
           child: NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,

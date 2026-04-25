@@ -37,38 +37,42 @@ class ForumList extends StatelessWidget {
         // Header
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(context.wp(5), 0, context.wp(5), context.hp(1.5)),
+            padding: EdgeInsets.fromLTRB(context.wp(5), context.hp(1), context.wp(5), context.hp(2)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center, // Optical alignment
               children: [
                 Text(
                   'المنتدى الزراعي',
                   style: TextStyle(
                     fontSize: context.sp(20).clamp(18, 26),
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900, // Heavier weight for Brutalist accent
                     color: AppColors.getTextColor(isDark),
-                    
+                    letterSpacing: -0.5,
                   ),
                 ),
-                InkWell(
-                  onTap: () => context.push('/forum'),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.wp(3).clamp(8.0, 16.0),
-                      vertical: context.hp(0.8).clamp(4.0, 10.0),
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      'عرض الكل',
-                      style: TextStyle(
-                        fontSize: context.sp(14).clamp(12, 18),
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                        
+                Semantics(
+                  label: 'عرض كل منشورات المنتدى',
+                  button: true,
+                  child: InkWell(
+                    onTap: () => context.push('/forum'),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.wp(4).clamp(12.0, 20.0),
+                        vertical: context.hp(0.6).clamp(4.0, 10.0),
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        'عرض الكل',
+                        style: TextStyle(
+                          fontSize: context.sp(13).clamp(11, 16),
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
                   ),
@@ -86,7 +90,8 @@ class ForumList extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: context.hp(1)),
                 child: FadeInSlide(
                   duration: const Duration(milliseconds: 500),
-                  delay: Duration(milliseconds: 100 * index),
+                  // Cap delay to first 5 items to prevent performance issues on long lists
+                  delay: Duration(milliseconds: index < 5 ? 100 * index : 0),
                   child: SocialMediaPost(
                     post: posts[index],
                   ),

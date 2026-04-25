@@ -53,7 +53,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('offline_cache');
 
-  await setupLocator(); 
+  await setupLocator();
 
   final settingsProvider = SettingsProvider();
   settingsProvider.loadMetadata();

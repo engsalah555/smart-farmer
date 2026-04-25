@@ -1,4 +1,4 @@
-name: smart_farm2
+﻿name: smart_farm2
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -140,3 +140,4 @@ flutter:
 dependency_overrides:
   camera_android_camerax:
     path: plugins/camera_android_camerax
+
