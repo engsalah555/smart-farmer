@@ -145,6 +145,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
   void _showDeleteConfirmation(BuildContext context, CatalogModel catalog) {
     showDialog(
       context: context,
+      
       builder: (context) => AlertDialog(
         title: const Text('حذف الكتالوج'),
         content: Text(

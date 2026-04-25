@@ -100,6 +100,7 @@ extension ThemeColors on BuildContext {
   Color get textColor => isDark ? darkTextPrimary : textPrimary;
 
   Color get white => AppColors.neutralWhite;
+  Color get black => AppColors.neutralBlack;
   Color get deepGreen => AppColors.primaryDeep;
 
   Color get shimmerBase => AppColors.shimmerBase(isDark);

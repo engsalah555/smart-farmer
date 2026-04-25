@@ -49,10 +49,10 @@ class HomeHeader extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-            spreadRadius: -5,
+            color: AppColors.primary.withValues(alpha: 0.25),
+            blurRadius: 25,
+            offset: const Offset(0, 12),
+            spreadRadius: -8,
           ),
         ],
       ),
@@ -70,24 +70,24 @@ class HomeHeader extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Flexible(
-                            child: Text(
-                              'مرحباً , $userName',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: context.sp(20).clamp(18, 26),
-                                fontWeight: FontWeight.bold,
-                                
+                          Semantics(
+                            label: 'اسم المستخدم: $userName',
+                              child: Text(
+                                'مرحباً , $userName',
+                                style: TextStyle(
+                                  color: context.white,
+                                  fontSize: context.sp(20).clamp(18, 26),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
                           if (user?.isVerified ?? false) ...[
                             SizedBox(width: context.wp(1.5)),
                             Icon(
                               Icons.verified,
-                              color: Colors.white,
+                              color: context.white,
                               size: context.sp(18).clamp(16, 22),
                             ),
                           ],
@@ -97,10 +97,9 @@ class HomeHeader extends StatelessWidget {
                       Text(
                         userRole,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: context.white.withValues(alpha: 0.9),
                           fontSize: context.sp(14).clamp(12, 18),
                           fontWeight: FontWeight.w500,
-                          
                         ),
                       ),
                     ],
@@ -110,34 +109,46 @@ class HomeHeader extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ProMaxIconButton(
-                      icon: Icons.notifications_none_rounded,
-                      onTap: () => context.push('/notifications'),
-                      size: context.wp(11).clamp(40, 55),
-                      iconSize: context.wp(5.5).clamp(20, 26),
-                      borderRadius: 22,
-                      color: isDark ? Colors.white : AppColors.primary,
-                      backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : Colors.white,
+                    Semantics(
+                      label: 'التنبيهات',
+                      button: true,
+                      child: ProMaxIconButton(
+                        icon: Icons.notifications_none_rounded,
+                        onTap: () => context.push('/notifications'),
+                        size: context.wp(11).clamp(40, 55),
+                        iconSize: context.wp(5.5).clamp(20, 26),
+                        borderRadius: 22,
+                        color: isDark ? context.white : AppColors.primary,
+                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : context.white,
+                      ),
                     ),
                     SizedBox(width: context.wp(2)),
-                    ProMaxIconButton(
-                      icon: Icons.eco_outlined,
-                      onTap: () => context.go('/crops'),
-                      size: context.wp(11).clamp(40, 55),
-                      iconSize: context.wp(5.5).clamp(20, 26),
-                      borderRadius: 22,
-                      color: isDark ? Colors.white : AppColors.primary,
-                      backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : Colors.white,
+                    Semantics(
+                      label: 'المحاصيل',
+                      button: true,
+                      child: ProMaxIconButton(
+                        icon: Icons.eco_outlined,
+                        onTap: () => context.go('/crops'),
+                        size: context.wp(11).clamp(40, 55),
+                        iconSize: context.wp(5.5).clamp(20, 26),
+                        borderRadius: 22,
+                        color: isDark ? context.white : AppColors.primary,
+                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : context.white,
+                      ),
                     ),
                     SizedBox(width: context.wp(2)),
-                    ProMaxIconButton(
-                      icon: Icons.smart_toy_outlined,
-                      onTap: () => context.push('/chatbot'),
-                      size: context.wp(11).clamp(40, 55),
-                      iconSize: context.wp(5.5).clamp(20, 26),
-                      borderRadius: 22,
-                      color: isDark ? Colors.white : AppColors.primary,
-                      backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : Colors.white,
+                    Semantics(
+                      label: 'المساعد الذكي',
+                      button: true,
+                      child: ProMaxIconButton(
+                        icon: Icons.smart_toy_outlined,
+                        onTap: () => context.push('/chatbot'),
+                        size: context.wp(11).clamp(40, 55),
+                        iconSize: context.wp(5.5).clamp(20, 26),
+                        borderRadius: 22,
+                        color: isDark ? context.white : AppColors.primary,
+                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : context.white,
+                      ),
                     ),
                   ],
                 ),
@@ -154,57 +165,62 @@ class HomeHeader extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      context.read<HomeProvider>().fetchWeather();
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(seconds: 1),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.wp(6),
-                        vertical: context.hp(1.5),
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: isNight
-                              ? [
-                                  const Color(0xFF1A237E).withValues(alpha: 0.8),
-                                  const Color(0xFF0D1B2A).withValues(alpha: 0.9),
-                                ]
-                              : [
-                                  Colors.white.withValues(alpha: 0.25),
-                                  Colors.white.withValues(alpha: 0.1),
-                                ],
+                  Semantics(
+                    label: 'معلومات الطقس، اضغط للتحديث',
+                    button: true,
+                    child: GestureDetector(
+                      onTap: () {
+                        context.read<HomeProvider>().fetchWeather();
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(seconds: 1),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.wp(6),
+                          vertical: context.hp(1.5),
                         ),
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                          color: isNight
-                              ? Colors.blueAccent.withValues(alpha: 0.3)
-                              : Colors.white.withValues(alpha: 0.3),
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: isNight
-                                ? Colors.blue.withValues(alpha: 0.2)
-                                : Colors.white.withValues(alpha: 0.1),
-                            blurRadius: 15,
-                            spreadRadius: 2,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: isNight
+                                ? [
+                                    const Color(0xFF1A237E).withValues(alpha: 0.8),
+                                    const Color(0xFF0D1B2A).withValues(alpha: 0.9),
+                                  ]
+                                : [
+                                    context.white.withValues(alpha: 0.35), // Increased opacity for readability
+                                    context.white.withValues(alpha: 0.2),
+                                  ],
                           ),
-                        ],
-                      ),
-                      child: isLoading
-                          ? SizedBox(
-                              height: context.hp(12),
-                              child: const Center(
-                                child: RepaintBoundary(
-                                  child: CircularProgressIndicator(color: Colors.white),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: isNight
+                                ? Colors.blueAccent.withValues(alpha: 0.4)
+                                : context.white.withValues(alpha: 0.4),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isNight
+                                  ? Colors.blue.withValues(alpha: 0.15)
+                                  : context.black.withValues(alpha: 0.05),
+                              blurRadius: 20,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: isLoading
+                            ? SizedBox(
+                                height: context.hp(12),
+                                child: Center(
+                                  child: RepaintBoundary(
+                                    child: CircularProgressIndicator(color: context.white),
+                                  ),
                                 ),
-                              ),
-                            )
-                          : _buildWeatherInfo(context, weather, isNight),
+                              )
+                            : _buildWeatherInfo(context, weather, isNight),
+                      ),
                     ),
                   ),
                 ],
@@ -234,20 +250,19 @@ class HomeHeader extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        weather == null ? Icons.touch_app : Icons.location_on_rounded,
-                        color: Colors.white,
-                        size: context.sp(16).clamp(14, 20),
-                      ),
+                        Icon(
+                          weather == null ? Icons.touch_app : Icons.location_on_rounded,
+                          color: context.white,
+                          size: context.sp(16).clamp(14, 20),
+                        ),
                       SizedBox(width: context.wp(1.5)),
                       Expanded(
                         child: Text(
                           cityName,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: context.white,
                             fontSize: context.sp(14).clamp(12, 18),
                             fontWeight: FontWeight.w500,
-                            
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -259,14 +274,13 @@ class HomeHeader extends StatelessWidget {
                   Text(
                     tempString,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: context.white,
                       fontSize: context.sp(44).clamp(36, 56),
                       fontWeight: FontWeight.w900,
                       height: 1.1,
-                      
                       shadows: [
                         Shadow(
-                          color: isNight ? Colors.blue : Colors.white,
+                          color: isNight ? Colors.blue : context.white.withValues(alpha: 0.5),
                           blurRadius: 10,
                         ),
                       ],
@@ -276,10 +290,9 @@ class HomeHeader extends StatelessWidget {
                   Text(
                     '$conditionString • $humidityString',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.95),
+                      color: context.white.withValues(alpha: 0.95),
                       fontSize: context.sp(13).clamp(11, 16),
                       fontWeight: FontWeight.w600,
-                      
                     ),
                   ),
                 ],
@@ -289,42 +302,47 @@ class HomeHeader extends StatelessWidget {
               children: [
                 const DigitalClock(),
                 SizedBox(height: context.hp(1.5)),
-                GestureDetector(
-                  onTap: () => context.push('/weather'),
-                  child: Container(
-                    padding: EdgeInsets.all(context.wp(3)),
-                    decoration: BoxDecoration(
-                      color: isNight 
-                          ? Colors.blue.withValues(alpha: 0.2) 
-                          : Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                      border: Border.all(
+                Semantics(
+                  label: 'تقرير الطقس الكامل',
+                  button: true,
+                  child: GestureDetector(
+                    onTap: () => context.push('/weather'),
+                    child: Container(
+                      padding: EdgeInsets.all(context.wp(3)),
+                      decoration: BoxDecoration(
                         color: isNight 
-                            ? Colors.blueAccent.withValues(alpha: 0.4) 
-                            : Colors.white.withValues(alpha: 0.3),
-                        width: 1.5,
+                            ? Colors.blue.withValues(alpha: 0.2) 
+                            : context.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isNight 
+                              ? Colors.blueAccent.withValues(alpha: 0.4) 
+                              : context.white.withValues(alpha: 0.4),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          if (isNight)
+                            BoxShadow(
+                              color: Colors.blue.withValues(alpha: 0.25),
+                              blurRadius: 12,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 2),
+                            ),
+                        ],
                       ),
-                      boxShadow: [
-                        if (isNight)
-                          BoxShadow(
-                            color: Colors.blue.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            spreadRadius: 1,
-                          ),
-                      ],
+                      child: weather != null
+                          ? AnimatedWeatherIcon(
+                              code: weather.weatherCode,
+                              isDay: weather.isDay,
+                              size: context.wp(12).clamp(40, 65),
+                              color: context.white,
+                            )
+                          : Icon(
+                              weatherIcon,
+                              color: context.white,
+                              size: context.wp(12).clamp(40, 65),
+                            ),
                     ),
-                    child: weather != null
-                        ? AnimatedWeatherIcon(
-                            code: weather.weatherCode,
-                            isDay: weather.isDay,
-                            size: context.wp(12).clamp(40, 65),
-                            color: Colors.white,
-                          )
-                        : Icon(
-                            weatherIcon,
-                            color: Colors.white,
-                            size: context.wp(12).clamp(40, 65),
-                          ),
                   ),
                 ),
               ],
@@ -339,27 +357,29 @@ class HomeHeader extends StatelessWidget {
               Text(
                 weather.relativeUpdateTime,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: context.white.withValues(alpha: 0.7),
                   fontSize: context.sp(11).clamp(10, 13),
-                  
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              GestureDetector(
-                onTap: () => context.push('/weather'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'تقرير كامل',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: context.sp(11).clamp(10, 13),
-                      
-                      fontWeight: FontWeight.w600,
+              Semantics(
+                label: 'عرض التقرير الكامل',
+                button: true,
+                child: GestureDetector(
+                  onTap: () => context.push('/weather'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: context.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'تقرير كامل',
+                      style: TextStyle(
+                        color: context.white,
+                        fontSize: context.sp(11).clamp(10, 13),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
