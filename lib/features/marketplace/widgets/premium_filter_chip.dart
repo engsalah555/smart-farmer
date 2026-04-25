@@ -24,14 +24,14 @@ class PremiumFilterChip extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? context.primary.withValues(alpha: 0.15)
-              : isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+          color: isSelected ? context.primary : context.cardBackground,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? context.primary
-                : isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                : isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.1),
             width: 1.5,
           ),
           boxShadow: isSelected
@@ -40,7 +40,7 @@ class PremiumFilterChip extends StatelessWidget {
                     color: context.primary.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
-                  )
+                  ),
                 ]
               : [],
         ),
@@ -50,13 +50,13 @@ class PremiumFilterChip extends StatelessWidget {
             Icon(
               icon,
               size: 18,
-              color: isSelected ? context.primary : (isDark ? Colors.white70 : Colors.black54),
+              color: isSelected ? context.white : context.textPrimary,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? context.primary : (isDark ? Colors.white : Colors.black),
+                color: isSelected ? context.white : context.textPrimary,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 14,
               ),
