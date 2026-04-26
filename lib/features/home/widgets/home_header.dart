@@ -7,10 +7,10 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/widgets/atoms/pro_max_icon_button.dart';
-import 'package:smart_farm2/core/models/weather_model.dart';
-import 'package:smart_farm2/core/widgets/digital_clock.dart';
-import 'package:smart_farm2/features/home/providers/home_provider.dart';
-import 'package:smart_farm2/core/widgets/animated_weather_icon.dart';
+import '../../../core/models/weather_model.dart';
+import '../../../core/widgets/digital_clock.dart';
+import '../providers/home_provider.dart';
+import '../../../core/widgets/animated_weather_icon.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -75,7 +75,7 @@ class HomeHeader extends StatelessWidget {
                               child: Text(
                                 'مرحباً , $userName',
                                 style: TextStyle(
-                                  color: context.white,
+                                  color: AppColors.white,
                                   fontSize: context.sp(20).clamp(18, 26),
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -87,7 +87,7 @@ class HomeHeader extends StatelessWidget {
                             SizedBox(width: context.wp(1.5)),
                             Icon(
                               Icons.verified,
-                              color: context.white,
+                              color: AppColors.white,
                               size: context.sp(18).clamp(16, 22),
                             ),
                           ],
@@ -97,7 +97,7 @@ class HomeHeader extends StatelessWidget {
                       Text(
                         userRole,
                         style: TextStyle(
-                          color: context.white.withValues(alpha: 0.9),
+                          color: AppColors.white.withValues(alpha: 0.9),
                           fontSize: context.sp(14).clamp(12, 18),
                           fontWeight: FontWeight.w500,
                         ),
@@ -118,8 +118,8 @@ class HomeHeader extends StatelessWidget {
                         size: context.wp(11).clamp(40, 55),
                         iconSize: context.wp(5.5).clamp(20, 26),
                         borderRadius: 22,
-                        color: isDark ? context.white : AppColors.primary,
-                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : context.white,
+                        color: isDark ? AppColors.white : AppColors.primary,
+                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : AppColors.white,
                       ),
                     ),
                     SizedBox(width: context.wp(2)),
@@ -132,8 +132,8 @@ class HomeHeader extends StatelessWidget {
                         size: context.wp(11).clamp(40, 55),
                         iconSize: context.wp(5.5).clamp(20, 26),
                         borderRadius: 22,
-                        color: isDark ? context.white : AppColors.primary,
-                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : context.white,
+                        color: isDark ? AppColors.white : AppColors.primary,
+                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : AppColors.white,
                       ),
                     ),
                     SizedBox(width: context.wp(2)),
@@ -146,8 +146,8 @@ class HomeHeader extends StatelessWidget {
                         size: context.wp(11).clamp(40, 55),
                         iconSize: context.wp(5.5).clamp(20, 26),
                         borderRadius: 22,
-                        color: isDark ? context.white : AppColors.primary,
-                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : context.white,
+                        color: isDark ? AppColors.white : AppColors.primary,
+                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : AppColors.white,
                       ),
                     ),
                   ],
@@ -188,22 +188,22 @@ class HomeHeader extends StatelessWidget {
                                     const Color(0xFF0D1B2A).withValues(alpha: 0.9),
                                   ]
                                 : [
-                                    context.white.withValues(alpha: 0.35), // Increased opacity for readability
-                                    context.white.withValues(alpha: 0.2),
+                                    AppColors.white.withValues(alpha: 0.35), // Increased opacity for readability
+                                    AppColors.white.withValues(alpha: 0.2),
                                   ],
                           ),
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
                             color: isNight
                                 ? Colors.blueAccent.withValues(alpha: 0.4)
-                                : context.white.withValues(alpha: 0.4),
+                                : AppColors.white.withValues(alpha: 0.4),
                             width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
                               color: isNight
                                   ? Colors.blue.withValues(alpha: 0.15)
-                                  : context.black.withValues(alpha: 0.05),
+                                  : AppColors.black.withValues(alpha: 0.05),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 4),
@@ -215,7 +215,7 @@ class HomeHeader extends StatelessWidget {
                                 height: context.hp(12),
                                 child: Center(
                                   child: RepaintBoundary(
-                                    child: CircularProgressIndicator(color: context.white),
+                                    child: CircularProgressIndicator(color: AppColors.white),
                                   ),
                                 ),
                               )
@@ -252,7 +252,7 @@ class HomeHeader extends StatelessWidget {
                     children: [
                         Icon(
                           weather == null ? Icons.touch_app : Icons.location_on_rounded,
-                          color: context.white,
+                          color: AppColors.white,
                           size: context.sp(16).clamp(14, 20),
                         ),
                       SizedBox(width: context.wp(1.5)),
@@ -260,7 +260,7 @@ class HomeHeader extends StatelessWidget {
                         child: Text(
                           cityName,
                           style: TextStyle(
-                            color: context.white,
+                            color: AppColors.white,
                             fontSize: context.sp(14).clamp(12, 18),
                             fontWeight: FontWeight.w500,
                           ),
@@ -274,13 +274,13 @@ class HomeHeader extends StatelessWidget {
                   Text(
                     tempString,
                     style: TextStyle(
-                      color: context.white,
+                      color: AppColors.white,
                       fontSize: context.sp(44).clamp(36, 56),
                       fontWeight: FontWeight.w900,
                       height: 1.1,
                       shadows: [
                         Shadow(
-                          color: isNight ? Colors.blue : context.white.withValues(alpha: 0.5),
+                          color: isNight ? Colors.blue : AppColors.white.withValues(alpha: 0.5),
                           blurRadius: 10,
                         ),
                       ],
@@ -290,7 +290,7 @@ class HomeHeader extends StatelessWidget {
                   Text(
                     '$conditionString • $humidityString',
                     style: TextStyle(
-                      color: context.white.withValues(alpha: 0.95),
+                      color: AppColors.white.withValues(alpha: 0.95),
                       fontSize: context.sp(13).clamp(11, 16),
                       fontWeight: FontWeight.w600,
                     ),
@@ -312,12 +312,12 @@ class HomeHeader extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isNight 
                             ? Colors.blue.withValues(alpha: 0.2) 
-                            : context.white.withValues(alpha: 0.2),
+                            : AppColors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isNight 
                               ? Colors.blueAccent.withValues(alpha: 0.4) 
-                              : context.white.withValues(alpha: 0.4),
+                              : AppColors.white.withValues(alpha: 0.4),
                           width: 1.5,
                         ),
                         boxShadow: [
@@ -335,11 +335,11 @@ class HomeHeader extends StatelessWidget {
                               code: weather.weatherCode,
                               isDay: weather.isDay,
                               size: context.wp(12).clamp(40, 65),
-                              color: context.white,
+                              color: AppColors.white,
                             )
                           : Icon(
                               weatherIcon,
-                              color: context.white,
+                              color: AppColors.white,
                               size: context.wp(12).clamp(40, 65),
                             ),
                     ),
@@ -357,7 +357,7 @@ class HomeHeader extends StatelessWidget {
               Text(
                 weather.relativeUpdateTime,
                 style: TextStyle(
-                  color: context.white.withValues(alpha: 0.7),
+                  color: AppColors.white.withValues(alpha: 0.7),
                   fontSize: context.sp(11).clamp(10, 13),
                   fontWeight: FontWeight.w400,
                 ),
@@ -370,13 +370,13 @@ class HomeHeader extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: context.white.withValues(alpha: 0.1),
+                      color: AppColors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       'تقرير كامل',
                       style: TextStyle(
-                        color: context.white,
+                        color: AppColors.white,
                         fontSize: context.sp(11).clamp(10, 13),
                         fontWeight: FontWeight.w600,
                       ),

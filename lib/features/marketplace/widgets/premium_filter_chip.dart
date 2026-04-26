@@ -50,13 +50,13 @@ class PremiumFilterChip extends StatelessWidget {
             Icon(
               icon,
               size: 18,
-              color: isSelected ? context.white : context.textPrimary,
+              color: isSelected ? AppColors.white : context.textPrimary,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? context.white : context.textPrimary,
+                color: isSelected ? AppColors.white : context.textPrimary,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 14,
               ),

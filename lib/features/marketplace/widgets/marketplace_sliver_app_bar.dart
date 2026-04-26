@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:smart_farm2/core/widgets/app_fonts.dart';
+import '../../../core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/models/user_model.dart';
@@ -64,7 +64,7 @@ class MarketplaceSliverAppBar extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               'المتجر',
-              style: context.font24.semiBold.copyWith(color: context.white),
+              style: context.font24.semiBold.copyWith(color: AppColors.white),
             ),
             const Spacer(),
             _buildActionIcons(context, user),
