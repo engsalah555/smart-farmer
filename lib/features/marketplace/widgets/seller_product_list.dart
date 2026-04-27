@@ -8,7 +8,7 @@ import '../../../core/widgets/fade_in_slide.dart';
 import '../providers/seller_provider.dart';
 import 'marketplace_empty_states.dart';
 import '../../../core/models/product_model.dart';
-import 'premium_seller_product_card.dart';
+import 'unified_product_card.dart';
 
 class SellerProductList extends StatelessWidget {
   final SellerProvider provider;
@@ -177,8 +177,6 @@ class SellerProductList extends StatelessWidget {
                                             color: Colors.white,
                                             height: 1.1,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
                                         if (catalog.description.isNotEmpty) ...[
                                           const SizedBox(height: 4),
@@ -241,7 +239,7 @@ class SellerProductList extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final product = myProducts[index];
@@ -249,9 +247,10 @@ class SellerProductList extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: FadeInSlide(
                     delay: Duration(milliseconds: 50 * index),
-                    child: PremiumSellerProductCard(
+                    child: UnifiedProductCard(
                       product: product,
-                      isGrid: false,
+                      layout: ProductCardLayout.list,
+                      mode: ProductCardMode.seller,
                       onEdit: () =>
                           context.push('/add_product', extra: product),
                       onDelete: () => _showDeleteConfirmation(context, product),

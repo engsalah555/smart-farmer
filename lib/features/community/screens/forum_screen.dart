@@ -74,7 +74,7 @@ class _ForumScreenState extends State<ForumScreen> {
           child: Material(
             color: Colors.transparent,
             child: Text(
-              'المجتمع الزراعي',
+              'المنتدى الزراعي',
               style: TextStyle(
                 color: Theme.of(context).textTheme.titleLarge?.color,
                 fontWeight: FontWeight.w900,
@@ -125,7 +125,7 @@ class _ForumScreenState extends State<ForumScreen> {
         child: Consumer<PostProvider>(
           builder: (context, provider, child) {
             return ResponsivePostList(
-              posts: provider.posts,
+              postIds: provider.postIds,
               isLoading: provider.isLoading,
               errorMessage: provider.errorMessage,
               onRefresh: () => provider.fetchPosts(),
@@ -148,7 +148,7 @@ class _ForumScreenState extends State<ForumScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'كن أول من يشارك خبرته الزراعية مع المجتمع',
+                      'كن أول من يشارك خبرته الزراعية في المنتدى الزراعي',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 32),
@@ -172,8 +172,6 @@ class _ForumScreenState extends State<ForumScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await context.push('/create_post');
-          if (!context.mounted) return;
-          context.read<PostProvider>().fetchPosts();
         },
         backgroundColor: AppColors.primary,
         elevation: 4,
@@ -235,7 +233,7 @@ class _PostSearchDelegate extends SearchDelegate<String> {
   }
 
   Widget _buildSearchResults() {
-    final results = _provider.posts.where((post) {
+    final results = _provider.getAllPosts().where((post) {
       final q = query.toLowerCase();
       return post.title.toLowerCase().contains(q) ||
           post.content.toLowerCase().contains(q) ||

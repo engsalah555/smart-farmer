@@ -64,6 +64,8 @@ class AppRouter {
   // Auth provider reference — injected once after app starts.
   static AuthProvider? _authProvider;
 
+  static AuthProvider? get authProvider => _authProvider;
+
   static void setAuthProvider(AuthProvider provider) {
     _authProvider = provider;
   }
@@ -72,18 +74,32 @@ class AppRouter {
     navigatorKey: rootNavigatorKey,
     initialLocation: '/',
     debugLogDiagnostics: true,
+    refreshListenable: _authProvider,
     // Redirect guard: skip SplashScreen when auth state is already known
     // (e.g. after OS kills & restores the process in the background).
     redirect: (context, state) {
       final auth = _authProvider;
       final isSplash = state.matchedLocation == '/';
+      final isAuthRoute = state.matchedLocation == '/auth' || 
+                          state.matchedLocation == '/language' || 
+                          state.matchedLocation == '/onboarding' || 
+                          state.matchedLocation == '/forgot_password' || 
+                          state.matchedLocation == '/merchant_verification';
 
       // Still initializing or navigating away from splash — let it go.
-      if (auth == null || auth.isLoading || !isSplash) return null;
+      if (auth == null || auth.isLoading) return null;
 
-      // Auth state is resolved — skip the 2.5s splash wait.
-      if (auth.isAuthenticated) return '/home';
-      return '/language';
+      // If user is NOT authenticated, restrict them from protected routes
+      if (!auth.isAuthenticated && !isAuthRoute && !isSplash) {
+        return '/language';
+      }
+
+      // If user IS authenticated, prevent them from going to auth routes
+      if (auth.isAuthenticated && (isAuthRoute || isSplash)) {
+        return '/home';
+      }
+
+      return null;
     },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),

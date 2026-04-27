@@ -44,7 +44,7 @@ class IotService extends BaseApiService {
 
   Future<bool> requestService() async {
     final result = await post<bool>(
-      'iot/request-service',
+      'iot/request',
       mapper: (_) => true,
     );
     return result ?? false;

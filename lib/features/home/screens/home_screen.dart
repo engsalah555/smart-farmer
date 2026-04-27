@@ -5,6 +5,7 @@ import '../providers/home_provider.dart';
 import '../widgets/forum_list.dart';
 import '../widgets/home_alerts.dart';
 import '../widgets/home_header.dart';
+import '../../community/providers/post_provider.dart';
 
 /// شاشة الصفحة الرئيسية للتطبيق
 /// تعرض معلومات المستخدم، بيانات المستشعرات، وآخر منشورات المنتدى
@@ -20,9 +21,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<HomeProvider>();
-      if (provider.posts.isEmpty && !provider.isLoading) {
-        provider.init();
+      final homeProvider = context.read<HomeProvider>();
+      final postProvider = context.read<PostProvider>();
+      
+      if (homeProvider.posts.isEmpty && !homeProvider.isLoading) {
+        homeProvider.init();
+      }
+      
+      if (postProvider.postIds.isEmpty && !postProvider.isLoading) {
+        postProvider.fetchPosts();
       }
     });
   }

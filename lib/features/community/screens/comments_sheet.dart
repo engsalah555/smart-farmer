@@ -9,6 +9,7 @@ import '../../../core/models/post_model.dart';
 import '../../../core/models/comment_model.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../providers/post_provider.dart';
+import '../providers/comment_provider.dart';
 import '../widgets/skeleton_post.dart';
 
 class CommentsSheet extends StatefulWidget {
@@ -29,7 +30,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PostProvider>().fetchComments(widget.post.id);
+      context.read<CommentProvider>().fetchComments(widget.post.id);
     });
   }
 
@@ -48,7 +49,11 @@ class _CommentsSheetState extends State<CommentsSheet> {
     HapticFeedback.mediumImpact();
 
     try {
-      await context.read<PostProvider>().addComment(widget.post.id, text);
+      final comment = await context.read<CommentProvider>().addComment(widget.post.id, text);
+      if (comment != null && mounted) {
+        final count = context.read<CommentProvider>().getComments(widget.post.id).length;
+        context.read<PostProvider>().updateCommentCount(widget.post.id, count);
+      }
       if (!mounted) return;
       _commentController.clear();
       FocusScope.of(context).unfocus();
@@ -108,8 +113,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                   Expanded(
                     child: Consumer<PostProvider>(
                       builder: (context, provider, _) {
-                        final currentPost = [...provider.posts, ...provider.myPosts, ...provider.savedPosts]
-                            .firstWhere((p) => p.id == widget.post.id, orElse: () => widget.post);
+                        final currentPost = provider.getPost(widget.post.id) ?? widget.post;
                         
                         return Text(
                           'التعليقات (${currentPost.commentsCount})',
@@ -133,7 +137,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
 
             // Comments List
             Expanded(
-              child: Consumer<PostProvider>(
+              child: Consumer<CommentProvider>(
                 builder: (context, provider, _) {
                   final comments = provider.getComments(widget.post.id);
                   final isLoading = provider.isCommentsLoading(widget.post.id);
@@ -531,7 +535,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
               if (controller.text.trim().isNotEmpty) {
                 Navigator.pop(context);
                 HapticFeedback.lightImpact();
-                context.read<PostProvider>().editComment(
+                context.read<CommentProvider>().editComment(
                   widget.post.id,
                   comment.id,
                   controller.text.trim(),
@@ -569,10 +573,15 @@ class _CommentsSheetState extends State<CommentsSheet> {
             onPressed: () {
               Navigator.pop(context);
               HapticFeedback.heavyImpact();
-              context.read<PostProvider>().deleteComment(
+              context.read<CommentProvider>().deleteComment(
                 widget.post.id,
                 comment.id,
-              );
+              ).then((success) {
+                if (success && context.mounted) {
+                  final count = context.read<CommentProvider>().getComments(widget.post.id).length;
+                  context.read<PostProvider>().updateCommentCount(widget.post.id, count);
+                }
+              });
             },
             child: const Text('حذف'),
           ),

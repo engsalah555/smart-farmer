@@ -6,7 +6,7 @@ import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/models/store_model.dart';
 import '../providers/marketplace_provider.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
-import '../widgets/product_card.dart';
+import '../widgets/unified_product_card.dart';
 
 class StoreDetailsScreen extends StatefulWidget {
   final StoreModel store;
@@ -348,7 +348,11 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                         return FadeInSlide(
                           delay: Duration(milliseconds: 30 * index),
                           duration: const Duration(milliseconds: 400),
-                          child: ProductCard(product: products[index]),
+                          child: UnifiedProductCard(
+                            product: products[index],
+                            layout: ProductCardLayout.grid,
+                            mode: ProductCardMode.buyer,
+                          ),
                         );
                       }, childCount: products.length),
                     ),

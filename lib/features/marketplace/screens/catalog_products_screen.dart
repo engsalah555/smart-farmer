@@ -9,8 +9,7 @@ import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
 import '../providers/marketplace_provider.dart';
 import '../providers/seller_provider.dart';
-import '../widgets/product_card.dart';
-import '../widgets/premium_seller_product_card.dart';
+import '../widgets/unified_product_card.dart';
 
 class CatalogProductsScreen extends StatefulWidget {
   final CatalogModel catalog;
@@ -181,16 +180,19 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
                   final product = products[index];
                   return FadeInSlide(
                     duration: Duration(milliseconds: 500 + (index * 100)),
-                    child: widget.isSeller
-                        ? PremiumSellerProductCard(
-                            product: product,
-                            isGrid: true,
-                            onEdit: () =>
-                                context.push('/add_product', extra: product),
-                            onDelete: () =>
-                                _showDeleteConfirmation(context, product),
-                          )
-                        : ProductCard(product: product),
+                    child: UnifiedProductCard(
+                      product: product,
+                      layout: ProductCardLayout.grid,
+                      mode: widget.isSeller
+                          ? ProductCardMode.seller
+                          : ProductCardMode.buyer,
+                      onEdit: widget.isSeller
+                          ? () => context.push('/add_product', extra: product)
+                          : null,
+                      onDelete: widget.isSeller
+                          ? () => _showDeleteConfirmation(context, product)
+                          : null,
+                    ),
                   );
                 }, childCount: products.length),
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/store_model.dart';
 import '../providers/marketplace_provider.dart';
-import 'premium_store_card.dart';
+import 'unified_store_card.dart';
 import 'marketplace_empty_states.dart';
 
 class BuyerStoreGrid extends StatelessWidget {
@@ -112,7 +112,7 @@ class BuyerStoreGrid extends StatelessWidget {
         ),
         delegate: SliverChildBuilderDelegate(
           (context, index) =>
-              PremiumStoreCard(store: stores[index], index: index),
+              UnifiedStoreCard(store: stores[index], index: index),
           childCount: stores.length,
         ),
       ),

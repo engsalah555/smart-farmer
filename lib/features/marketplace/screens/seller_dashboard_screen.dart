@@ -12,7 +12,7 @@ import '../providers/seller_provider.dart';
 import '../../../core/models/store_model.dart';
 import '../../../core/models/product_model.dart';
 import '../../../core/models/catalog_model.dart';
-import '../widgets/premium_seller_product_card.dart';
+import '../widgets/unified_product_card.dart';
 import 'seller_orders_screen.dart';
 
 class SellerDashboardScreen extends StatefulWidget {
@@ -440,9 +440,10 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                             final product = filteredProducts[index];
                             return FadeInSlide(
                               delay: Duration(milliseconds: 50 * index),
-                              child: PremiumSellerProductCard(
+                              child: UnifiedProductCard(
                                 product: product,
-                                isGrid: true,
+                                layout: ProductCardLayout.grid,
+                                mode: ProductCardMode.seller,
                                 onEdit: () => context.push(
                                   '/add_product',
                                   extra: product,

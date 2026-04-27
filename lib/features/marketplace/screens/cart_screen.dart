@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants.dart';
 import '../providers/cart_provider.dart';
+import '../../../core/models/cart_model.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 
 class CartScreen extends StatelessWidget {

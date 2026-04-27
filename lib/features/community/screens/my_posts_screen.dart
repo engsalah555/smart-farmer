@@ -54,7 +54,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
         body: Consumer<PostProvider>(
           builder: (context, provider, child) {
             return ResponsivePostList(
-              posts: provider.myPosts,
+              postIds: provider.myPostIds,
               isLoading: provider.isLoading,
               errorMessage: provider.errorMessage,
               onRefresh: () => provider.fetchMyPosts(),

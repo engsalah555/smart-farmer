@@ -14,7 +14,8 @@
     <application
         android:label="smart_farm2"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:usesCleartextTraffic="true">
         
         <!-- Image Cropper Activity -->
         <activity

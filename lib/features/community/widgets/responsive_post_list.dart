@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/post_model.dart';
 import '../../../core/utils/responsive.dart';
 import '../widgets/social_media_post.dart';
 import '../widgets/skeleton_post.dart';
 
 class ResponsivePostList extends StatelessWidget {
-  final List<PostModel> posts;
+  final List<String> postIds;
   final bool isLoading;
   final String? errorMessage;
   final VoidCallback onRefresh;
@@ -16,7 +15,7 @@ class ResponsivePostList extends StatelessWidget {
 
   const ResponsivePostList({
     super.key,
-    required this.posts,
+    required this.postIds,
     required this.isLoading,
     this.errorMessage,
     required this.onRefresh,
@@ -28,15 +27,15 @@ class ResponsivePostList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading && posts.isEmpty) {
+    if (isLoading && postIds.isEmpty) {
       return _buildSkeletons(context);
     }
 
-    if (errorMessage != null && posts.isEmpty) {
+    if (errorMessage != null && postIds.isEmpty) {
       return _buildError(context);
     }
 
-    if (posts.isEmpty) {
+    if (postIds.isEmpty) {
       return emptyWidget ?? _buildEmpty(context);
     }
 
@@ -72,8 +71,8 @@ class ResponsivePostList extends StatelessWidget {
                       sliver: !isTablet 
                         ? SliverList(
                             delegate: SliverChildBuilderDelegate(
-                              (context, index) => SocialMediaPost(post: posts[index]),
-                              childCount: posts.length,
+                              (context, index) => SocialMediaPost(postId: postIds[index]),
+                              childCount: postIds.length,
                             ),
                           )
                         : SliverGrid(
@@ -84,8 +83,8 @@ class ResponsivePostList extends StatelessWidget {
                               childAspectRatio: 0.75, // Better for grid items with images
                             ),
                             delegate: SliverChildBuilderDelegate(
-                              (context, index) => SocialMediaPost(post: posts[index]),
-                              childCount: posts.length,
+                              (context, index) => SocialMediaPost(postId: postIds[index]),
+                              childCount: postIds.length,
                             ),
                           ),
                     ),

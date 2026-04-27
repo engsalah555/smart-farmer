@@ -43,23 +43,32 @@ class AppConstants {
 
   static const String aiAnalyzeUrl = 'ai/analyze-plant';
 
-  /// يبني عنوان URL كامل من مسار نسبي، مع معالجة مشاكل المسارات المتكررة.
+  /// يبني عنوان URL كامل من مسار نسبي، مع معالجة مشاكل المسارات المتكررة وتلقائياً إضافة /storage/ إذا لزم الأمر.
   static String? buildUrl(String? path) {
     if (path == null || path.isEmpty) return null;
     if (path.startsWith('http')) return path;
-    
-    String cleanPath = path;
-    
+    if (path.startsWith('assets/')) return path;
+
+    // تنظيف المسار من البادئات المتكررة
+    String cleanPath = path.startsWith('/') ? path.substring(1) : path;
+
+    // إذا لم يكن المسار يبدأ بـ storage/، نقوم بإضافته (لأن Laravel يخزن الصور هناك غالباً)
+    // إلا إذا كان المسار يبدأ بـ api/ أو شيء آخر لا يتطلب storage/
+    if (!cleanPath.startsWith('storage/') &&
+        !cleanPath.startsWith('api/') &&
+        !cleanPath.contains('placeholder')) {
+      cleanPath = 'storage/$cleanPath';
+    }
+
     // إزالة السلاسل المتكررة التي قد تأتي من الباك إند أحياناً
     while (cleanPath.contains('//')) {
       cleanPath = cleanPath.replaceAll('//', '/');
     }
-    
-    if (cleanPath.contains('/storage/storage/')) {
-      cleanPath = cleanPath.replaceAll('/storage/storage/', '/storage/');
+
+    if (cleanPath.contains('storage/storage/')) {
+      cleanPath = cleanPath.replaceAll('storage/storage/', 'storage/');
     }
-    
-    // التأكد من أن المسار يبدأ بـ / إذا لم يكن موجوداً
+
     final String separator = cleanPath.startsWith('/') ? '' : '/';
     return '$apiBaseUrl$separator$cleanPath';
   }

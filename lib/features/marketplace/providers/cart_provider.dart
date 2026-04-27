@@ -1,14 +1,10 @@
 import '../../../core/services/locator.dart';
 import '../../../core/providers/base_provider.dart';
-import '../../../core/models/product_model.dart';
+import '../../../core/models/cart_model.dart';
+
+
 import '../services/marketplace_service.dart';
-
-class CartItem {
-  final ProductModel product;
-  int quantity;
-
-  CartItem({required this.product, this.quantity = 1});
-}
+import '../../../core/models/product_model.dart';
 
 class CartProvider extends BaseProvider {
   final MarketplaceService _marketplaceService = locator<MarketplaceService>();
@@ -29,15 +25,13 @@ class CartProvider extends BaseProvider {
   void addItem(ProductModel product, {int quantity = 1}) {
     if (_items.containsKey(product.id)) {
       // increase quantity
-      final newQuantity = _items[product.id]!.quantity + quantity;
-      _items.update(
-        product.id,
-        (existingCartItem) => CartItem(
-          product: existingCartItem.product,
-          quantity: newQuantity > product.quantity
-              ? product.quantity
-              : newQuantity,
-        ),
+      final existingItem = _items[product.id]!;
+      final newQuantity = existingItem.quantity + quantity;
+      
+      _items[product.id] = existingItem.copyWith(
+        quantity: newQuantity > product.quantity
+            ? product.quantity
+            : newQuantity,
       );
     } else {
       // add new item
@@ -45,9 +39,9 @@ class CartProvider extends BaseProvider {
           ? product.quantity
           : quantity;
       if (initialQty > 0) {
-        _items.putIfAbsent(
-          product.id,
-          () => CartItem(product: product, quantity: initialQty),
+        _items[product.id] = CartItem(
+          product: product, 
+          quantity: initialQty
         );
       }
     }
@@ -63,13 +57,10 @@ class CartProvider extends BaseProvider {
     if (!_items.containsKey(productId)) {
       return;
     }
-    if (_items[productId]!.quantity > 1) {
-      _items.update(
-        productId,
-        (existingCartItem) => CartItem(
-          product: existingCartItem.product,
-          quantity: existingCartItem.quantity - 1,
-        ),
+    final existingItem = _items[productId]!;
+    if (existingItem.quantity > 1) {
+      _items[productId] = existingItem.copyWith(
+        quantity: existingItem.quantity - 1,
       );
     } else {
       _items.remove(productId);
@@ -91,6 +82,8 @@ class CartProvider extends BaseProvider {
     if (_items.isEmpty) return false;
 
     final result = await execute(() async {
+      // Group items by storeId for backend processing if needed
+      // However, backend service currently takes raw items list
       final orderData = {
         'items': _items.values
             .map(

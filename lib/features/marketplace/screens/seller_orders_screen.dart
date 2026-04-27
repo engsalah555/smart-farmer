@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/widgets/fade_in_slide.dart';
-import '../../../core/utils/url_helper.dart';
 import '../providers/seller_provider.dart';
 
 class SellerOrdersScreen extends StatefulWidget {
@@ -353,8 +352,9 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           final order = storeOrders[index];
+          final delayIndex = index > 10 ? 0 : index;
           return FadeInSlide(
-            delay: Duration(milliseconds: 100 * index),
+            delay: Duration(milliseconds: 50 * delayIndex),
             child: _buildOrderCard(context, order),
           );
         }, childCount: storeOrders.length),
@@ -596,7 +596,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
   }
 
   Widget _buildReceiptPreview(BuildContext context, String imageUrl) {
-    final fullUrl = UrlHelper.formatImageUrl(imageUrl);
+    final fullUrl = AppConstants.buildUrl(imageUrl) ?? '';
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: Column(
@@ -645,7 +645,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
   Widget _buildOrderItemRow(BuildContext context, Map<String, dynamic> item) {
     final product = item['product'];
     final productImage = product?['image'] != null
-        ? UrlHelper.formatImageUrl(product!['image'].toString())
+        ? AppConstants.buildUrl(product!['image'].toString())
         : null;
 
     return Padding(

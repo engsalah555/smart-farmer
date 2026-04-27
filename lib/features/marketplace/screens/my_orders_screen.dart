@@ -117,8 +117,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final order = orders[index];
+                    final animationMultiplier = index > 10 ? 0 : index;
                     return FadeInSlide(
-                      duration: Duration(milliseconds: 400 + (index * 100)),
+                      delay: Duration(milliseconds: 50 * animationMultiplier),
                       child: OrderCard(order: order, isDark: isDark),
                     );
                   },
