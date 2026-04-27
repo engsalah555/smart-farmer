@@ -5,6 +5,7 @@ import 'catalog_model.dart';
 /// نموذج بيانات المتجر
 class StoreModel {
   final String id;
+  final String slug; // ✅ للتعامل مع API routes التي تستخدم slug
   final String name;
   final String ownerId;
   final String description;
@@ -23,6 +24,7 @@ class StoreModel {
 
   StoreModel({
     required this.id,
+    String? slug,
     required this.name,
     required this.ownerId,
     required this.description,
@@ -38,19 +40,22 @@ class StoreModel {
     this.products = const [],
     this.catalogs = const [],
     this.productsCount = 0,
-  });
+  }) : slug = slug ?? id;
 
   factory StoreModel.fromJson(Map<String, dynamic> json) {
+    // ✅ الباكند يُعيد logo و cover_image كـ URLs كاملة من getLogoUrlAttribute
+    // لذا نستخدم buildUrl فقط إذا لم يكن كاملاً
+    final rawLogo = json['logo']?.toString() ?? '';
+    final rawCover = json['cover_image']?.toString() ?? json['coverImage']?.toString() ?? '';
+
     return StoreModel(
       id: json['id'].toString(),
+      slug: json['slug']?.toString() ?? json['id'].toString(),
       name: json['store_name'] ?? json['name'] ?? '',
       ownerId: json['user_id']?.toString() ?? json['ownerId']?.toString() ?? '',
       description: json['description'] ?? '',
-      logo: AppConstants.buildUrl(json['logo']?.toString() ?? '') ?? '',
-      coverImage: AppConstants.buildUrl(
-            json['cover_image']?.toString() ?? json['coverImage']?.toString() ?? '',
-          ) ??
-          '',
+      logo: AppConstants.buildUrl(rawLogo) ?? '',
+      coverImage: AppConstants.buildUrl(rawCover) ?? '',
       rating: double.tryParse((json['rating'] ?? 0).toString()) ?? 0.0,
       reviewsCount: json['reviewsCount'] ?? 0,
       location: json['address'] ?? json['location'] ?? 'غير محدد',
@@ -79,6 +84,7 @@ class StoreModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'slug': slug,
       'store_name': name,
       'user_id': ownerId,
       'description': description,
@@ -94,3 +100,4 @@ class StoreModel {
     };
   }
 }
+

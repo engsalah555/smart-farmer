@@ -90,19 +90,32 @@ class PostModel {
       return str;
     }
 
+    // ✅ الباكند يُعيد 'image' = profile_photo_url (URL كامل) و 'post_image' = image_url (URL كامل)
+    // buildUrl تُعيد URL كاملاً كما هو إذا بدأ بـ http
+    final authorAvatarRaw = json['image']?.toString() ?? 
+        json['user']?['profile_photo_url']?.toString() ?? 
+        json['user']?['profile_image']?.toString();
+    
+    final postImageRaw = json['post_image']?.toString() ?? 
+        json['image_url']?.toString();
+
     return PostModel(
       id: json['id'].toString(),
       userId: json['user_id']?.toString() ??
           json['user']?['id']?.toString() ??
           '',
       author: json['author'] ?? json['user']?['name'] ?? 'مستخدم مجهول',
-      time: parseDate(json['time'] ?? json['created_at']),
+      // ✅ نُفضّل 'time' (human-readable) ثم created_at (ISO)
+      time: json['time']?.toString().isNotEmpty == true
+          ? json['time'].toString()
+          : parseDate(json['created_at']),
       title: json['title'] ?? '',
       content: json['content'] ?? '',
-      image: AppConstants.buildUrl(json['image'] ?? json['user']?['profile_image'] ?? json['user']?['profile_photo_url']),
-      postImage: AppConstants.buildUrl(json['post_image'] ?? json['image_url']),
-      likesCount: json['likes_count'] ?? 0,
-      commentsCount: json['comments_count'] ?? 0,
+      // ✅ buildUrl تتجاهل URLs الكاملة، وتُضيف prefix فقط للمسارات النسبية
+      image: AppConstants.buildUrl(authorAvatarRaw),
+      postImage: AppConstants.buildUrl(postImageRaw),
+      likesCount: (json['likes_count'] as num?)?.toInt() ?? 0,
+      commentsCount: (json['comments_count'] as num?)?.toInt() ?? 0,
       isLiked: parseBool(json['is_liked']),
       isSaved: parseBool(json['is_saved']),
       isAuthorVerified: parseBool(json['is_verified'] ?? json['user']?['is_verified']),
