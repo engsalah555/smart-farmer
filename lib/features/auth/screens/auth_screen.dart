@@ -386,8 +386,10 @@ class _AuthScreenState extends State<AuthScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        isLogin ? 'ليس لديك حساب؟ ' : '��ديك حساب بالفعل؟ ',
-                        style: TextStyle(color: textSecondary, fontSize: 14),
+                        isLogin ? 'ليس لديك حساب؟ ' : 'لديك حساب بالفعل؟ ',
+                        style: context.font14.copyWith(
+                          color: context.textSecondary,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () => setState(() => isLogin = !isLogin),
