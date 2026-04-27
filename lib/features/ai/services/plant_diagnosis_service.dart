@@ -28,13 +28,8 @@ class PlantDiagnosisResult {
 /// خدمة تشخيص أمراض النباتات باستخدام Gemini Vision AI
 class PlantDiagnosisService {
   GenerativeModel? _model;
-  String _currentModel = _modelFallbacks.first;
+  final String _currentModel = 'gemini-1.5-flash';
   bool _isInitialized = false;
-
-  static const List<String> _modelFallbacks = [
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-flash',
-  ];
 
   static const String _systemPrompt =
       'أنت طبيب نباتات متخصص وخبير زراعي دقيق للغاية. '
@@ -57,20 +52,18 @@ class PlantDiagnosisService {
     _init();
   }
 
-  void _init({String? modelOverride}) {
+  void _init() {
     final apiKey = _getApiKey();
     if (apiKey.isEmpty) {
       debugPrint('PlantDiagnosisService: No API key found');
       return;
     }
 
-    final modelName = modelOverride ?? _modelFallbacks.first;
-    _currentModel = modelName;
-    _model = _createModel(apiKey, modelName);
+    _model = _createModel(apiKey, _currentModel);
     _isInitialized = _model != null;
     
     if (_isInitialized) {
-      debugPrint('PlantDiagnosisService: initialized with model $modelName');
+      debugPrint('PlantDiagnosisService: initialized with model $_currentModel');
     }
   }
 
@@ -135,16 +128,7 @@ class PlantDiagnosisService {
     final errorStr = e.toString().toUpperCase();
     debugPrint('PlantDiagnosisService Error: $e');
 
-    // 1. معالجة أخطاء النموذج (Model Not Found / Unavailable)
-    if (errorStr.contains('404') || errorStr.contains('MODEL_NOT_FOUND') || errorStr.contains('503')) {
-      final nextModel = _getNextFallbackModel();
-      if (nextModel != null) {
-        _init(modelOverride: nextModel);
-        return diagnose(imageBytes);
-      }
-    }
-
-    // 2. معالجة أخطاء الحصة (Quota / Resource Exhausted)
+    // 1. معالجة أخطاء الحصة (Quota / Resource Exhausted)
     if (errorStr.contains('QUOTA') || errorStr.contains('RESOURCE_EXHAUSTED')) {
       final fallbackKey = dotenv.env['GEMINI_API_KEY'] ?? '';
       if (fallbackKey.isNotEmpty && _getApiKey() != fallbackKey) {
@@ -154,20 +138,12 @@ class PlantDiagnosisService {
       return _errorResult('تم تجاوز الحد المسموح به (Quota). يرجى المحاولة لاحقاً.');
     }
 
-    // 3. أخطاء الشبكة
+    // 2. أخطاء الشبكة
     if (errorStr.contains('SOCKETEXCEPTION') || errorStr.contains('NETWORK')) {
       return _errorResult('فشل الاتصال بالإنترنت. يرجى التحقق من الشبكة.');
     }
 
     return _errorResult('حدث خطأ غير متوقع أثناء التشخيص.');
-  }
-
-  String? _getNextFallbackModel() {
-    final currentIdx = _modelFallbacks.indexOf(_currentModel);
-    if (currentIdx >= 0 && currentIdx < _modelFallbacks.length - 1) {
-      return _modelFallbacks[currentIdx + 1];
-    }
-    return null;
   }
 
   /// تحليل نص الاستجابة واستخراج الأقسام

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../routes/app_router.dart';
 
 class GlobalErrorInterceptor extends Interceptor {
@@ -15,8 +14,15 @@ class GlobalErrorInterceptor extends Interceptor {
         errorMessage = 'انتهى وقت الاتصال المستغرق. يرجى التحقق من الإنترنت.';
         break;
       case DioExceptionType.badResponse:
-        errorMessage =
-            'تلقينا استجابة غير صالحة من الخادم. (الرمز: ${err.response?.statusCode})';
+        final responseData = err.response?.data;
+        if (responseData != null &&
+            responseData is Map<String, dynamic> &&
+            responseData.containsKey('message')) {
+          errorMessage = responseData['message'] as String;
+        } else {
+          errorMessage =
+              'تلقينا استجابة غير صالحة من الخادم. (الرمز: ${err.response?.statusCode})';
+        }
         break;
       case DioExceptionType.cancel:
         errorMessage = 'تم إلغاء الطلب.';
@@ -31,15 +37,16 @@ class GlobalErrorInterceptor extends Interceptor {
         errorMessage = 'حدث خطأ غير متوقع بالنظام.';
     }
 
-    debugPrint('GlobalErrorInterceptor: Error [${err.response?.statusCode}] at [${err.requestOptions.uri}]: $errorMessage');
+    debugPrint(
+      'GlobalErrorInterceptor: Error [${err.response?.statusCode}] at [${err.requestOptions.uri}]: $errorMessage',
+    );
 
     if (err.response?.statusCode == 401) {
-      debugPrint('401 Unauthorized detected. Clearing session and redirecting to /auth...');
+      debugPrint(
+        '401 Unauthorized detected. Clearing session and redirecting to /auth...',
+      );
 
-      SharedPreferences.getInstance().then((prefs) {
-        prefs.remove('auth_token');
-        prefs.remove('user_data');
-      });
+      AppRouter.authProvider?.forceLogout();
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AppRouter.router.go('/auth');

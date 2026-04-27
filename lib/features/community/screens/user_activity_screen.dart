@@ -48,7 +48,7 @@ class _UserActivityScreenState extends State<UserActivityScreen> {
         body: Consumer<PostProvider>(
           builder: (context, provider, child) {
             return ResponsivePostList(
-              posts: provider.activityPosts,
+              postIds: provider.activityPostIds,
               isLoading: provider.isLoading,
               errorMessage: provider.errorMessage,
               onRefresh: () => provider.fetchActivityPosts(),

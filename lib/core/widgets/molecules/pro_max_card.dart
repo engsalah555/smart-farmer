@@ -33,6 +33,7 @@ class ProMaxCard extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(color: borderColor, width: 1.0),
+        boxShadow: (elevation != null && elevation! > 0) ? AppDecorations.softShadow(isDark) : null,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),

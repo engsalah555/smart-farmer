@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'base_provider.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -153,6 +155,22 @@ class AuthProvider extends BaseProvider {
       _isAuthenticated = false;
       _currentUser = null;
     });
+  }
+
+  /// تسجيل الخروج القسري محلياً (في حالة انتهاء الجلسة أو 401)
+  Future<void> forceLogout() async {
+    await executeSilently(() async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('auth_token');
+      await prefs.remove('user_data');
+      if (!_rememberMe) {
+        await _authService.clearRememberMe();
+        _savedEmail = '';
+      }
+      _isAuthenticated = false;
+      _currentUser = null;
+    });
+    notifyListeners();
   }
 
   /// تحديث الملف الشخصي

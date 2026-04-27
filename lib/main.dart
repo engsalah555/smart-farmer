@@ -11,6 +11,7 @@ import 'core/providers/settings_provider.dart';
 import 'core/services/locator.dart';
 import 'core/theme/app_theme.dart';
 import 'features/community/providers/post_provider.dart';
+import 'features/community/providers/comment_provider.dart';
 import 'features/crops/providers/crops_provider.dart';
 import 'features/home/providers/home_provider.dart';
 import 'features/marketplace/providers/cart_provider.dart';
@@ -78,6 +79,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => NotificationsProvider()),
         ChangeNotifierProvider(create: (_) => PostProvider(locator())),
+        ChangeNotifierProvider(create: (_) => CommentProvider(locator())),
         ChangeNotifierProvider(create: (_) => CropsProvider(locator())),
         ChangeNotifierProvider(create: (_) => IotProvider(locator())),
       ],

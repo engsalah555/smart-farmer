@@ -6,28 +6,19 @@ class GeminiService {
   GenerativeModel? _model;
   ChatSession? _chatSession;
   String? _initError;
-  String _currentModelName = _modelFallbacks.first;
-
-  // قائمة بالنماذج المتاحة بترتيب الأولوية
-  static const List<String> _modelFallbacks = [
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-flash',
-    'gemini-2.0-flash',
-  ];
+  final String _currentModelName = 'gemini-1.5-flash';
 
   GeminiService() {
     _initModel();
   }
 
-  void _initModel({String? modelOverride}) {
+  void _initModel() {
     try {
       final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
       if (apiKey.isEmpty) {
         _initError = 'مفتاح Gemini AI غير موجود في ملف .env';
         return;
       }
-
-      final modelName = modelOverride ?? _modelFallbacks.first;
 
       final systemInstruction = Content.system(
         'أنت استشاري زراعي ذكي ومساعد رسمي لتطبيق "مزرعتي الذكية".\n'
@@ -43,7 +34,7 @@ class GeminiService {
       );
 
       _model = GenerativeModel(
-        model: modelName,
+        model: _currentModelName,
         apiKey: apiKey,
         systemInstruction: systemInstruction,
         generationConfig: GenerationConfig(
@@ -53,21 +44,10 @@ class GeminiService {
       );
       _chatSession = _model!.startChat();
       _initError = null; // clear any previous error
-      _currentModelName = modelName;
-      debugPrint('GeminiService: initialized with model $modelName');
+      debugPrint('GeminiService: initialized with model $_currentModelName');
     } catch (e) {
       debugPrint('GeminiService init error: $e');
       _initError = 'حدث خطأ أثناء إعداد المساعد الذكي.';
-    }
-  }
-
-  /// محاولة استخدام نموذج بديل في حال فشل الأول
-  Future<void> _tryFallbackModel(String failedModel) async {
-    final currentIdx = _modelFallbacks.indexOf(failedModel);
-    if (currentIdx != -1 && currentIdx < _modelFallbacks.length - 1) {
-      final nextModel = _modelFallbacks[currentIdx + 1];
-      debugPrint('GeminiService: Falling back to $nextModel');
-      _initModel(modelOverride: nextModel);
     }
   }
 
@@ -96,8 +76,6 @@ class GeminiService {
       return;
     }
 
-    String currentModelRef = _currentModelName;
-
     try {
       final parts = <Part>[TextPart(message)];
       if (imageBytes != null) {
@@ -117,21 +95,7 @@ class GeminiService {
       debugPrint('GeminiService stream error: $e');
       final errorStr = e.toString();
 
-      // محاولة نموذج بديل إذا كانت المشكلة في الموديل
-      if (errorStr.contains('404') ||
-          errorStr.contains('not found') ||
-          errorStr.contains('MODEL_NOT_FOUND') ||
-          errorStr.contains('deprecated') ||
-          errorStr.contains('503') ||
-          errorStr.contains('UNAVAILABLE') ||
-          errorStr.contains('high demand')) {
-        await _tryFallbackModel(currentModelRef);
-        if (isReady) {
-          yield 'جارٍ إعادة الاتصال بنموذج بديل، أرسل رسالتك مرة أخرى...';
-        } else {
-          yield 'لم يتمكن التطبيق من الاتصال بخدمة الذكاء الاصطناعي. يرجى التحقق من الاتصال بالإنترنت أو تحديث التطبيق.';
-        }
-      } else if (errorStr.contains('API_KEY') || errorStr.contains('403')) {
+      if (errorStr.contains('API_KEY') || errorStr.contains('403')) {
         yield 'المفتاح المستخدم لذكاء الاصطناعي غير صالح أو منتهي الصلاحية. يرجى التواصل مع الدعم.';
       } else if (errorStr.contains('quota') ||
           errorStr.contains('RESOURCE_EXHAUSTED')) {

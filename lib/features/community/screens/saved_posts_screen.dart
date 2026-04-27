@@ -53,7 +53,7 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
         body: Consumer<PostProvider>(
           builder: (context, provider, child) {
             return ResponsivePostList(
-              posts: provider.savedPosts,
+              postIds: provider.savedPostIds,
               isLoading: provider.isLoading,
               errorMessage: provider.errorMessage,
               onRefresh: () => provider.fetchSavedPosts(),

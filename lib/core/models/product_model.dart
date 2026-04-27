@@ -1,9 +1,10 @@
-import '../utils/url_helper.dart';
+import '../constants.dart';
 
 /// نموذج بيانات المنتج
 /// يحتوي على جميع المعلومات المتعلقة بالمنتج في المتجر
 class ProductModel {
   final String id;
+  final String slug; // Used for API update/delete URLs (Backend routes by slug)
   final String title;
   final String description;
   final String category; // Not present in backend explicitly yet, use default
@@ -29,6 +30,7 @@ class ProductModel {
 
   ProductModel({
     required this.id,
+    String? slug,
     required this.title,
     required this.description,
     required this.category,
@@ -51,7 +53,7 @@ class ProductModel {
     this.reviewsCount = 0,
     this.storeLogo = '',
     this.storeCoverImage = '',
-  });
+  }) : slug = slug ?? id; // fallback to id if slug not provided
 
   /// تحويل من JSON إلى كائن ProductModel
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -60,6 +62,7 @@ class ProductModel {
 
     return ProductModel(
       id: json['id'].toString(),
+      slug: json['slug']?.toString() ?? json['id'].toString(), // Backend slugs products
       title: json['name'] ?? json['title'] ?? '',
       description: json['description'] ?? '',
       category: json['category'] ?? 'شامل',
@@ -80,17 +83,17 @@ class ProductModel {
         final List<String> imgUrls = [];
         if (json['image_url'] != null &&
             json['image_url'].toString().isNotEmpty) {
-          imgUrls.add(UrlHelper.formatImageUrl(json['image_url'].toString()));
+          imgUrls.add(AppConstants.buildUrl(json['image_url'].toString())!);
         }
 
         final additional = json['additional_images'];
         if (additional != null && additional is List) {
           for (var img in additional) {
             if (img is String && img.isNotEmpty) {
-              imgUrls.add(UrlHelper.formatImageUrl(img));
+              imgUrls.add(AppConstants.buildUrl(img)!);
             } else if (img is Map && img['image_url'] != null) {
               imgUrls.add(
-                UrlHelper.formatImageUrl(img['image_url'].toString()),
+                AppConstants.buildUrl(img['image_url'].toString())!,
               );
             }
           }
@@ -100,7 +103,7 @@ class ProductModel {
           imgUrls.addAll(
             List<String>.from(json['images'])
                 .where((e) => e.isNotEmpty)
-                .map((e) => UrlHelper.formatImageUrl(e)),
+                .map((e) => AppConstants.buildUrl(e)!),
           );
         }
         return imgUrls;
@@ -133,24 +136,25 @@ class ProductModel {
           (json['reviews_count'] as num?)?.toInt() ??
           (json['reviewsCount'] as num?)?.toInt() ??
           0,
-      storeLogo: UrlHelper.formatImageUrl(
+      storeLogo: AppConstants.buildUrl(
         store != null ? (store['logo'] ?? '') : (json['storeLogo'] ?? ''),
-      ),
-      storeCoverImage: UrlHelper.formatImageUrl(
+      ) ?? '',
+      storeCoverImage: AppConstants.buildUrl(
         store != null
             ? (store['cover_image'] ?? store['coverImage'] ?? '')
             : (json['storeCoverImage'] ?? ''),
-      ),
+      ) ?? '',
       updatedAt: json['updated_at'] != null
           ? DateTime.tryParse(json['updated_at'].toString())
           : null,
     );
   }
 
-  /// تحويل من كائن ProductModel إلى JSON
+  /// تحويل كائن ProductModel إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'slug': slug,
       'name': title, // map to backend "name"
       'description': description,
       'price': price,
@@ -178,6 +182,7 @@ class ProductModel {
   /// نسخ الكائن مع إمكانية تعديل بعض الحقول
   ProductModel copyWith({
     String? id,
+    String? slug,
     String? title,
     String? description,
     String? category,
@@ -203,6 +208,7 @@ class ProductModel {
   }) {
     return ProductModel(
       id: id ?? this.id,
+      slug: slug ?? this.slug,
       title: title ?? this.title,
       description: description ?? this.description,
       category: category ?? this.category,

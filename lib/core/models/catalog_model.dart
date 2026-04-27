@@ -1,4 +1,4 @@
-import '../utils/url_helper.dart';
+import '../constants.dart';
 
 /// نموذج الكتالوج
 /// يمثل تصنيف داخل متجر واحد
@@ -31,7 +31,7 @@ class CatalogModel {
       storeId: json['store_id']?.toString() ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      imageUrl: UrlHelper.formatImageUrl(json['image_url']),
+      imageUrl: AppConstants.buildUrl(json['image_url']?.toString() ?? ''),
       sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
       productsCount: (json['products_count'] as num?)?.toInt() ?? 0,
       createdAt: json['created_at'] != null

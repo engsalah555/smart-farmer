@@ -6,6 +6,7 @@ import '../../../core/constants.dart';
 import '../../../core/helpers/image_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../providers/cart_provider.dart';
+import '../providers/marketplace_provider.dart';
 import 'package:go_router/go_router.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -61,6 +62,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     if (success) {
       if (mounted) {
+        context.read<MarketplaceProvider>().loadMyOrders();
         showDialog(
           context: context,
           barrierDismissible: false,

@@ -1,4 +1,4 @@
-import '../utils/url_helper.dart';
+import '../constants.dart';
 import 'product_model.dart';
 import 'catalog_model.dart';
 
@@ -18,6 +18,7 @@ class StoreModel {
   final double? longitude;
   final List<ProductModel> products;
   final List<CatalogModel> catalogs;
+  final String status; // 'pending', 'verified', 'rejected'
   final int productsCount;
 
   StoreModel({
@@ -31,6 +32,7 @@ class StoreModel {
     required this.reviewsCount,
     required this.location,
     required this.category,
+    this.status = 'pending',
     this.latitude,
     this.longitude,
     this.products = const [],
@@ -44,14 +46,16 @@ class StoreModel {
       name: json['store_name'] ?? json['name'] ?? '',
       ownerId: json['user_id']?.toString() ?? json['ownerId']?.toString() ?? '',
       description: json['description'] ?? '',
-      logo: UrlHelper.formatImageUrl(json['logo']),
-      coverImage: UrlHelper.formatImageUrl(
-        json['cover_image'] ?? json['coverImage'],
-      ),
+      logo: AppConstants.buildUrl(json['logo']?.toString() ?? '') ?? '',
+      coverImage: AppConstants.buildUrl(
+            json['cover_image']?.toString() ?? json['coverImage']?.toString() ?? '',
+          ) ??
+          '',
       rating: double.tryParse((json['rating'] ?? 0).toString()) ?? 0.0,
       reviewsCount: json['reviewsCount'] ?? 0,
       location: json['address'] ?? json['location'] ?? 'غير محدد',
       category: json['store_type'] ?? json['category'] ?? 'شامل',
+      status: json['status'] ?? 'pending',
       latitude: json['latitude'] != null
           ? double.tryParse(json['latitude'].toString())
           : null,
@@ -84,6 +88,7 @@ class StoreModel {
       'reviewsCount': reviewsCount,
       'address': location,
       'store_type': category,
+      'status': status,
       'latitude': latitude,
       'longitude': longitude,
     };

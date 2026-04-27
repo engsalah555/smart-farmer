@@ -257,11 +257,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ),
           ],
         ),
-        body: Stack(
+        body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
+<<<<<<< HEAD
                 padding: EdgeInsets.symmetric(
                   horizontal: context.wp(4),
                   vertical: context.hp(1),
@@ -310,9 +311,71 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               _existingImageUrl != null) ...[
                             SizedBox(height: context.hp(2)),
                             _buildImagePreview(context),
-                          ],
-                        ],
+=======
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.wp(5)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildUserHeader(context),
+                      SizedBox(height: context.hp(1)),
+
+                      TextField(
+                        controller: _contentController,
+                        maxLength: _maxChars,
+                        autofocus: widget.postToEdit == null,
+                        decoration: InputDecoration(
+                          hintText: 'بماذا تفكر؟ شاركنا يومياتك الزراعية...',
+                          border: InputBorder.none,
+                          counterText: '',
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: context.sp(17).clamp(15, 20),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        maxLines: null,
+                        minLines: 5,
+                        keyboardType: TextInputType.multiline,
+                        style: TextStyle(
+                          fontSize: context.sp(16).clamp(14, 18),
+                          height: 1.6,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
                       ),
+                      
+                      if (_selectedImage != null || _existingImageUrl != null) ...[
+                        SizedBox(height: context.hp(2)),
+                        _buildImagePreview(context),
+                      ],
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: context.hp(2)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: (_charCount > _maxChars * 0.9 ? Colors.orange : Colors.grey).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '$_charCount / $_maxChars',
+                                style: TextStyle(
+                                  fontSize: context.sp(11).clamp(9, 13),
+                                  fontWeight: FontWeight.w600,
+                                  color: _charCount > _maxChars * 0.9 
+                                      ? Colors.orange 
+                                      : Colors.grey.shade500,
+                                ),
+                              ),
+                            ),
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
+                          ],
+                        ),
+                      ),
+<<<<<<< HEAD
                     ),
 
                     // Stats / Info
@@ -331,23 +394,49 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               color: _charCount > _maxChars * 0.9
                                   ? Colors.orange
                                   : Colors.grey,
+=======
+                      
+                      // Community Tips
+                      Container(
+                        padding: EdgeInsets.all(context.wp(4)),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.tips_and_updates_rounded, color: AppColors.primary, size: 18),
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
                             ),
-                          ),
-                        ],
+                            SizedBox(width: context.wp(3)),
+                            Expanded(
+                              child: Text(
+                                'نصيحة: المنشورات المدعمة بالصور تحصل على تفاعل أكبر بـ 3 أضعاف!',
+                                style: TextStyle(
+                                  fontSize: context.sp(13).clamp(11, 15),
+                                  color: AppColors.primary.withValues(alpha: 0.8),
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: context.hp(4)),
+                    ],
+                  ),
                 ),
               ),
             ),
-
-            // Bottom Actions Bar
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildBottomBar(context),
-            ),
+            _buildBottomBar(context),
           ],
         ),
       ),
@@ -358,6 +447,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         final user = auth.currentUser;
+<<<<<<< HEAD
         return Row(
           children: [
             Container(
@@ -400,11 +490,51 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   style: TextStyle(
                     fontSize: context.sp(13).clamp(11, 15),
                     color: Colors.grey,
+=======
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: context.hp(2)),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: context.wp(5.5),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                backgroundImage: user?.profileImage != null && user!.profileImage!.isNotEmpty
+                    ? CachedNetworkImageProvider(user.profileImage!)
+                    : null,
+                child: user?.profileImage == null || user!.profileImage!.isEmpty
+                    ? Icon(Icons.person, color: AppColors.primary, size: context.wp(6))
+                    : null,
+              ),
+              SizedBox(width: context.wp(3)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user?.name ?? 'مستخدم زائر',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: context.sp(16).clamp(14, 18),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Icon(Icons.public, size: 12, color: Colors.grey.shade500),
+                      const SizedBox(width: 4),
+                      Text(
+                        'منشور عام',
+                        style: TextStyle(
+                          fontSize: context.sp(11).clamp(10, 13),
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ],
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
@@ -470,15 +600,26 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           padding: EdgeInsets.only(
             left: context.wp(4),
             right: context.wp(4),
-            top: context.hp(1.5),
-            bottom: context.hp(2) + MediaQuery.of(context).viewInsets.bottom,
+            top: context.hp(1),
+            bottom: context.hp(1) + MediaQuery.of(context).padding.bottom,
           ),
           decoration: BoxDecoration(
+<<<<<<< HEAD
             color: isDark
                 ? Colors.black.withValues(alpha: 0.6)
                 : Colors.white.withValues(alpha: 0.8),
             border: Border(
               top: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
+=======
+            color: isDark 
+                ? Colors.black.withValues(alpha: 0.8) 
+                : Colors.white.withValues(alpha: 0.9),
+            border: Border(
+              top: BorderSide(
+                color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.05),
+                width: 0.5,
+              ),
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
             ),
           ),
           child: Row(

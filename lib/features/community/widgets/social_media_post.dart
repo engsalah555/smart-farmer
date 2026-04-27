@@ -1,25 +1,24 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/post_model.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/molecules/pro_max_card.dart';
 import '../providers/post_provider.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../screens/comments_sheet.dart';
+import 'post/post_header.dart';
+import 'post/post_image.dart';
+import 'post/post_actions.dart';
 
 class SocialMediaPost extends StatelessWidget {
-  final PostModel post;
+  final String postId;
 
-  const SocialMediaPost({super.key, required this.post});
+  const SocialMediaPost({super.key, required this.postId});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+<<<<<<< HEAD
     // Use RepaintBoundary to isolate this widget's painting from the rest of the list
     return RepaintBoundary(
       child: Directionality(
@@ -76,34 +75,59 @@ class SocialMediaPost extends StatelessWidget {
       ),
     );
   }
+=======
+    return Selector<PostProvider, PostModel?>(
+      selector: (context, provider) => provider.getPost(postId),
+      builder: (context, post, child) {
+        if (post == null) {
+          return const SizedBox.shrink();
+        }
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
 
-  Widget _buildHeader(BuildContext context, bool isDark) {
-    return Padding(
-      padding: EdgeInsets.all(context.wp(4)),
-      child: Row(
-        children: [
-          _buildAvatar(context, isDark),
-          SizedBox(width: context.wp(3)),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+        return RepaintBoundary(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.wp(4),
+                vertical: context.hp(0.8),
+              ),
+              child: ProMaxCard(
+                borderRadius: 24,
+                elevation: isDark ? 0 : 2,
+                backgroundColor: isDark
+                    ? AppColors.darkSurface.withValues(alpha: 0.8)
+                    : Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
+                    // User Header
+                    PostHeader(post: post, isDark: isDark),
+
+                    // Post Text
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        context.wp(5),
+                        context.hp(1.2),
+                        context.wp(5),
+                        context.hp(1.8),
+                      ),
                       child: Text(
-                        post.author,
+                        post.content,
                         style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: context.sp(15).clamp(13, 19),
+                          fontSize: context.sp(14).clamp(12, 18),
+                          height: 1.6,
                           color: isDark
                               ? AppColors.darkTextPrimary
                               : AppColors.textPrimary,
+<<<<<<< HEAD
+=======
+                          letterSpacing: 0.1,
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+<<<<<<< HEAD
                     if (post.isAuthorVerified) ...[
                       SizedBox(width: context.wp(1.5)),
                       Icon(
@@ -682,6 +706,21 @@ class _ActionButton extends StatelessWidget {
           ],
         ),
       ),
+=======
+
+                    if (post.postImage != null && post.postImage!.isNotEmpty)
+                      PostImage(post: post),
+
+                    // Action Buttons
+                    PostActions(post: post, isDark: isDark),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
     );
   }
 }

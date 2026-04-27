@@ -1,4 +1,4 @@
-import '../utils/url_helper.dart';
+import '../constants.dart';
 
 class ReviewModel {
   final String id;
@@ -24,8 +24,8 @@ class ReviewModel {
       id: json['id']?.toString() ?? '',
       userId: json['user_id']?.toString() ?? '',
       userName: json['user']?['name'] ?? json['userName'] ?? 'مستخدم',
-      userImage: UrlHelper.formatImageUrl(
-        json['user']?['image_url'] ?? json['userImage'],
+      userImage: AppConstants.buildUrl(
+        (json['user']?['image_url'] ?? json['userImage'])?.toString() ?? '',
       ),
       rating: double.tryParse((json['rating'] ?? 0).toString()) ?? 0.0,
       comment: json['comment'] ?? '',

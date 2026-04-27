@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_farm2/features/community/widgets/social_media_post.dart';
+import 'package:smart_farm2/features/community/providers/post_provider.dart';
 
 import '../../../core/constants.dart';
-import '../../../core/models/post_model.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import 'package:go_router/go_router.dart';
-import '../providers/home_provider.dart';
-
 class ForumList extends StatelessWidget {
   const ForumList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final posts = context.select<HomeProvider, List<PostModel>>((p) => p.posts);
-    final isLoading = context.select<HomeProvider, bool>((p) => p.isLoading);
+    final postIds = context.select<PostProvider, List<String>>((p) => p.postIds.take(2).toList());
+    final isLoading = context.select<PostProvider, bool>((p) => p.isLoading);
 
     if (isLoading) {
       return const SliverToBoxAdapter(
@@ -90,6 +88,24 @@ class ForumList extends StatelessWidget {
 
         // Forum Posts List (Lazy loading via SliverList)
         SliverList(
+<<<<<<< HEAD
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: context.hp(1)),
+                child: FadeInSlide(
+                  duration: const Duration(milliseconds: 500),
+                  // Cap delay to first 5 items to prevent performance issues on long lists
+                  delay: Duration(milliseconds: index < 5 ? 100 * index : 0),
+                  child: SocialMediaPost(
+                    postId: postIds[index],
+                  ),
+                ),
+              );
+            },
+            childCount: postIds.length,
+          ),
+=======
           delegate: SliverChildBuilderDelegate((context, index) {
             return Padding(
               padding: EdgeInsets.only(bottom: context.hp(1)),
@@ -101,6 +117,7 @@ class ForumList extends StatelessWidget {
               ),
             );
           }, childCount: posts.length),
+>>>>>>> b0e685f0ffd6a3b1faea4a5064397d709de298ff
         ),
       ],
     );
