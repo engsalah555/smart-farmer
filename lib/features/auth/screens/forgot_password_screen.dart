@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/widgets/fade_in_slide.dart';
+import '../../../core/widgets/atoms/pro_max_text_field.dart';
 import '../widgets/auth_header.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -71,10 +72,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               showBackButton: true,
             ),
 
-            Transform.translate(
-              offset: const Offset(0, -40),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: FadeInSlide(
                   duration: const Duration(milliseconds: 600),
                   delay: const Duration(milliseconds: 200),
@@ -119,55 +118,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             const SizedBox(height: 30),
 
                             // Email Input
-                            Container(
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? const Color(0xFF27272A)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(
-                                  30,
-                                ), // Pill Shape
-                                border: Border.all(
-                                  color: isDark
-                                      ? const Color(0xFF3F3F46)
-                                      : const Color(0xFFE2E8F0),
-                                ),
-                                boxShadow: isDark
-                                    ? []
-                                    : [
-                                        BoxShadow(
-                                          color: Colors.grey.withValues(
-                                            alpha: 0.05,
-                                          ),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                              ),
-                              child: TextField(
-                                controller: _emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                textAlign: TextAlign.right,
-                                decoration: InputDecoration(
-                                  hintText: 'البريد الإلكتروني',
-                                  hintStyle: TextStyle(
-                                    color: isDark
-                                        ? const Color(0xFF71717A)
-                                        : const Color(0xFF94A3B8),
-                                    fontSize: 14,
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.mail_outline,
-                                    color: context.primary,
-                                    size: 22,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                    horizontal: 20,
-                                  ),
-                                ),
-                              ),
+                            ProMaxTextField(
+                              controller: _emailController,
+                              hint: 'البريد الإلكتروني',
+                              icon: Icons.mail_outline,
+                              inputType: TextInputType.emailAddress,
+                              borderRadius: 30,
                             ),
                             const SizedBox(height: 24),
 
@@ -204,7 +160,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),

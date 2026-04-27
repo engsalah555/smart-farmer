@@ -1,7 +1,9 @@
-import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import '../../../../core/constants.dart';
 import '../../../../core/widgets/fade_in_slide.dart';
+import '../../../../core/widgets/atoms/pro_max_text_field.dart';
+import '../../../../core/widgets/dashed_border.dart';
 import '../widgets/auth_header.dart';
 import 'package:go_router/go_router.dart';
 
@@ -30,10 +32,8 @@ class _MerchantVerificationScreenState
             _buildHeader(context),
 
             // Content Section - slight negative margin to overlap header
-            Transform.translate(
-              offset: const Offset(0, -40),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: FadeInSlide(
                   duration: const Duration(milliseconds: 600),
                   delay: const Duration(milliseconds: 200),
@@ -70,18 +70,18 @@ class _MerchantVerificationScreenState
                             const SizedBox(height: 24),
 
                             // Store Name
-                            _buildTextField(
+                            const ProMaxTextField(
                               hint: 'اسم المتجر/الشركة',
                               icon: Icons.store,
-                              isDark: isDark,
+                              borderRadius: 16,
                             ),
                             const SizedBox(height: 16),
 
                             // Register Number
-                            _buildTextField(
+                            const ProMaxTextField(
                               hint: 'رقم السجل التجاري',
                               icon: Icons.badge,
-                              isDark: isDark,
+                              borderRadius: 16,
                             ),
                             const SizedBox(height: 16),
 
@@ -160,7 +160,6 @@ class _MerchantVerificationScreenState
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -171,55 +170,14 @@ class _MerchantVerificationScreenState
     return const AuthHeader();
   }
 
-  Widget _buildTextField({
-    required String hint,
-    required IconData icon,
-    bool isPassword = false,
-    required bool isDark,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF18181B)
-            : const Color(0xFFF8FAFC), // Lighter bg for inputs
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE2E8F0),
-        ),
-      ),
-      child: TextField(
-        textAlign: TextAlign.right,
-        obscureText: isPassword,
-        style: const TextStyle(fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: TextStyle(
-            color: isDark ? const Color(0xFF71717A) : const Color(0xFF94A3B8),
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(icon, color: Colors.grey.shade400, size: 22),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder
-              .none, // Handled by Container border if needed, or default
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildDropdown(bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : const Color(0xFFF8FAFC),
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE2E8F0),
-        ),
+        border: Border.all(color: context.border),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -231,9 +189,7 @@ class _MerchantVerificationScreenState
               Text(
                 'نوع النشاط التجاري',
                 style: TextStyle(
-                  color: isDark
-                      ? const Color(0xFF71717A)
-                      : const Color(0xFF94A3B8),
+                  color: context.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -288,23 +244,12 @@ class _MerchantVerificationScreenState
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 24),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFCBD5E1),
-            style: BorderStyle
-                .none, // We want dashed... Flutter Border doesn't support dashed easily.
-            // Using CustomPaint or just a solid border for now as approximation, or use DottedBorder package if available.
-            // Assuming no external packages allowed unless specified, I will use a solid border with dashed styling via a CustomPainter if needed,
-            // but for simplicity I'll stick to a styled container.
-          ),
           borderRadius: BorderRadius.circular(16),
-          color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white,
+          color: context.surface.withValues(alpha: 0.5),
         ),
-        // To mimic dashed border, I'll use a specific decoration
-        // For now, I'll use a standard border with a different visual style (e.g. slight opacity)
-        // because native dashed borders require a package or custom painter.
         child: CustomPaint(
-          painter: _DashedBorderPainter(
-            color: isDark ? const Color(0xFF52525B) : const Color(0xFFCBD5E1),
+          painter: DashedBorderPainter(
+            color: context.border,
             strokeWidth: 2,
             gap: 4,
           ),
@@ -329,51 +274,4 @@ class _MerchantVerificationScreenState
       ),
     );
   }
-}
-
-class _DashedBorderPainter extends CustomPainter {
-  final Color color;
-  final double strokeWidth;
-  final double gap;
-
-  _DashedBorderPainter({
-    required this.color,
-    required this.strokeWidth,
-    required this.gap,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    var path = Path();
-    path.addRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        const Radius.circular(16),
-      ),
-    );
-
-    Path dashPath = Path();
-    double dashWidth = 8.0;
-    double distance = 0.0;
-
-    for (ui.PathMetric pathMetric in path.computeMetrics()) {
-      while (distance < pathMetric.length) {
-        dashPath.addPath(
-          pathMetric.extractPath(distance, distance + dashWidth),
-          Offset.zero,
-        );
-        distance += dashWidth + gap;
-      }
-    }
-
-    canvas.drawPath(dashPath, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

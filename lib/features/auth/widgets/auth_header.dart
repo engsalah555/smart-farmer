@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/fade_in_slide.dart';
+import '../../../core/theme/app_colors.dart';
 
 class AuthHeader extends StatelessWidget {
   final String title;
@@ -17,12 +18,12 @@ class AuthHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(top: 64, bottom: 90, left: 24, right: 24),
-      decoration: const BoxDecoration(
+      padding: const EdgeInsets.only(top: 64, bottom: 40, left: 24, right: 24),
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF76C748), Color(0xFF2D6A4F)],
+          colors: [context.accent, context.deepGreen],
         ),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(40),

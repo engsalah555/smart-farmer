@@ -5,6 +5,7 @@ import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/widgets/atoms/smart_farm_logo.dart';
+import '../../../core/widgets/atoms/pro_max_text_field.dart';
 import 'package:go_router/go_router.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -422,50 +423,15 @@ class _AuthScreenState extends State<AuthScreen> {
     bool? obscureText,
     VoidCallback? onToggleVisibility,
   }) {
-    final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
-    final borderColor = AppColors.border(isDark);
-    final textColor = isDark
-        ? AppColors.darkTextPrimary
-        : AppColors.textPrimary;
-    final hintColor = isDark
-        ? AppColors.darkTextSecondary
-        : AppColors.textSecondary;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: fillColor,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: borderColor),
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: inputType,
-        obscureText: obscureText ?? false,
-        textAlign: TextAlign.right,
-        style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: TextStyle(color: hintColor, fontSize: 14),
-          prefixIcon: Icon(icon, color: context.primary, size: 22),
-          suffixIcon: isPassword
-              ? IconButton(
-                  icon: Icon(
-                    (obscureText ?? false)
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: hintColor,
-                    size: 20,
-                  ),
-                  onPressed: onToggleVisibility,
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 20,
-          ),
-        ),
-      ),
+    return ProMaxTextField(
+      controller: controller,
+      hint: hint,
+      icon: icon,
+      inputType: inputType,
+      isPassword: isPassword,
+      obscureText: obscureText ?? false,
+      onToggleVisibility: onToggleVisibility,
+      borderRadius: 30,
     );
   }
 
