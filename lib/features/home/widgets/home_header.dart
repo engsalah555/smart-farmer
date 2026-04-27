@@ -138,13 +138,9 @@ class HomeHeader extends StatelessWidget {
                       child: ProMaxIconButton(
                         icon: Icons.notifications_none_rounded,
                         onTap: () => context.push('/notifications'),
-                        size: context.wp(11).clamp(40, 55),
-                        iconSize: context.wp(5.5).clamp(20, 26),
-                        borderRadius: 22,
-                        color: context.primary,
-                        backgroundColor: isDark
-                            ? AppColors.darkCard.withValues(alpha: 0.6)
-                            : AppColors.white,
+                        iconSize: context.wp(5.5).clamp(24, 28),
+                        color: context.textPrimary,
+                        backgroundColor: context.cardBackground,
                       ),
                     ),
                     SizedBox(width: context.wp(2)),
@@ -154,13 +150,9 @@ class HomeHeader extends StatelessWidget {
                       child: ProMaxIconButton(
                         icon: Icons.eco_outlined,
                         onTap: () => context.go('/crops'),
-                        size: context.wp(11).clamp(40, 55),
-                        iconSize: context.wp(5.5).clamp(20, 26),
-                        borderRadius: 22,
-                        color: context.primary,
-                        backgroundColor: isDark
-                            ? AppColors.darkCard.withValues(alpha: 0.6)
-                            : AppColors.white,
+                        iconSize: context.wp(5.5).clamp(24, 28),
+                        color: context.textPrimary,
+                        backgroundColor: context.cardBackground,
                       ),
                     ),
                     SizedBox(width: context.wp(2)),
@@ -170,13 +162,9 @@ class HomeHeader extends StatelessWidget {
                       child: ProMaxIconButton(
                         icon: Icons.smart_toy_outlined,
                         onTap: () => context.push('/chatbot'),
-                        size: context.wp(11).clamp(40, 55),
-                        iconSize: context.wp(5.5).clamp(20, 26),
-                        borderRadius: 22,
-                        color: context.primary,
-                        backgroundColor: isDark
-                            ? AppColors.darkCard.withValues(alpha: 0.6)
-                            : AppColors.white,
+                        iconSize: context.wp(5.5).clamp(24, 28),
+                        color: context.textPrimary,
+                        backgroundColor: context.cardBackground,
                       ),
                     ),
                   ],

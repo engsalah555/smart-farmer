@@ -25,39 +25,28 @@ class ProMaxIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     // Logic for circular vs rounded square
-    final effectiveRadius = borderRadius ?? 12.0;
+    final effectiveRadius = borderRadius ?? (size / 2);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: borderRadius == null && size > 0
-              ? BorderRadius.circular(effectiveRadius)
-              : (borderRadius != null
-                    ? BorderRadius.circular(borderRadius!)
-                    : BorderRadius.circular(size / 2)),
-          border: Border.all(color: context.primary, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 5),
-              spreadRadius: -2,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: backgroundColor ?? Colors.transparent,
+        borderRadius: BorderRadius.circular(effectiveRadius),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          child: Center(
+            child: Icon(
+              icon,
+              color: color ?? (isGlass ? Colors.white : context.primary),
+              size: iconSize,
             ),
-          ],
-        ),
-        child: Center(
-          child: Icon(
-            icon,
-            color: color ?? (isGlass ? Colors.white : context.primary),
-            size: iconSize,
           ),
         ),
       ),
