@@ -31,7 +31,7 @@ class ProfileHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.2),
+                  color: context.primary.withValues(alpha: 0.2),
                   width: 4,
                 ),
               ),
@@ -59,6 +59,7 @@ class ProfileHeader extends StatelessWidget {
             ],
           ],
         ),
+        const SizedBox(height: 12),
         if (phone != null && phone!.isNotEmpty)
           Text(phone!, style: AppTypography.bodyMedium(isDark: isDark)),
       ],
@@ -91,7 +92,7 @@ class SettingsGroup extends StatelessWidget {
           ),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? AppColors.darkCard : AppColors.cardLight,
+            color: context.cardBackground,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: AppColors.border(isDark), width: 1),
             boxShadow: [
@@ -171,9 +172,7 @@ class SettingsTile extends StatelessWidget {
           ? Switch.adaptive(
               value: switchValue,
               onChanged: onToggle,
-              activeThumbColor: isDark
-                  ? AppColors.darkAccent
-                  : AppColors.primary,
+              activeThumbColor: context.primary,
             )
           : (hasArrow
                 ? Icon(
