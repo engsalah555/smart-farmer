@@ -35,6 +35,7 @@ class ProMaxIconButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.transparent,
         borderRadius: BorderRadius.circular(effectiveRadius),
+        border: Border.all(color: context.primary, width: 1),
       ),
       child: Material(
         color: Colors.transparent,
