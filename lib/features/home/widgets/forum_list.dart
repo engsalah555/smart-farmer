@@ -22,9 +22,7 @@ class ForumList extends StatelessWidget {
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(20),
-            child: RepaintBoundary(
-              child: CircularProgressIndicator(),
-            ),
+            child: RepaintBoundary(child: CircularProgressIndicator()),
           ),
         ),
       );
@@ -37,17 +35,25 @@ class ForumList extends StatelessWidget {
         // Header
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(context.wp(5), context.hp(1), context.wp(5), context.hp(2)),
+            padding: EdgeInsets.fromLTRB(
+              context.wp(5),
+              context.hp(1),
+              context.wp(5),
+              context.hp(2),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center, // Optical alignment
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, // Optical alignment
               children: [
                 Text(
                   'المنتدى الزراعي',
                   style: TextStyle(
                     fontSize: context.sp(20).clamp(18, 26),
                     fontWeight: FontWeight.w900,
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
                     letterSpacing: -0.5,
                   ),
                 ),
@@ -63,7 +69,7 @@ class ForumList extends StatelessWidget {
                         vertical: context.hp(0.6).clamp(4.0, 10.0),
                       ),
                       decoration: BoxDecoration(
-                        color: (isDark ? AppColors.darkAccent : AppColors.primary).withValues(alpha: 0.12),
+                        color: (context.primary).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Text(
@@ -71,7 +77,7 @@ class ForumList extends StatelessWidget {
                         style: TextStyle(
                           fontSize: context.sp(13).clamp(11, 16),
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.darkAccent : AppColors.primary,
+                          color: context.primary,
                         ),
                       ),
                     ),
@@ -84,25 +90,19 @@ class ForumList extends StatelessWidget {
 
         // Forum Posts List (Lazy loading via SliverList)
         SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: context.hp(1)),
-                child: FadeInSlide(
-                  duration: const Duration(milliseconds: 500),
-                  // Cap delay to first 5 items to prevent performance issues on long lists
-                  delay: Duration(milliseconds: index < 5 ? 100 * index : 0),
-                  child: SocialMediaPost(
-                    post: posts[index],
-                  ),
-                ),
-              );
-            },
-            childCount: posts.length,
-          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: context.hp(1)),
+              child: FadeInSlide(
+                duration: const Duration(milliseconds: 500),
+                // Cap delay to first 5 items to prevent performance issues on long lists
+                delay: Duration(milliseconds: index < 5 ? 100 * index : 0),
+                child: SocialMediaPost(post: posts[index]),
+              ),
+            );
+          }, childCount: posts.length),
         ),
       ],
     );
   }
 }
-

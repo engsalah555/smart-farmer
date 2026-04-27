@@ -19,9 +19,11 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.select<AuthProvider, dynamic>((p) => p.currentUser);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Fine-grained selection for HomeProvider data
-    final weather = context.select<HomeProvider, WeatherModel?>((p) => p.weatherData);
+    final weather = context.select<HomeProvider, WeatherModel?>(
+      (p) => p.weatherData,
+    );
     final isLoading = context.select<HomeProvider, bool>((p) => p.isLoading);
     final isNight = weather != null ? !weather.isDay : false;
 
@@ -45,22 +47,26 @@ class HomeHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark 
-              ? [AppColors.darkSurface, AppColors.darkBackground] 
+          colors: isDark
+              ? [AppColors.darkSurface, AppColors.darkBackground]
               : [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(40),
           bottomRight: Radius.circular(40),
         ),
-        border: isDark ? Border(
-          bottom: BorderSide(color: AppColors.darkBorder, width: 1.5),
-          left: BorderSide(color: AppColors.darkBorder, width: 1.5),
-          right: BorderSide(color: AppColors.darkBorder, width: 1.5),
-        ) : null,
+        border: isDark
+            ? Border(
+                bottom: BorderSide(color: AppColors.darkBorder, width: 1.5),
+                left: BorderSide(color: AppColors.darkBorder, width: 1.5),
+                right: BorderSide(color: AppColors.darkBorder, width: 1.5),
+              )
+            : null,
         boxShadow: [
           BoxShadow(
-            color: (isDark ? AppColors.black : AppColors.primary).withValues(alpha: 0.25),
+            color: (isDark ? AppColors.black : AppColors.primary).withValues(
+              alpha: 0.25,
+            ),
             blurRadius: 25,
             offset: const Offset(0, 12),
             spreadRadius: -8,
@@ -83,32 +89,40 @@ class HomeHeader extends StatelessWidget {
                         children: [
                           Semantics(
                             label: 'اسم المستخدم: $userName',
-                                  child: Text(
-                                    'مرحباً , $userName',
-                                    style: TextStyle(
-                                      color: isDark ? AppColors.darkTextPrimary : AppColors.white,
-                                      fontSize: context.sp(20).clamp(18, 26),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              if (user?.isVerified ?? false) ...[
-                                SizedBox(width: context.wp(1.5)),
-                                Icon(
-                                  Icons.verified,
-                                  color: isDark ? AppColors.darkAccent : AppColors.white,
-                                  size: context.sp(18).clamp(16, 22),
-                                ),
-                              ],
-                            ],
+                            child: Text(
+                              'مرحباً , $userName',
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.white,
+                                fontSize: context.sp(20).clamp(18, 26),
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
+                          if (user?.isVerified ?? false) ...[
+                            SizedBox(width: context.wp(1.5)),
+                            Icon(
+                              Icons.verified,
+                              color: isDark
+                                  ? AppColors.darkAccent
+                                  : AppColors.white,
+                              size: context.sp(18).clamp(16, 22),
+                            ),
+                          ],
+                        ],
+                      ),
                       SizedBox(height: context.hp(0.5)),
                       Text(
                         userRole,
                         style: TextStyle(
-                          color: (isDark ? AppColors.darkTextSecondary : AppColors.white).withValues(alpha: 0.9),
+                          color:
+                              (isDark
+                                      ? AppColors.darkTextSecondary
+                                      : AppColors.white)
+                                  .withValues(alpha: 0.9),
                           fontSize: context.sp(14).clamp(12, 18),
                           fontWeight: FontWeight.w500,
                         ),
@@ -120,47 +134,53 @@ class HomeHeader extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                        Semantics(
-                          label: 'التنبيهات',
-                          button: true,
-                          child: ProMaxIconButton(
-                            icon: Icons.notifications_none_rounded,
-                            onTap: () => context.push('/notifications'),
-                            size: context.wp(11).clamp(40, 55),
-                            iconSize: context.wp(5.5).clamp(20, 26),
-                            borderRadius: 22,
-                            color: isDark ? AppColors.darkAccent : AppColors.primary,
-                            backgroundColor: isDark ? AppColors.darkCard.withValues(alpha: 0.6) : AppColors.white,
-                          ),
-                        ),
-                        SizedBox(width: context.wp(2)),
-                        Semantics(
-                          label: 'المحاصيل',
-                          button: true,
-                          child: ProMaxIconButton(
-                            icon: Icons.eco_outlined,
-                            onTap: () => context.go('/crops'),
-                            size: context.wp(11).clamp(40, 55),
-                            iconSize: context.wp(5.5).clamp(20, 26),
-                            borderRadius: 22,
-                            color: isDark ? AppColors.darkAccent : AppColors.primary,
-                            backgroundColor: isDark ? AppColors.darkCard.withValues(alpha: 0.6) : AppColors.white,
-                          ),
-                        ),
-                        SizedBox(width: context.wp(2)),
-                        Semantics(
-                          label: 'المساعد الذكي',
-                          button: true,
-                          child: ProMaxIconButton(
-                            icon: Icons.smart_toy_outlined,
-                            onTap: () => context.push('/chatbot'),
-                            size: context.wp(11).clamp(40, 55),
-                            iconSize: context.wp(5.5).clamp(20, 26),
-                            borderRadius: 22,
-                            color: isDark ? AppColors.darkAccent : AppColors.primary,
-                            backgroundColor: isDark ? AppColors.darkCard.withValues(alpha: 0.6) : AppColors.white,
-                          ),
-                        ),
+                    Semantics(
+                      label: 'التنبيهات',
+                      button: true,
+                      child: ProMaxIconButton(
+                        icon: Icons.notifications_none_rounded,
+                        onTap: () => context.push('/notifications'),
+                        size: context.wp(11).clamp(40, 55),
+                        iconSize: context.wp(5.5).clamp(20, 26),
+                        borderRadius: 22,
+                        color: context.primary,
+                        backgroundColor: isDark
+                            ? AppColors.darkCard.withValues(alpha: 0.6)
+                            : AppColors.white,
+                      ),
+                    ),
+                    SizedBox(width: context.wp(2)),
+                    Semantics(
+                      label: 'المحاصيل',
+                      button: true,
+                      child: ProMaxIconButton(
+                        icon: Icons.eco_outlined,
+                        onTap: () => context.go('/crops'),
+                        size: context.wp(11).clamp(40, 55),
+                        iconSize: context.wp(5.5).clamp(20, 26),
+                        borderRadius: 22,
+                        color: context.primary,
+                        backgroundColor: isDark
+                            ? AppColors.darkCard.withValues(alpha: 0.6)
+                            : AppColors.white,
+                      ),
+                    ),
+                    SizedBox(width: context.wp(2)),
+                    Semantics(
+                      label: 'المساعد الذكي',
+                      button: true,
+                      child: ProMaxIconButton(
+                        icon: Icons.smart_toy_outlined,
+                        onTap: () => context.push('/chatbot'),
+                        size: context.wp(11).clamp(40, 55),
+                        iconSize: context.wp(5.5).clamp(20, 26),
+                        borderRadius: 22,
+                        color: context.primary,
+                        backgroundColor: isDark
+                            ? AppColors.darkCard.withValues(alpha: 0.6)
+                            : AppColors.white,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -195,19 +215,31 @@ class HomeHeader extends StatelessWidget {
                             end: Alignment.bottomRight,
                             colors: isNight
                                 ? [
-                                    const Color(0xFF1A237E).withValues(alpha: 0.8),
-                                    const Color(0xFF0D1B2A).withValues(alpha: 0.9),
+                                    const Color(
+                                      0xFF1A237E,
+                                    ).withValues(alpha: 0.8),
+                                    const Color(
+                                      0xFF0D1B2A,
+                                    ).withValues(alpha: 0.9),
                                   ]
                                 : [
-                                    (isDark ? AppColors.darkCard : AppColors.white).withValues(alpha: isDark ? 0.7 : 0.35),
-                                    (isDark ? AppColors.darkBackground : AppColors.white).withValues(alpha: isDark ? 0.8 : 0.2),
+                                    (isDark
+                                            ? AppColors.darkCard
+                                            : AppColors.white)
+                                        .withValues(alpha: isDark ? 0.7 : 0.35),
+                                    (isDark
+                                            ? AppColors.darkBackground
+                                            : AppColors.white)
+                                        .withValues(alpha: isDark ? 0.8 : 0.2),
                                   ],
                           ),
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
                             color: isNight
                                 ? Colors.blueAccent.withValues(alpha: 0.4)
-                                : (isDark ? AppColors.darkBorder : AppColors.white.withValues(alpha: 0.4)),
+                                : (isDark
+                                      ? AppColors.darkBorder
+                                      : AppColors.white.withValues(alpha: 0.4)),
                             width: 1.5,
                           ),
                           boxShadow: [
@@ -226,7 +258,9 @@ class HomeHeader extends StatelessWidget {
                                 height: context.hp(12),
                                 child: Center(
                                   child: RepaintBoundary(
-                                    child: CircularProgressIndicator(color: AppColors.white),
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.white,
+                                    ),
                                   ),
                                 ),
                               )
@@ -243,12 +277,22 @@ class HomeHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildWeatherInfo(BuildContext context, WeatherModel? weather, bool isNight) {
+  Widget _buildWeatherInfo(
+    BuildContext context,
+    WeatherModel? weather,
+    bool isNight,
+  ) {
     final String cityName = weather?.cityName ?? 'اضغط هنا لتحديث الطقس';
-    final String tempString = weather != null ? '${weather.temperature.round()}°C' : '--°C';
+    final String tempString = weather != null
+        ? '${weather.temperature.round()}°C'
+        : '--°C';
     final String conditionString = weather?.conditionText ?? '---';
-    final String humidityString = weather != null ? 'رطوبة ${weather.humidity}%' : 'رطوبة --%';
-    final IconData weatherIcon = weather != null ? _getWeatherIcon(weather.weatherCode) : Icons.cloud_queue_rounded;
+    final String humidityString = weather != null
+        ? 'رطوبة ${weather.humidity}%'
+        : 'رطوبة --%';
+    final IconData weatherIcon = weather != null
+        ? _getWeatherIcon(weather.weatherCode)
+        : Icons.cloud_queue_rounded;
 
     return Column(
       children: [
@@ -261,11 +305,13 @@ class HomeHeader extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                        Icon(
-                          weather == null ? Icons.touch_app : Icons.location_on_rounded,
-                          color: AppColors.white,
-                          size: context.sp(16).clamp(14, 20),
-                        ),
+                      Icon(
+                        weather == null
+                            ? Icons.touch_app
+                            : Icons.location_on_rounded,
+                        color: AppColors.white,
+                        size: context.sp(16).clamp(14, 20),
+                      ),
                       SizedBox(width: context.wp(1.5)),
                       Expanded(
                         child: Text(
@@ -291,7 +337,9 @@ class HomeHeader extends StatelessWidget {
                       height: 1.1,
                       shadows: [
                         Shadow(
-                          color: isNight ? Colors.blue : AppColors.white.withValues(alpha: 0.5),
+                          color: isNight
+                              ? Colors.blue
+                              : AppColors.white.withValues(alpha: 0.5),
                           blurRadius: 10,
                         ),
                       ],
@@ -321,13 +369,13 @@ class HomeHeader extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(context.wp(3)),
                       decoration: BoxDecoration(
-                        color: isNight 
-                            ? Colors.blue.withValues(alpha: 0.2) 
+                        color: isNight
+                            ? Colors.blue.withValues(alpha: 0.2)
                             : AppColors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isNight 
-                              ? Colors.blueAccent.withValues(alpha: 0.4) 
+                          color: isNight
+                              ? Colors.blueAccent.withValues(alpha: 0.4)
                               : AppColors.white.withValues(alpha: 0.4),
                           width: 1.5,
                         ),
@@ -379,7 +427,10 @@ class HomeHeader extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => context.push('/weather'),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -412,4 +463,3 @@ class HomeHeader extends StatelessWidget {
     return Icons.cloud_rounded;
   }
 }
-

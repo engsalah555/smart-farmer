@@ -54,10 +54,12 @@ class AppTypography {
     fontWeight: FontWeight.w700,
     color: Colors.white,
   );
-  
+
   static TextStyle hintStyle({required bool isDark}) => GoogleFonts.cairo(
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: isDark ? AppColors.darkTextSecondary.withValues(alpha: 0.5) : AppColors.textSecondary.withValues(alpha: 0.5),
+    color: isDark
+        ? AppColors.darkTextSecondary.withValues(alpha: 0.5)
+        : AppColors.textSecondary.withValues(alpha: 0.5),
   );
 }
