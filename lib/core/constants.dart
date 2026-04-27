@@ -43,33 +43,39 @@ class AppConstants {
 
   static const String aiAnalyzeUrl = 'ai/analyze-plant';
 
-  /// يبني عنوان URL كامل من مسار نسبي، مع معالجة مشاكل المسارات المتكررة وتلقائياً إضافة /storage/ إذا لزم الأمر.
+  /// يبني عنوان URL كامل من مسار نسبي أو يُعيد المسار الكامل كما هو.
+  /// الباكند يُعيد URLs كاملة من الـ accessors، لذا لا نُضيف أي بادئة إليها.
   static String? buildUrl(String? path) {
     if (path == null || path.isEmpty) return null;
-    if (path.startsWith('http')) return path;
-    if (path.startsWith('assets/')) return path;
 
-    // تنظيف المسار من البادئات المتكررة
-    String cleanPath = path.startsWith('/') ? path.substring(1) : path;
-
-    // إذا لم يكن المسار يبدأ بـ storage/، نقوم بإضافته (لأن Laravel يخزن الصور هناك غالباً)
-    // إلا إذا كان المسار يبدأ بـ api/ أو شيء آخر لا يتطلب storage/
-    if (!cleanPath.startsWith('storage/') &&
-        !cleanPath.startsWith('api/') &&
-        !cleanPath.contains('placeholder')) {
-      cleanPath = 'storage/$cleanPath';
+    // ✅ URL كامل يبدأ بـ http أو https → نُعيده كما هو
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
     }
 
-    // إزالة السلاسل المتكررة التي قد تأتي من الباك إند أحياناً
+    // ✅ مسار Assets المحلية → نُعيده كما هو
+    if (path.startsWith('assets/')) return path;
+
+    // تنظيف البادئة الزائدة من الـ slash
+    String cleanPath = path.startsWith('/') ? path.substring(1) : path;
+
+    // إزالة التكرارات في السلاش
     while (cleanPath.contains('//')) {
       cleanPath = cleanPath.replaceAll('//', '/');
     }
 
+    // إزالة تكرار storage/storage/ إن وُجد
     if (cleanPath.contains('storage/storage/')) {
       cleanPath = cleanPath.replaceAll('storage/storage/', 'storage/');
     }
 
-    final String separator = cleanPath.startsWith('/') ? '' : '/';
-    return '$apiBaseUrl$separator$cleanPath';
+    // ✅ مسار نسبي يبدأ بـ storage/ → نُضيف فقط baseUrl
+    if (cleanPath.startsWith('storage/')) {
+      return '$apiBaseUrl/$cleanPath';
+    }
+
+    // ✅ مسار نسبي آخر (مثل avatars/xxx.jpg) → نُضيف storage/
+    return '$apiBaseUrl/storage/$cleanPath';
   }
 }
+
