@@ -131,16 +131,16 @@ class _HomeAlertsState extends State<HomeAlerts> {
                       padding: EdgeInsets.all(context.wp(4).clamp(12.0, 20.0)),
                       decoration: BoxDecoration(
                         color: isDark 
-                            ? Color.alphaBlend(severityColor.withValues(alpha: 0.08), AppColors.darkSurface)
+                            ? Color.alphaBlend(severityColor.withValues(alpha: 0.08), AppColors.darkCard)
                             : Color.alphaBlend(severityColor.withValues(alpha: 0.05), AppColors.white),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: severityColor.withValues(alpha: 0.2),
+                          color: isDark ? AppColors.darkBorder : severityColor.withValues(alpha: 0.2),
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: severityColor.withValues(alpha: 0.1),
+                            color: isDark ? AppColors.black.withValues(alpha: 0.2) : severityColor.withValues(alpha: 0.1),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                             spreadRadius: -4,

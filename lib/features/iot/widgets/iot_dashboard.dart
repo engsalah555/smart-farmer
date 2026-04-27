@@ -116,19 +116,22 @@ class IotDashboard extends StatelessWidget {
   }
 
   Widget _buildFab(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       height: 64,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+        gradient: LinearGradient(
+          colors: isDark 
+              ? [AppColors.darkAccent.withValues(alpha: 0.8), AppColors.darkAccent.withValues(alpha: 0.5)]
+              : [const Color(0xFF00C6FF), const Color(0xFF0072FF)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0072FF).withValues(alpha: 0.4),
+            color: (isDark ? AppColors.darkAccent : const Color(0xFF0072FF)).withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -188,7 +191,7 @@ class IotDashboard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: isDark 
-                      ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                      ? [AppColors.darkSurface, AppColors.darkBackground]
                       : [const Color(0xFFF8FAFC), const Color(0xFFE2E8F0)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -420,12 +423,12 @@ class IotDashboard extends StatelessWidget {
             value: value,
             onChanged: onChanged,
             activeTrackColor: activeColor2,
-            inactiveTrackColor: isDark ? AppColors.neutralWhite.withValues(alpha: 0.15) : AppColors.textMuted.withValues(alpha: 0.1),
+            inactiveTrackColor: isDark ? AppColors.darkBorder : AppColors.textMuted.withValues(alpha: 0.1),
             thumbColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
                 return AppColors.neutralWhite;
               }
-              return null;
+              return isDark ? AppColors.darkTextSecondary : null;
             }),
           ),
         ],
@@ -586,16 +589,16 @@ class _PremiumCard extends StatelessWidget {
     return Container(
       padding: padding ?? const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: gradientColors == null ? AppColors.getSurface(isDark) : null,
+        color: gradientColors == null ? (isDark ? AppColors.darkCard : AppColors.getSurface(isDark)) : null,
         gradient: gradientColors != null ? LinearGradient(colors: gradientColors!, begin: Alignment.topLeft, end: Alignment.bottomRight) : null,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.03),
+          color: isDark ? AppColors.darkBorder : Colors.black.withValues(alpha: 0.03),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: (gradientColors?.first ?? (isDark ? Colors.black : const Color(0xFFD0D0D0))).withValues(alpha: isDark ? 0.4 : 0.15),
+            color: (gradientColors?.first ?? (isDark ? Colors.black : const Color(0xFFD0D0D0))).withValues(alpha: isDark ? 0.3 : 0.15),
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
