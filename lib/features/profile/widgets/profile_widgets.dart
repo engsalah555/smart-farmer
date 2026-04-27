@@ -176,7 +176,7 @@ class SettingsTile extends StatelessWidget {
             )
           : (hasArrow
                 ? Icon(
-                    Icons.arrow_back_ios_new,
+                    Icons.arrow_forward_ios,
                     size: 14,
                     color: isDark
                         ? AppColors.darkTextSecondary.withValues(alpha: 0.3)
