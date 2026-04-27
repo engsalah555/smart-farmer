@@ -198,16 +198,16 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
                     );
                     if (success && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text('تم تحديث حالة الطلب بنجاح'),
                           behavior: SnackBarBehavior.floating,
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: context.primary,
                         ),
                       );
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: context.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -291,7 +291,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.primary.withValues(alpha: 0.1),
+                    context.primary.withValues(alpha: 0.1),
                     Theme.of(context).scaffoldBackgroundColor,
                   ],
                 ),
@@ -316,8 +316,8 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
   }
 
   Widget _buildLoadingState() {
-    return const SliverFillRemaining(
-      child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+    return SliverFillRemaining(
+      child: Center(child: CircularProgressIndicator(color: context.primary)),
     );
   }
 
@@ -486,7 +486,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
                       onPressed: () =>
                           _showUpdateStatusBottomSheet(context, order),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: context.primary,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -534,7 +534,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
   Widget _buildSectionTitle(BuildContext context, String title, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.primary),
+        Icon(icon, size: 18, color: context.primary),
         const SizedBox(width: 8),
         Text(
           title,
@@ -656,7 +656,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: context.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: productImage != null
@@ -665,17 +665,14 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
                     child: CachedNetworkImage(
                       imageUrl: productImage,
                       fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => const Icon(
+                      errorWidget: (context, url, error) => Icon(
                         Icons.image_not_supported,
                         size: 24,
-                        color: AppColors.primary,
+                        color: context.primary,
                       ),
                     ),
                   )
-                : const Icon(
-                    Icons.inventory_2_outlined,
-                    color: AppColors.primary,
-                  ),
+                : Icon(Icons.inventory_2_outlined, color: context.primary),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -702,10 +699,10 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
           ),
           Text(
             '${item['price_at_purchase']} ريال',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 14,
-              color: AppColors.primary,
+              color: context.primary,
             ),
           ),
         ],

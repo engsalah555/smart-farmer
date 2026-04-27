@@ -47,12 +47,10 @@ class CropTab extends StatelessWidget {
                   margin: const EdgeInsets.only(left: 10),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: isSelected
-                      ? AppDecorations.selectedDecoration(
-                          radius: 25,
-                        ).copyWith(
+                      ? AppDecorations.selectedDecoration(radius: 25).copyWith(
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.3),
+                              color: context.primary.withValues(alpha: 0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -115,7 +113,7 @@ class CropTab extends StatelessWidget {
                               ).copyWith(
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(
+                                    color: context.primary.withValues(
                                       alpha: 0.4,
                                     ),
                                     blurRadius: 20,
@@ -123,7 +121,9 @@ class CropTab extends StatelessWidget {
                                   ),
                                 ],
                               )
-                            : AppDecorations.premiumGlassDecorationV2(isDark: isDark),
+                            : AppDecorations.premiumGlassDecorationV2(
+                                isDark: isDark,
+                              ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -149,25 +149,27 @@ class CropTab extends StatelessWidget {
                             Text(
                               crop.name,
                               textAlign: TextAlign.center,
-                              style: AppTypography.bodyMedium(isDark: isDark).copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: isSel
-                                    ? Colors.white
-                                    : (isDark
-                                          ? Colors.white
-                                          : AppColors.textPrimary),
-                                fontSize: 13,
-                              ),
+                              style: AppTypography.bodyMedium(isDark: isDark)
+                                  .copyWith(
+                                    fontWeight: FontWeight.w900,
+                                    color: isSel
+                                        ? Colors.white
+                                        : (isDark
+                                              ? Colors.white
+                                              : AppColors.textPrimary),
+                                    fontSize: 13,
+                                  ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               '${crop.avgYield} طن/هكتار',
-                              style: AppTypography.valueLabel(isDark: isDark).copyWith(
-                                color: isSel
-                                    ? Colors.white.withValues(alpha: 0.9)
-                                    : Colors.grey,
-                                fontSize: 10,
-                              ),
+                              style: AppTypography.valueLabel(isDark: isDark)
+                                  .copyWith(
+                                    color: isSel
+                                        ? Colors.white.withValues(alpha: 0.9)
+                                        : Colors.grey,
+                                    fontSize: 10,
+                                  ),
                             ),
                           ],
                         ),

@@ -34,7 +34,7 @@ class _PlantHealthScreenState extends State<PlantHealthScreen> {
             pinned: true,
             stretch: true,
             elevation: 0,
-            backgroundColor: AppColors.primary,
+            backgroundColor: context.primary,
             leading: Padding(
               padding: const EdgeInsets.all(10.0),
               child: ProMaxIconButton(
@@ -51,7 +51,10 @@ class _PlantHealthScreenState extends State<PlantHealthScreen> {
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              titlePadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
               title: Text(
                 'السجل الصحي: ${widget.userCrop.plant.name}',
                 style: const TextStyle(
@@ -60,7 +63,7 @@ class _PlantHealthScreenState extends State<PlantHealthScreen> {
                   fontSize: 16,
                 ),
               ),
-              background: Container(color: AppColors.primary),
+              background: Container(color: context.primary),
             ),
           ),
           if (_healthLogs.isNotEmpty) ...[
@@ -101,13 +104,13 @@ class _PlantHealthScreenState extends State<PlantHealthScreen> {
                           FlSpot(6, 9),
                         ],
                         isCurved: true,
-                        color: AppColors.primary,
+                        color: context.primary,
                         barWidth: 3,
                         isStrokeCapRound: true,
                         dotData: const FlDotData(show: true),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: AppColors.primary.withValues(alpha: 0.2),
+                          color: context.primary.withValues(alpha: 0.2),
                         ),
                       ),
                     ],
@@ -116,7 +119,10 @@ class _PlantHealthScreenState extends State<PlantHealthScreen> {
               ),
             ),
             SliverToBoxAdapter(
-              child: Divider(color: Colors.grey.withValues(alpha: 0.2), thickness: 1),
+              child: Divider(
+                color: Colors.grey.withValues(alpha: 0.2),
+                thickness: 1,
+              ),
             ),
           ],
           if (_healthLogs.isEmpty)
@@ -148,74 +154,78 @@ class _PlantHealthScreenState extends State<PlantHealthScreen> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final log = _healthLogs[index];
-                    final DateTime date = log['date'] as DateTime;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: GlassmorphicContainer(
-                        borderRadius: BorderRadius.circular(20),
-                        color: AppColors.getSurface(isDark),
-                        opacity: isDark ? 0.6 : 0.85,
-                        blur: 15.0,
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : AppColors.primary.withValues(alpha: 0.1),
-                          width: 1.5,
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final log = _healthLogs[index];
+                  final DateTime date = log['date'] as DateTime;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: GlassmorphicContainer(
+                      borderRadius: BorderRadius.circular(20),
+                      color: AppColors.getSurface(isDark),
+                      opacity: isDark ? 0.6 : 0.85,
+                      blur: 15.0,
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : context.primary.withValues(alpha: 0.1),
+                        width: 1.5,
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          leading: CircleAvatar(
-                            backgroundColor: log['isHealthy']
-                                ? Colors.green.withValues(alpha: 0.2)
-                                : Colors.red.withValues(alpha: 0.2),
-                            child: Icon(
-                              log['isHealthy']
-                                  ? Icons.check
-                                  : Icons.warning_amber,
-                              color: log['isHealthy']
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
+                        leading: CircleAvatar(
+                          backgroundColor: log['isHealthy']
+                              ? Colors.green.withValues(alpha: 0.2)
+                              : Colors.red.withValues(alpha: 0.2),
+                          child: Icon(
+                            log['isHealthy']
+                                ? Icons.check
+                                : Icons.warning_amber,
+                            color: log['isHealthy'] ? Colors.green : Colors.red,
                           ),
-                          title: Text(
-                            log['status'],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : AppColors.textPrimary,
-                            ),
+                        ),
+                        title: Text(
+                          log['status'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.textPrimary,
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Text(
-                                log['notes'],
-                                style: TextStyle(
-                                  color: isDark ? Colors.white70 : Colors.black87,
-                                ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+                            Text(
+                              log['notes'],
+                              style: TextStyle(
+                                color: isDark ? Colors.white70 : Colors.black87,
                               ),
-                              const SizedBox(height: 6),
-                              Text(
-                                '${date.year}/${date.month}/${date.day}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: isDark ? Colors.white54 : Colors.grey[600],
-                                ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '${date.year}/${date.month}/${date.day}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark
+                                    ? Colors.white54
+                                    : Colors.grey[600],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                  childCount: _healthLogs.length,
-                ),
+                    ),
+                  );
+                }, childCount: _healthLogs.length),
               ),
             ),
-          const SliverToBoxAdapter(child: SizedBox(height: 100)), // Bottom padding
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 100),
+          ), // Bottom padding
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -231,12 +241,14 @@ class _PlantHealthScreenState extends State<PlantHealthScreen> {
             });
           });
         },
-        backgroundColor: AppColors.primary,
+        backgroundColor: context.primary,
         icon: const Icon(Icons.camera_alt, color: Colors.white),
-        label: const Text('فحص جديد', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        label: const Text(
+          'فحص جديد',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         elevation: 4,
       ),
     );
   }
 }
-

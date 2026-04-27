@@ -67,7 +67,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final success = await authProvider.updateProfile(
         name: _nameController.text.trim(),
         phone: _phoneController.text.trim(),
-        currentPassword: _showPasswordFields ? _currentPasswordController.text : null,
+        currentPassword: _showPasswordFields
+            ? _currentPasswordController.text
+            : null,
         newPassword: _showPasswordFields ? _newPasswordController.text : null,
         profileImage: _selectedImage,
       );
@@ -79,17 +81,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               content: const Text('تم تحديث الملف الشخصي بنجاح'),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(authProvider.errorMessage ?? 'فشل التحديث، يرجى المحاولة لاحقاً'),
+              content: Text(
+                authProvider.errorMessage ??
+                    'فشل التحديث، يرجى المحاولة لاحقاً',
+              ),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         }
@@ -132,21 +141,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.2),
+                            color: context.primary.withValues(alpha: 0.2),
                             width: 2,
                           ),
                         ),
                         child: CircleAvatar(
                           radius: 55,
-                          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                          backgroundColor: context.primary.withValues(
+                            alpha: 0.1,
+                          ),
                           backgroundImage: _selectedImage != null
                               ? FileImage(_selectedImage!) as ImageProvider
-                              : (user?.profileImage != null && user!.profileImage!.isNotEmpty
-                                  ? CachedNetworkImageProvider(user.profileImage!)
-                                  : null),
-                          child: _selectedImage == null &&
-                                  (user?.profileImage == null || user!.profileImage!.isEmpty)
-                              ? const Icon(Icons.person, size: 55, color: AppColors.primary)
+                              : (user?.profileImage != null &&
+                                        user!.profileImage!.isNotEmpty
+                                    ? CachedNetworkImageProvider(
+                                        user.profileImage!,
+                                      )
+                                    : null),
+                          child:
+                              _selectedImage == null &&
+                                  (user?.profileImage == null ||
+                                      user!.profileImage!.isEmpty)
+                              ? Icon(
+                                  Icons.person,
+                                  size: 55,
+                                  color: context.primary,
+                                )
                               : null,
                         ),
                       ),
@@ -156,7 +176,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: context.primary,
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: Theme.of(context).scaffoldBackgroundColor,
@@ -169,7 +189,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                             ],
                           ),
-                          child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 16,
+                          ),
                         ),
                       ),
                     ],
@@ -185,11 +209,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('المعلومات الأساسية',
-                        style: AppTypography.bodySmall(isDark: isDark).copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        )),
+                    Text(
+                      'المعلومات الأساسية',
+                      style: AppTypography.bodySmall(isDark: isDark).copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: context.primary,
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _nameController,
@@ -199,8 +225,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         prefixIcon: Icon(Icons.person_outline),
                       ),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'يرجى إدخال الاسم';
-                        if (v.trim().length < 3) return 'الاسم يجب أن يكون 3 أحرف على الأقل';
+                        if (v == null || v.trim().isEmpty)
+                          return 'يرجى إدخال الاسم';
+                        if (v.trim().length < 3)
+                          return 'الاسم يجب أن يكون 3 أحرف على الأقل';
                         return null;
                       },
                     ),
@@ -233,15 +261,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Column(
                     children: [
                       ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
                         title: Text(
                           'تغيير كلمة المرور',
                           style: AppTypography.bodyLarge(isDark: isDark),
                         ),
                         trailing: Switch.adaptive(
                           value: _showPasswordFields,
-                          onChanged: (v) => setState(() => _showPasswordFields = v),
-                          activeThumbColor: AppColors.primary,
+                          onChanged: (v) =>
+                              setState(() => _showPasswordFields = v),
+                          activeThumbColor: context.primary,
                         ),
                       ),
                       if (_showPasswordFields) ...[
@@ -258,7 +289,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   labelText: 'كلمة المرور الحالية',
                                   prefixIcon: Icon(Icons.lock_outline),
                                 ),
-                                validator: (v) => _showPasswordFields && (v == null || v.isEmpty)
+                                validator: (v) =>
+                                    _showPasswordFields &&
+                                        (v == null || v.isEmpty)
                                     ? 'يرجى إدخال كلمة المرور الحالية'
                                     : null,
                               ),
@@ -271,7 +304,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   labelText: 'كلمة المرور الجديدة',
                                   prefixIcon: Icon(Icons.lock_open),
                                 ),
-                                validator: (v) => _showPasswordFields && (v == null || v.length < 6)
+                                validator: (v) =>
+                                    _showPasswordFields &&
+                                        (v == null || v.length < 6)
                                     ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'
                                     : null,
                               ),
@@ -295,7 +330,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _saveProfile,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: context.primary,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),

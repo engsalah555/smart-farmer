@@ -215,7 +215,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
       floating: false,
       pinned: true,
       stretch: true,
-      backgroundColor: AppColors.primary,
+      backgroundColor: context.primary,
       elevation: 0,
       automaticallyImplyLeading: false,
       leadingWidth: 0,
@@ -244,7 +244,6 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 26,
-                
               ),
             ),
           ],
@@ -255,7 +254,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
           StretchMode.zoomBackground,
           StretchMode.blurBackground,
         ],
-        background: Container(color: AppColors.primary),
+        background: Container(color: context.primary),
       ),
     );
   }
@@ -275,13 +274,15 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.3),
+              color: context.primary.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        labelStyle: AppTypography.bodyMedium(isDark: isDark).copyWith(fontWeight: FontWeight.bold),
+        labelStyle: AppTypography.bodyMedium(
+          isDark: isDark,
+        ).copyWith(fontWeight: FontWeight.bold),
         unselectedLabelStyle: AppTypography.bodyMedium(isDark: isDark),
         tabs: const [
           Tab(text: 'المحصول'),
@@ -320,10 +321,9 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
               Expanded(
                 child: Text(
                   '🌱 اختر محصولاً للبدء',
-                  style: AppTypography.bodyMedium(isDark: isDark).copyWith(
-                    color: Colors.grey,
-                    fontSize: 13,
-                  ),
+                  style: AppTypography.bodyMedium(
+                    isDark: isDark,
+                  ).copyWith(color: Colors.grey, fontSize: 13),
                 ),
               ),
             const SizedBox(width: 16),
@@ -340,7 +340,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: context.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -355,17 +355,15 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
           children: [
             Text(
               _selectedCrop!.name,
-              style: AppTypography.bodyLarge(isDark: isDark).copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+              style: AppTypography.bodyLarge(
+                isDark: isDark,
+              ).copyWith(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             Text(
               '${_areaCtrl.text} $_areaUnit',
-              style: AppTypography.valueLabel(isDark: isDark).copyWith(
-                color: Colors.grey,
-                fontSize: 12,
-              ),
+              style: AppTypography.valueLabel(
+                isDark: isDark,
+              ).copyWith(color: Colors.grey, fontSize: 12),
             ),
           ],
         ),
@@ -378,7 +376,9 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
       icon: const Icon(Icons.bolt_rounded, size: 22),
       label: Text(
         'احسب النتائج',
-        style: AppTypography.buttonLabel(isDark: isDark).copyWith(fontWeight: FontWeight.bold),
+        style: AppTypography.buttonLabel(
+          isDark: isDark,
+        ).copyWith(fontWeight: FontWeight.bold),
       ),
       onPressed: _selectedCrop != null ? _onCalculate : null,
       style: ElevatedButton.styleFrom(
@@ -431,7 +431,7 @@ class _AnimatedMeshBackgroundState extends State<_AnimatedMeshBackground>
                 basePos: const Offset(0.7, -0.3),
                 moveRadius: 0.15,
                 size: constraints.maxHeight * 1.5,
-                color: AppColors.primary.withValues(alpha: 0.4),
+                color: context.primary.withValues(alpha: 0.4),
                 speedMult: 1.0,
               ),
               _AnimatedBlob(

@@ -50,7 +50,7 @@ class LanguageSelectionScreen extends StatelessWidget {
               height: 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primary.withValues(alpha: 0.05),
+                color: context.primary.withValues(alpha: 0.05),
               ),
             ),
           ),
@@ -85,7 +85,6 @@ class LanguageSelectionScreen extends StatelessWidget {
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).textTheme.titleLarge?.color,
-                          
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -97,7 +96,6 @@ class LanguageSelectionScreen extends StatelessWidget {
                           color: Theme.of(
                             context,
                           ).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
-                          
                         ),
                       ),
                     ],
@@ -132,21 +130,21 @@ class LanguageSelectionScreen extends StatelessWidget {
                           duration: const Duration(milliseconds: 200),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.primary
+                                ? context.primary
                                 : (isDark
                                       ? const Color(0xFF2C3E50)
                                       : Colors.white),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: isSelected
-                                  ? AppColors.primary
+                                  ? context.primary
                                   : Colors.transparent,
                               width: 2,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isSelected
-                                    ? AppColors.primary.withValues(alpha: 0.3)
+                                    ? context.primary.withValues(alpha: 0.3)
                                     : Colors.black.withValues(
                                         alpha: isDark ? 0.3 : 0.05,
                                       ),
@@ -168,7 +166,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  
+
                                   color: isSelected
                                       ? Colors.white
                                       : Theme.of(
@@ -202,13 +200,13 @@ class LanguageSelectionScreen extends StatelessWidget {
                         context.go('/auth');
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: context.primary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 8,
-                        shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                        shadowColor: context.primary.withValues(alpha: 0.4),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -219,7 +217,6 @@ class LanguageSelectionScreen extends StatelessWidget {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              
                             ),
                           ),
                           const SizedBox(width: 8),

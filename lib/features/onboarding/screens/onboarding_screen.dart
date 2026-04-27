@@ -89,7 +89,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
+                                  color: context.primary,
                                 ),
                           ),
                           const SizedBox(height: 16),
@@ -109,9 +109,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               SmoothPageIndicator(
                 controller: _pageController,
                 count: _pages.length,
-                effect: const ExpandingDotsEffect(
-                  activeDotColor: AppColors.primary,
-                  dotColor: Color(0xFFE0E0E0),
+                effect: ExpandingDotsEffect(
+                  activeDotColor: context.primary,
+                  dotColor: const Color(0xFFE0E0E0),
                   dotHeight: 8,
                   dotWidth: 8,
                   spacing: 4,

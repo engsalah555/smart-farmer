@@ -67,19 +67,15 @@ class _UserActivityScreenState extends State<UserActivityScreen> {
                       style: TextStyle(
                         color: Theme.of(context).hintColor,
                         fontSize: 16,
-                        
                       ),
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
                       onPressed: () => context.go('/forum'),
                       icon: const Icon(Icons.explore),
-                      label: const Text(
-                        'استكشف المنتدى',
-                        style: TextStyle(),
-                      ),
+                      label: const Text('استكشف المنتدى', style: TextStyle()),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: context.primary,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

@@ -30,7 +30,10 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<MarketplaceProvider>();
       provider.loadStoreDetails(widget.store.id);
-      provider.loadStoreProducts(widget.store.id, catalogId: _selectedCatalogId);
+      provider.loadStoreProducts(
+        widget.store.id,
+        catalogId: _selectedCatalogId,
+      );
     });
   }
 
@@ -40,7 +43,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
       _selectedCatalogId = catalogId;
     });
     context.read<MarketplaceProvider>().loadStoreProducts(
-      widget.store.id, 
+      widget.store.id,
       catalogId: catalogId,
     );
   }
@@ -60,14 +63,19 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final marketplaceProvider = context.watch<MarketplaceProvider>();
-    
+
     // Use cached store details if available
     final store =
-        marketplaceProvider.getStoreDetailsFromCache(widget.store.id) ?? widget.store;
-    
+        marketplaceProvider.getStoreDetailsFromCache(widget.store.id) ??
+        widget.store;
+
     final products = marketplaceProvider.getStoreProductsList(widget.store.id);
-    final isLoadingMore = marketplaceProvider.isStoreProductsLoading(widget.store.id);
-    final hasNext = marketplaceProvider.hasNextStoreProductsPage(widget.store.id);
+    final isLoadingMore = marketplaceProvider.isStoreProductsLoading(
+      widget.store.id,
+    );
+    final hasNext = marketplaceProvider.hasNextStoreProductsPage(
+      widget.store.id,
+    );
     final catalogs = store.catalogs;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -82,7 +90,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
             SliverAppBar(
               expandedHeight: 200,
               pinned: true,
-              backgroundColor: AppColors.primary,
+              backgroundColor: context.primary,
               elevation: 0,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
@@ -101,7 +109,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                             imageUrl: store.coverImage,
                             fit: BoxFit.cover,
                           )
-                        : Container(color: AppColors.primary),
+                        : Container(color: context.primary),
                     // Gradient Overlay
                     Container(
                       decoration: BoxDecoration(
@@ -130,7 +138,10 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                             decoration: BoxDecoration(
                               color: AppColors.getSurface(isDark),
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.border(isDark), width: 2),
+                              border: Border.all(
+                                color: AppColors.border(isDark),
+                                width: 2,
+                              ),
                             ),
                             child: ClipOval(
                               child: store.logo.isNotEmpty
@@ -140,10 +151,10 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                                       width: 70,
                                       height: 70,
                                     )
-                                  : const Icon(
+                                  : Icon(
                                       Icons.store,
                                       size: 40,
-                                      color: AppColors.primary,
+                                      color: context.primary,
                                     ),
                             ),
                           ),
@@ -203,7 +214,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                 ),
               ),
             ),
-      
+
             // Store Description
             SliverToBoxAdapter(
               child: Padding(
@@ -237,7 +248,9 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).textTheme.titleLarge?.color,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.color,
                           ),
                         ),
                       ],
@@ -246,7 +259,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                 ),
               ),
             ),
-      
+
             // Premium Sticky Catalog Filter Bar
             if (catalogs.isNotEmpty)
               SliverPersistentHeader(
@@ -260,7 +273,9 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                         color: AppColors.getBackground(isDark),
                         boxShadow: [
                           BoxShadow(
-                            color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.05),
+                            color: isDark
+                                ? Colors.black.withValues(alpha: 0.2)
+                                : Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -298,9 +313,9 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                   ),
                 ),
               ),
-      
+
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
-      
+
             // Products Grid
             products.isEmpty && !isLoadingMore
                 ? SliverToBoxAdapter(
@@ -353,7 +368,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                       }, childCount: products.length),
                     ),
                   ),
-      
+
             // Loading Indicator at bottom
             if (isLoadingMore)
               const SliverToBoxAdapter(
@@ -362,7 +377,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ),
-      
+
             if (!hasNext && products.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(
@@ -375,7 +390,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                   ),
                 ),
               ),
-      
+
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
@@ -396,20 +411,16 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary
-              : AppColors.glass(isDark),
+          color: isSelected ? context.primary : AppColors.glass(isDark),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.border(isDark),
+            color: isSelected ? context.primary : AppColors.border(isDark),
             width: 1.5,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: context.primary.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

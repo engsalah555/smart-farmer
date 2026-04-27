@@ -133,7 +133,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
       case 'المشاتل':
         return Colors.purple;
       default:
-        return AppColors.primary;
+        return context.primary;
     }
   }
 
@@ -412,7 +412,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                             child: Text(
                               '${filteredStores.length} متجر في هذه المنطقة',
                               style: TextStyle(
-                                color: AppColors.primary,
+                                color: context.primary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
                               ),
@@ -439,10 +439,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                       ],
                     ),
                     child: IconButton(
-                      icon: const Icon(
-                        Icons.my_location,
-                        color: AppColors.primary,
-                      ),
+                      icon: Icon(Icons.my_location, color: context.primary),
                       onPressed: () async {
                         try {
                           final position =
@@ -527,9 +524,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const CircularProgressIndicator(
-                            color: AppColors.primary,
-                          ),
+                          CircularProgressIndicator(color: context.primary),
                           const SizedBox(height: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -759,7 +754,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
               icon: const Icon(Icons.storefront, size: 18),
               label: const Text('عرض المتجر'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: context.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(

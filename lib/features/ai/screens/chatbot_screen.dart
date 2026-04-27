@@ -45,11 +45,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     super.initState();
     // Welcome message if list is empty
     if (_messages.isEmpty) {
-      _messages.add(ChatMessage(
-        text: 'أهلاً بك في مساعدك الزراعي الذكي! كيف يمكنني مساعدتك اليوم؟',
-        isUser: false,
-        timestamp: DateTime.now(),
-      ));
+      _messages.add(
+        ChatMessage(
+          text: 'أهلاً بك في مساعدك الزراعي الذكي! كيف يمكنني مساعدتك اليوم؟',
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
     }
   }
 
@@ -97,17 +99,22 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     final String text = _messageController.text.trim();
     if (text.isEmpty && _selectedImage == null) return;
 
-    final Uint8List? imageBytes =
-        _selectedImage != null ? await _selectedImage!.readAsBytes() : null;
-    final List<Uint8List>? displayImages = imageBytes != null ? [imageBytes] : null;
+    final Uint8List? imageBytes = _selectedImage != null
+        ? await _selectedImage!.readAsBytes()
+        : null;
+    final List<Uint8List>? displayImages = imageBytes != null
+        ? [imageBytes]
+        : null;
 
     setState(() {
-      _messages.add(ChatMessage(
-        text: text,
-        isUser: true,
-        timestamp: DateTime.now(),
-        images: displayImages,
-      ));
+      _messages.add(
+        ChatMessage(
+          text: text,
+          isUser: true,
+          timestamp: DateTime.now(),
+          images: displayImages,
+        ),
+      );
       _messageController.clear();
       _selectedImage = null;
       _isTyping = true;
@@ -180,7 +187,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: const AssetImage('assets/icon/icon.png',),
+            image: const AssetImage('assets/icon/icon.png'),
             opacity: isDark ? 0.02 : 0.03,
             repeat: ImageRepeat.repeat,
             scale: 5,
@@ -190,21 +197,28 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           children: [
             _buildAppBar(),
             Expanded(
-              child: _messages.length <= 1 
-                ? _buildWelcomeState()
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      return FadeInSlide(
-                        duration: const Duration(milliseconds: 400),
-                        delay: Duration(milliseconds: index == _messages.length - 1 ? 0 : 50),
-                        child: _buildMessageBubble(message),
-                      );
-                    },
-                  ),
+              child: _messages.length <= 1
+                  ? _buildWelcomeState()
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 20,
+                      ),
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final message = _messages[index];
+                        return FadeInSlide(
+                          duration: const Duration(milliseconds: 400),
+                          delay: Duration(
+                            milliseconds: index == _messages.length - 1
+                                ? 0
+                                : 50,
+                          ),
+                          child: _buildMessageBubble(message),
+                        );
+                      },
+                    ),
             ),
             if (_isTyping) _buildTypingIndicator(),
             _buildInputArea(),
@@ -217,12 +231,17 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget _buildAppBar() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 12),
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top,
+        bottom: 12,
+      ),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.05),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -242,7 +261,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
           CircleAvatar(
             radius: 18,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+            backgroundColor: context.primary.withValues(alpha: 0.1),
             backgroundImage: const AssetImage('assets/icon/icon.png'),
           ),
           const SizedBox(width: 12),
@@ -271,7 +290,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   Text(
                     'متصل نشط',
                     style: TextStyle(
-                      color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.6),
+                      color: AppColors.getTextColor(
+                        Theme.of(context).brightness == Brightness.dark,
+                      ).withValues(alpha: 0.6),
                       fontSize: 12,
                     ),
                   ),
@@ -280,10 +301,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ],
           ),
           const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
     );
@@ -294,20 +312,26 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
             CircleAvatar(
               radius: 14,
-              backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : Colors.white,
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.darkSurface
+                  : Colors.white,
               backgroundImage: const AssetImage('assets/icon/icon.png'),
             ),
             const SizedBox(width: 8),
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isUser
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 if (message.images != null && message.images!.isNotEmpty)
                   Container(
@@ -329,10 +353,17 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     ),
                   ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     gradient: isUser ? AppDecorations.primaryGradient : null,
-                    color: isUser ? null : AppColors.getSurface(Theme.of(context).brightness == Brightness.dark),
+                    color: isUser
+                        ? null
+                        : AppColors.getSurface(
+                            Theme.of(context).brightness == Brightness.dark,
+                          ),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(20),
                       topRight: const Radius.circular(20),
@@ -341,9 +372,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: isUser 
-                            ? AppColors.primary.withValues(alpha: 0.3) 
-                            : AppColors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.05),
+                        color: isUser
+                            ? context.primary.withValues(alpha: 0.3)
+                            : AppColors.black.withValues(
+                                alpha:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? 0.2
+                                    : 0.05,
+                              ),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -352,7 +389,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   child: Text(
                     message.text,
                     style: TextStyle(
-                      color: isUser ? Colors.white : AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark),
+                      color: isUser
+                          ? Colors.white
+                          : AppColors.getTextColor(
+                              Theme.of(context).brightness == Brightness.dark,
+                            ),
                       fontSize: 15,
                       height: 1.6,
                       fontWeight: isUser ? FontWeight.w500 : FontWeight.normal,
@@ -363,10 +404,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
                   child: Text(
                     '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, "0")}',
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 10,
-                    ),
+                    style: const TextStyle(color: Colors.grey, fontSize: 10),
                   ),
                 ),
               ],
@@ -387,7 +425,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             duration: const Duration(milliseconds: 600),
             child: CircleAvatar(
               radius: 45,
-              backgroundColor: AppColors.getSurface(Theme.of(context).brightness == Brightness.dark),
+              backgroundColor: AppColors.getSurface(
+                Theme.of(context).brightness == Brightness.dark,
+              ),
               backgroundImage: const AssetImage('assets/icon/icon.png'),
             ),
           ),
@@ -401,7 +441,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primary.withValues(alpha: 0.9),
+                color: context.primary.withValues(alpha: 0.9),
                 height: 1.3,
               ),
             ),
@@ -426,13 +466,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           'تشخيص الأمراض',
           Icons.bug_report_outlined,
           'افحص نباتاتك واعرف ما يؤلمها',
-          () => _messageController.text = 'كيف يمكنني تشخيص مرض في نبات الطماطم؟',
+          () =>
+              _messageController.text = 'كيف يمكنني تشخيص مرض في نبات الطماطم؟',
         ),
         _buildStarterCard(
           'نصائح الري',
           Icons.water_drop_outlined,
           'أفضل الممارسات لري محاصيلك',
-          () => _messageController.text = 'ما هو أفضل وقت لري المحاصيل في الصيف؟',
+          () =>
+              _messageController.text = 'ما هو أفضل وقت لري المحاصيل في الصيف؟',
         ),
         _buildStarterCard(
           'التقويم الزراعي',
@@ -444,13 +486,19 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           'حاسبة الأسمدة',
           Icons.calculate_outlined,
           'احسب احتياج نباتك بدقة',
-          () => _messageController.text = 'كيف أحسب كمية السماد اللازمة لمحصول القمح؟',
+          () => _messageController.text =
+              'كيف أحسب كمية السماد اللازمة لمحصول القمح؟',
         ),
       ],
     );
   }
 
-  Widget _buildStarterCard(String title, IconData icon, String subtitle, VoidCallback onTap) {
+  Widget _buildStarterCard(
+    String title,
+    IconData icon,
+    String subtitle,
+    VoidCallback onTap,
+  ) {
     return FadeInSlide(
       duration: const Duration(milliseconds: 600),
       beginOffset: const Offset(0.2, 0),
@@ -462,12 +510,22 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.getSurface(Theme.of(context).brightness == Brightness.dark),
+            color: AppColors.getSurface(
+              Theme.of(context).brightness == Brightness.dark,
+            ),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.border(Theme.of(context).brightness == Brightness.dark)),
+            border: Border.all(
+              color: AppColors.border(
+                Theme.of(context).brightness == Brightness.dark,
+              ),
+            ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.03),
+                color: AppColors.black.withValues(
+                  alpha: Theme.of(context).brightness == Brightness.dark
+                      ? 0.2
+                      : 0.03,
+                ),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -477,19 +535,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: AppColors.primary, size: 28),
+              Icon(icon, color: context.primary, size: 28),
               const SizedBox(height: 12),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Text(
                 subtitle,
                 style: TextStyle(
-                  color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.5),
+                  color: AppColors.getTextColor(
+                    Theme.of(context).brightness == Brightness.dark,
+                  ).withValues(alpha: 0.5),
                   fontSize: 10,
                   height: 1.4,
                 ),
@@ -502,21 +557,24 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
     );
   }
+
   Widget _buildTypingIndicator() {
     return Padding(
       padding: const EdgeInsets.only(left: 48, bottom: 20),
       child: Row(
         children: [
-           const _BouncingDots(),
-           const SizedBox(width: 8),
-           Text(
-             'جاري التفكير...',
-             style: TextStyle(
-               color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.6),
-               fontSize: 12,
-               fontStyle: FontStyle.italic,
-             ),
-           ),
+          const _BouncingDots(),
+          const SizedBox(width: 8),
+          Text(
+            'جاري التفكير...',
+            style: TextStyle(
+              color: AppColors.getTextColor(
+                Theme.of(context).brightness == Brightness.dark,
+              ).withValues(alpha: 0.6),
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
         ],
       ),
     );
@@ -525,9 +583,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget _buildInputArea() {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-      ),
+      decoration: BoxDecoration(color: Colors.transparent),
       child: Column(
         children: [
           if (_selectedImage != null)
@@ -542,7 +598,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                        border: Border.all(
+                          color: context.primary.withValues(alpha: 0.3),
+                        ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: Image.file(
@@ -560,7 +618,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         child: CircleAvatar(
                           radius: 12,
                           backgroundColor: Colors.red.withValues(alpha: 0.8),
-                          child: const Icon(Icons.close, size: 16, color: Colors.white),
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -574,12 +636,21 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 child: GlassmorphicContainer(
                   borderRadius: BorderRadius.circular(30),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  opacity: Theme.of(context).brightness == Brightness.dark ? 0.7 : 0.9,
-                  color: AppColors.getSurface(Theme.of(context).brightness == Brightness.dark),
+                  opacity: Theme.of(context).brightness == Brightness.dark
+                      ? 0.7
+                      : 0.9,
+                  color: AppColors.getSurface(
+                    Theme.of(context).brightness == Brightness.dark,
+                  ),
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.camera_alt_outlined, color: Theme.of(context).brightness == Brightness.dark ? AppColors.primary : Colors.grey),
+                        icon: Icon(
+                          Icons.camera_alt_outlined,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? context.primary
+                              : Colors.grey,
+                        ),
                         onPressed: _pickImage,
                       ),
                       Expanded(
@@ -589,12 +660,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                             hintText: 'اكتب رسالتك هنا...',
                             border: InputBorder.none,
                             hintStyle: TextStyle(
-                              color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.5), 
+                              color: AppColors.getTextColor(
+                                Theme.of(context).brightness == Brightness.dark,
+                              ).withValues(alpha: 0.5),
                               fontSize: 14,
                             ),
                           ),
                           style: TextStyle(
-                            color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark),
+                            color: AppColors.getTextColor(
+                              Theme.of(context).brightness == Brightness.dark,
+                            ),
                           ),
                           maxLines: null,
                           onSubmitted: (_) => _handleSendMessage(),
@@ -609,12 +684,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 onTap: _handleSendMessage,
                 child: Container(
                   padding: const EdgeInsets.all(14),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
+                  decoration: BoxDecoration(
+                    color: context.primary,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary,
+                        color: context.primary,
                         blurRadius: 8,
                         offset: Offset(0, 2),
                         spreadRadius: -2,
@@ -674,7 +749,9 @@ class _BouncingDotsState extends State<_BouncingDots>
               width: 5,
               height: 5,
               decoration: BoxDecoration(
-                color: AppColors.getTextColor(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.3),
+                color: AppColors.getTextColor(
+                  Theme.of(context).brightness == Brightness.dark,
+                ).withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
             );

@@ -46,10 +46,10 @@ class PremiumSellerProductCard extends StatelessWidget {
                             fit: BoxFit.cover,
                           )
                         : Container(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            child: const Icon(
+                            color: context.primary.withValues(alpha: 0.1),
+                            child: Icon(
                               Icons.image_outlined,
-                              color: AppColors.primary,
+                              color: context.primary,
                               size: 40,
                             ),
                           ),
@@ -62,7 +62,10 @@ class PremiumSellerProductCard extends StatelessWidget {
                             stops: const [0.6, 1.0],
                             colors: [
                               Colors.transparent,
-                              (isDark ? AppColors.darkBackground : AppColors.neutralBlack).withValues(alpha: isDark ? 0.8 : 0.4),
+                              (isDark
+                                      ? AppColors.darkBackground
+                                      : AppColors.neutralBlack)
+                                  .withValues(alpha: isDark ? 0.8 : 0.4),
                             ],
                           ),
                         ),
@@ -71,13 +74,21 @@ class PremiumSellerProductCard extends StatelessWidget {
                     PositionedDirectional(
                       top: 8,
                       start: 8,
-                      child: _buildBadge(context, '${product.price}ريال', AppColors.primary),
+                      child: _buildBadge(
+                        context,
+                        '${product.price}ريال',
+                        context.primary,
+                      ),
                     ),
                     if (stockStatus != null)
                       PositionedDirectional(
                         top: 8,
                         end: 8,
-                        child: _buildBadge(context, stockStatus.label, stockStatus.color),
+                        child: _buildBadge(
+                          context,
+                          stockStatus.label,
+                          stockStatus.color,
+                        ),
                       ),
                   ],
                 ),
@@ -134,9 +145,19 @@ class PremiumSellerProductCard extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              _buildActionCircle(Icons.edit_outlined, context.info, onEdit, size: 28),
+                              _buildActionCircle(
+                                Icons.edit_outlined,
+                                context.info,
+                                onEdit,
+                                size: 28,
+                              ),
                               const SizedBox(width: 4),
-                              _buildActionCircle(Icons.delete_outline, context.error, onDelete, size: 28),
+                              _buildActionCircle(
+                                Icons.delete_outline,
+                                context.error,
+                                onDelete,
+                                size: 28,
+                              ),
                             ],
                           ),
                         ],
@@ -173,12 +194,21 @@ class PremiumSellerProductCard extends StatelessWidget {
                           imageUrl: product.images.first,
                           fit: BoxFit.cover,
                         )
-                      : Icon(Icons.image_outlined, color: context.primary, size: 32),
+                      : Icon(
+                          Icons.image_outlined,
+                          color: context.primary,
+                          size: 32,
+                        ),
                   if (stockStatus != null)
                     Positioned(
                       bottom: 6,
                       right: 6,
-                      child: _buildBadge(context, stockStatus.label, stockStatus.color, fontSize: 9),
+                      child: _buildBadge(
+                        context,
+                        stockStatus.label,
+                        stockStatus.color,
+                        fontSize: 9,
+                      ),
                     ),
                 ],
               ),
@@ -198,21 +228,27 @@ class PremiumSellerProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Text(
-                          '${product.price}',
-                          style: context.font18.bold.copyWith(
-                            color: context.isDark ? context.darkAccent : context.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'ريال',
-                          style: context.font12.bold.copyWith(
-                            color: (context.isDark ? context.darkAccent : context.primary).withValues(alpha: 0.7),
-                          ),
-                        ),
+                Row(
+                  children: [
+                    Text(
+                      '${product.price}',
+                      style: context.font18.bold.copyWith(
+                        color: context.isDark
+                            ? context.darkAccent
+                            : context.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'ريال',
+                      style: context.font12.bold.copyWith(
+                        color:
+                            (context.isDark
+                                    ? context.darkAccent
+                                    : context.primary)
+                                .withValues(alpha: 0.7),
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       '/ ${product.unit}',
@@ -226,7 +262,10 @@ class PremiumSellerProductCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: context.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -252,7 +291,10 @@ class PremiumSellerProductCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     if (stockStatus != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: stockStatus.color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
@@ -273,9 +315,19 @@ class PremiumSellerProductCard extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildActionCircle(Icons.edit_outlined, context.info, onEdit, size: 36),
+              _buildActionCircle(
+                Icons.edit_outlined,
+                context.info,
+                onEdit,
+                size: 36,
+              ),
               const SizedBox(height: 8),
-              _buildActionCircle(Icons.delete_outline, context.error, onDelete, size: 36),
+              _buildActionCircle(
+                Icons.delete_outline,
+                context.error,
+                onDelete,
+                size: 36,
+              ),
             ],
           ),
         ],
@@ -292,7 +344,12 @@ class PremiumSellerProductCard extends StatelessWidget {
     return null;
   }
 
-  Widget _buildBadge(BuildContext context, String text, Color color, {double fontSize = 10}) {
+  Widget _buildBadge(
+    BuildContext context,
+    String text,
+    Color color, {
+    double fontSize = 10,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -301,14 +358,17 @@ class PremiumSellerProductCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: context.font10.bold.copyWith(
-          color: Colors.white,
-        ),
+        style: context.font10.bold.copyWith(color: Colors.white),
       ),
     );
   }
 
-  Widget _buildActionCircle(IconData icon, Color color, VoidCallback onTap, {double size = 32}) {
+  Widget _buildActionCircle(
+    IconData icon,
+    Color color,
+    VoidCallback onTap, {
+    double size = 32,
+  }) {
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();

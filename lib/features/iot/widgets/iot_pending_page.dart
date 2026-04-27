@@ -30,9 +30,9 @@ class IotPendingPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   _buildStatusDescription(),
                   const SizedBox(height: 48),
-                  _buildContactCard(isDark),
+                  _buildContactCard(context, isDark),
                   const SizedBox(height: 60),
-                  _buildRefreshButton(provider),
+                  _buildRefreshButton(context, provider),
                 ],
               ),
             ),
@@ -47,7 +47,7 @@ class IotPendingPage extends StatelessWidget {
       expandedHeight: 0,
       toolbarHeight: 70,
       pinned: true,
-      backgroundColor: AppColors.primary,
+      backgroundColor: context.primary,
       elevation: 0,
       automaticallyImplyLeading: false,
       title: Row(
@@ -61,11 +61,7 @@ class IotPendingPage extends StatelessWidget {
           const SizedBox(width: 12),
           const Text(
             'حالة الطلب',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -108,7 +104,7 @@ class IotPendingPage extends StatelessWidget {
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        
+
         color: AppColors.getTextColor(isDark),
       ),
     );
@@ -118,16 +114,11 @@ class IotPendingPage extends StatelessWidget {
     return const Text(
       'لقد تلقينا طلبك لتفعيل خدمة الري الذكي. فريقنا يعمل حالياً على مراجعة الطلب وسيتم التواصل معك لتركيب الجهاز وتفعيل الخدمة.',
       textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 16,
-        color: Colors.grey,
-        
-        height: 1.5,
-      ),
+      style: TextStyle(fontSize: 16, color: Colors.grey, height: 1.5),
     );
   }
 
-  Widget _buildContactCard(bool isDark) {
+  Widget _buildContactCard(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -142,10 +133,13 @@ class IotPendingPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: context.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.support_agent_rounded, color: AppColors.primary),
+            child: Icon(
+              Icons.support_agent_rounded,
+              color: context.primary,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -156,7 +150,7 @@ class IotPendingPage extends StatelessWidget {
                   'هل لديك استفسار؟',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    
+
                     color: AppColors.getTextColor(isDark),
                   ),
                 ),
@@ -167,23 +161,23 @@ class IotPendingPage extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey),
+          const Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 16,
+            color: Colors.grey,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildRefreshButton(IotProvider provider) {
+  Widget _buildRefreshButton(BuildContext context, IotProvider provider) {
     return TextButton.icon(
       onPressed: () => provider.fetchStatus(),
-      icon: const Icon(Icons.refresh_rounded, color: AppColors.primary),
-      label: const Text(
+      icon: Icon(Icons.refresh_rounded, color: context.primary),
+      label: Text(
         'تحديث الحالة',
-        style: TextStyle(
-          color: AppColors.primary,
-          fontWeight: FontWeight.bold,
-          
-        ),
+        style: TextStyle(color: context.primary, fontWeight: FontWeight.bold),
       ),
     );
   }

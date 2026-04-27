@@ -38,15 +38,15 @@ class CropsHeader extends StatelessWidget {
         background: Container(
           decoration: BoxDecoration(
             color: isDark
-                ? AppColors.primary.withValues(alpha: 0.8)
-                : AppColors.primary,
+                ? context.primary.withValues(alpha: 0.8)
+                : context.primary,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(AppDecorations.headerRadius),
               bottomRight: Radius.circular(AppDecorations.headerRadius),
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: context.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
                 spreadRadius: -5,

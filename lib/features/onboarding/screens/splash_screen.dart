@@ -154,11 +154,11 @@ class _SplashScreenState extends State<SplashScreen>
                           width: size,
                           height: size,
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.6),
+                            color: context.primary.withValues(alpha: 0.6),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.4),
+                                color: context.primary.withValues(alpha: 0.4),
                                 blurRadius: 6,
                                 spreadRadius: 1,
                               ),
@@ -190,7 +190,7 @@ class _SplashScreenState extends State<SplashScreen>
                     AppConstants.appName,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: context.primary,
                       letterSpacing: 1.2,
                     ),
                   ),
@@ -198,11 +198,9 @@ class _SplashScreenState extends State<SplashScreen>
                 const SizedBox(height: 50),
                 FadeTransition(
                   opacity: _fadeAnimation,
-                  child: const CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.primary,
-                    ),
+                    valueColor: AlwaysStoppedAnimation<Color>(context.primary),
                   ),
                 ),
               ],

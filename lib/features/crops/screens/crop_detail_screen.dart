@@ -30,18 +30,21 @@ class _CropDetailScreenState extends State<CropDetailScreen> {
 
   Future<void> _addToMyCrops() async {
     setState(() => _isAdding = true);
-    final userId =
-        context.read<AuthProvider>().currentUser?.id ?? 'guest_user';
+    final userId = context.read<AuthProvider>().currentUser?.id ?? 'guest_user';
     final provider = context.read<CropsProvider>();
     final success = await provider.addCropToFarm(userId, widget.crop.id);
     if (!mounted) return;
     setState(() => _isAdding = false);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(success
-          ? 'تمت إضافة ${widget.crop.name} إلى محاصيلك بنجاح'
-          : 'حدث خطأ: ${provider.errorMessage}'),
-      backgroundColor: success ? AppColors.primary : Colors.red,
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? 'تمت إضافة ${widget.crop.name} إلى محاصيلك بنجاح'
+              : 'حدث خطأ: ${provider.errorMessage}',
+        ),
+        backgroundColor: success ? context.primary : Colors.red,
+      ),
+    );
     if (success && Navigator.canPop(context)) Navigator.pop(context);
   }
 
@@ -259,7 +262,7 @@ class _AddButton extends StatelessWidget {
           : const Icon(Icons.add_rounded),
       label: Text(isAdding ? 'جاري الإضافة...' : 'أضف لمزرعتي'),
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
+        backgroundColor: context.primary,
         foregroundColor: Colors.white,
         padding: EdgeInsets.symmetric(
           horizontal: context.wp(4),
@@ -291,17 +294,21 @@ class _AboutCard extends StatelessWidget {
       padding: EdgeInsets.all(context.wp(5)),
       decoration: BoxDecoration(
         color: isDark
-            ? AppColors.primary.withValues(alpha: 0.08)
-            : AppColors.primary.withValues(alpha: 0.05),
+            ? context.primary.withValues(alpha: 0.08)
+            : context.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(context.wp(5)),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: context.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.eco_rounded, color: AppColors.primary, size: context.sp(18)),
+              Icon(
+                Icons.eco_rounded,
+                color: context.primary,
+                size: context.sp(18),
+              ),
               SizedBox(width: context.wp(2)),
               Text(
                 'نبذة عن النبتة',

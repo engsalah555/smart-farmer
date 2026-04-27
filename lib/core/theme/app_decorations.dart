@@ -33,82 +33,69 @@ class AppDecorations {
     required bool isDark,
     double radius = cardRadius,
     bool elevated = false,
-  }) =>
-      BoxDecoration(
-        color: isDark ? AppColors.darkCard : AppColors.surface,
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(
-          color: AppColors.border(isDark),
-          width: 1.0,
-        ),
-        boxShadow: elevated ? softShadow(isDark) : null,
-      );
+  }) => BoxDecoration(
+    color: isDark ? AppColors.darkCard : AppColors.surface,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: AppColors.border(isDark), width: 1.0),
+    boxShadow: elevated ? softShadow(isDark) : null,
+  );
 
-  static BoxDecoration inputDecoration({required bool isDark, double radius = inputRadius}) =>
-      BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.surface,
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(
-          color: AppColors.border(isDark),
-          width: 1.0,
-        ),
-      );
+  static BoxDecoration inputDecoration({
+    required bool isDark,
+    double radius = inputRadius,
+  }) => BoxDecoration(
+    color: isDark ? AppColors.darkSurface : AppColors.surface,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: AppColors.border(isDark), width: 1.0),
+  );
 
-  static BoxDecoration pillDecoration({required bool isDark, Color? fillColor}) =>
-      BoxDecoration(
-        color: fillColor ?? (isDark ? AppColors.darkSurface : AppColors.surface),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(
-          color: AppColors.border(isDark),
-          width: 1,
-        ),
-      );
+  static BoxDecoration pillDecoration({
+    required bool isDark,
+    Color? fillColor,
+  }) => BoxDecoration(
+    color: fillColor ?? (isDark ? AppColors.darkSurface : AppColors.surface),
+    borderRadius: BorderRadius.circular(25),
+    border: Border.all(color: AppColors.border(isDark), width: 1),
+  );
 
   static BoxDecoration primaryHeaderDecoration() => const BoxDecoration(
     color: AppColors.primary,
-    borderRadius: BorderRadius.vertical(
-      bottom: Radius.circular(headerRadius),
-    ),
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(headerRadius)),
   );
 
   static BoxDecoration whiteSheetDecoration() => BoxDecoration(
     color: AppColors.surface,
-    borderRadius: BorderRadius.vertical(
-      top: Radius.circular(headerRadius - 8),
-    ),
+    borderRadius: BorderRadius.vertical(top: Radius.circular(headerRadius - 8)),
   );
 
   // Backward compatibility - solid card without glassmorphism
-  static BoxDecoration premiumCardDecoration({required bool isDark, double radius = cardRadius}) =>
-      BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.surface,
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(
-          color: AppColors.border(isDark),
-          width: 1.0,
-        ),
-        boxShadow: softShadow(isDark),
-      );
+  static BoxDecoration premiumCardDecoration({
+    required bool isDark,
+    double radius = cardRadius,
+  }) => BoxDecoration(
+    color: isDark ? AppColors.darkSurface : AppColors.surface,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: AppColors.border(isDark), width: 1.0),
+    boxShadow: softShadow(isDark),
+  );
 
-  static BoxDecoration premiumPillDecoration({required bool isDark, double radius = 25.0}) =>
-      BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.surface,
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(
-          color: AppColors.border(isDark),
-          width: 1,
-        ),
-      );
+  static BoxDecoration premiumPillDecoration({
+    required bool isDark,
+    double radius = 25.0,
+  }) => BoxDecoration(
+    color: isDark ? AppColors.darkSurface : AppColors.surface,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: AppColors.border(isDark), width: 1),
+  );
 
-  static BoxDecoration premiumGlassDecorationV2({required bool isDark, double radius = 24.0}) =>
-      BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.surface,
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(
-          color: AppColors.border(isDark),
-          width: 1.5,
-        ),
-      );
+  static BoxDecoration premiumGlassDecorationV2({
+    required bool isDark,
+    double radius = 24.0,
+  }) => BoxDecoration(
+    color: isDark ? AppColors.darkSurface : AppColors.surface,
+    borderRadius: BorderRadius.circular(radius),
+    border: Border.all(color: AppColors.border(isDark), width: 1.5),
+  );
 
   static BoxDecoration selectedDecoration({double radius = 20.0}) =>
       BoxDecoration(

@@ -26,8 +26,7 @@ class FertilizerCalculatorSheet extends StatefulWidget {
       _FertilizerCalculatorSheetState();
 }
 
-class _FertilizerCalculatorSheetState
-    extends State<FertilizerCalculatorSheet> {
+class _FertilizerCalculatorSheetState extends State<FertilizerCalculatorSheet> {
   final _areaController = TextEditingController(text: '1.0');
   NpkResult? _result;
 
@@ -59,7 +58,9 @@ class _FertilizerCalculatorSheetState
       margin: EdgeInsets.only(top: context.hp(10)),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(context.wp(7))),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(context.wp(7)),
+        ),
       ),
       child: DraggableScrollableSheet(
         initialChildSize: 1,
@@ -94,12 +95,12 @@ class _FertilizerCalculatorSheetState
                   Container(
                     padding: EdgeInsets.all(context.wp(2.5)),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.12),
+                      color: context.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(context.wp(3)),
                     ),
                     child: Icon(
                       Icons.calculate_rounded,
-                      color: AppColors.primary,
+                      color: context.primary,
                       size: context.sp(22),
                     ),
                   ),
@@ -120,7 +121,7 @@ class _FertilizerCalculatorSheetState
                           widget.crop.name,
                           style: TextStyle(
                             fontSize: context.sp(12),
-                            color: AppColors.primary,
+                            color: context.primary,
                           ),
                         ),
                       ],
@@ -159,12 +160,12 @@ class _FertilizerCalculatorSheetState
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(context.wp(3)),
                           borderSide: BorderSide(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: context.primary.withValues(alpha: 0.3),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(context.wp(3)),
-                          borderSide: BorderSide(color: AppColors.primary),
+                          borderSide: BorderSide(color: context.primary),
                         ),
                         fillColor: isDark
                             ? Colors.white.withValues(alpha: 0.05)
@@ -263,10 +264,9 @@ class _FertilizerCalculatorSheetState
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: context.primary,
                     foregroundColor: Colors.white,
-                    padding:
-                        EdgeInsets.symmetric(vertical: context.hp(1.8)),
+                    padding: EdgeInsets.symmetric(vertical: context.hp(1.8)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(context.wp(4)),
                     ),

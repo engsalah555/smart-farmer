@@ -40,7 +40,7 @@ class SocialMediaPost extends StatelessWidget {
               children: [
                 // User Header
                 _buildHeader(context, isDark),
-  
+
                 // Post Text
                 Padding(
                   padding: EdgeInsets.fromLTRB(
@@ -57,16 +57,16 @@ class SocialMediaPost extends StatelessWidget {
                       color: isDark
                           ? AppColors.darkTextPrimary
                           : AppColors.textPrimary,
-                      
+
                       letterSpacing: 0.1,
                     ),
                   ),
                 ),
-  
+
                 if (post.postImage != null && post.postImage!.isNotEmpty) ...[
                   _buildPostImage(context),
                 ],
-  
+
                 // Action Buttons
                 _buildActions(context, isDark),
               ],
@@ -99,7 +99,6 @@ class SocialMediaPost extends StatelessWidget {
                           color: isDark
                               ? AppColors.darkTextPrimary
                               : AppColors.textPrimary,
-                          
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -109,7 +108,7 @@ class SocialMediaPost extends StatelessWidget {
                       SizedBox(width: context.wp(1.5)),
                       Icon(
                         Icons.verified,
-                        color: AppColors.primary,
+                        color: context.primary,
                         size: context.sp(14).clamp(12, 18),
                       ),
                     ],
@@ -122,7 +121,7 @@ class SocialMediaPost extends StatelessWidget {
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
                     fontSize: context.sp(11).clamp(10, 14),
-                    
+
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -205,7 +204,7 @@ class SocialMediaPost extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.2),
+          color: context.primary.withValues(alpha: 0.2),
           width: 2,
         ),
       ),
@@ -216,27 +215,29 @@ class SocialMediaPost extends StatelessWidget {
                 imageUrl: post.image!,
                 fit: BoxFit.cover,
                 // Optimize memory by limiting decoded image size
-                memCacheWidth: (avatarSize * MediaQuery.of(context).devicePixelRatio).toInt(),
+                memCacheWidth:
+                    (avatarSize * MediaQuery.of(context).devicePixelRatio)
+                        .toInt(),
                 placeholder: (context, url) => Container(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: context.primary.withValues(alpha: 0.1),
                   child: const Center(
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: context.primary.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.person,
-                    color: AppColors.primary,
+                    color: context.primary,
                     size: avatarSize * 0.6,
                   ),
                 ),
               )
             : Container(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: context.primary.withValues(alpha: 0.1),
                 child: Icon(
                   Icons.person,
-                  color: AppColors.primary,
+                  color: context.primary,
                   size: avatarSize * 0.6,
                 ),
               ),
@@ -286,10 +287,7 @@ class SocialMediaPost extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   isAdmin && !isMyPost ? 'حذف (إشراف)' : 'حذف',
-                  style: const TextStyle(
-                    color: Colors.red,
-                    
-                  ),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ],
             ),
@@ -339,11 +337,7 @@ class SocialMediaPost extends StatelessWidget {
                   const SizedBox(height: 16),
                   const Text(
                     'إبلاغ عن محتوى',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -368,14 +362,14 @@ class SocialMediaPost extends StatelessWidget {
                                   margin: const EdgeInsets.only(bottom: 8),
                                   decoration: BoxDecoration(
                                     color: selectedReason == e.key
-                                        ? AppColors.primary.withValues(
+                                        ? context.primary.withValues(
                                             alpha: 0.05,
                                           )
                                         : Colors.transparent,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: selectedReason == e.key
-                                          ? AppColors.primary.withValues(
+                                          ? context.primary.withValues(
                                               alpha: 0.2,
                                             )
                                           : Colors.transparent,
@@ -384,13 +378,10 @@ class SocialMediaPost extends StatelessWidget {
                                   child: RadioListTile<String>(
                                     title: Text(
                                       e.value,
-                                      style: const TextStyle(
-                                        
-                                        fontSize: 14,
-                                      ),
+                                      style: const TextStyle(fontSize: 14),
                                     ),
                                     value: e.key,
-                                    activeColor: AppColors.primary,
+                                    activeColor: context.primary,
                                   ),
                                 ),
                               )
@@ -401,11 +392,10 @@ class SocialMediaPost extends StatelessWidget {
                   TextField(
                     controller: detailsController,
                     maxLines: 3,
-                    style: const TextStyle( fontSize: 14),
+                    style: const TextStyle(fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'تفاصيل إضافية (اختياري)',
                       hintStyle: TextStyle(
-                        
                         fontSize: 13,
                         color: Colors.grey.withValues(alpha: 0.6),
                       ),
@@ -417,8 +407,8 @@ class SocialMediaPost extends StatelessWidget {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary,
+                        borderSide: BorderSide(
+                          color: context.primary,
                           width: 1.5,
                         ),
                       ),
@@ -439,7 +429,6 @@ class SocialMediaPost extends StatelessWidget {
                           child: Text(
                             'تراجع',
                             style: TextStyle(
-                              
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w600,
                             ),
@@ -472,7 +461,7 @@ class SocialMediaPost extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: context.primary,
                             foregroundColor: Colors.white,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -482,10 +471,7 @@ class SocialMediaPost extends StatelessWidget {
                           ),
                           child: const Text(
                             'إرسال',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -513,7 +499,10 @@ class SocialMediaPost extends StatelessWidget {
           child: CachedNetworkImage(
             imageUrl: post.postImage!,
             // Optimize memory by limiting decoded image size to screen width
-            memCacheWidth: (MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio).toInt(),
+            memCacheWidth:
+                (MediaQuery.of(context).size.width *
+                        MediaQuery.of(context).devicePixelRatio)
+                    .toInt(),
             placeholder: (context, url) => _buildShimmer(context),
             errorWidget: (context, url, error) => _buildImageError(context),
             fit: BoxFit.cover,
@@ -532,7 +521,7 @@ class SocialMediaPost extends StatelessWidget {
       child: Center(
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: AppColors.primary.withValues(alpha: 0.5),
+          color: context.primary.withValues(alpha: 0.5),
         ),
       ),
     );
@@ -550,11 +539,7 @@ class SocialMediaPost extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'فشل تحميل الصورة',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 12,
-              
-            ),
+            style: TextStyle(color: Colors.grey[400], fontSize: 12),
           ),
         ],
       ),
@@ -595,7 +580,6 @@ class SocialMediaPost extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -610,10 +594,7 @@ class SocialMediaPost extends StatelessWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.pop(ctx),
-                        child: const Text(
-                          'تراجع',
-                          style: TextStyle(),
-                        ),
+                        child: const Text('تراجع', style: TextStyle()),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -634,10 +615,7 @@ class SocialMediaPost extends StatelessWidget {
                         ),
                         child: const Text(
                           'حذف',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -651,7 +629,6 @@ class SocialMediaPost extends StatelessWidget {
     );
   }
 }
-
 
 class _ActionButton extends StatelessWidget {
   final IconData icon;
@@ -699,7 +676,6 @@ class _ActionButton extends StatelessWidget {
                   color: color,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  
                 ),
               ),
             ],

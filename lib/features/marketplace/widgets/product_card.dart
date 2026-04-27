@@ -40,7 +40,7 @@ class ProductCard extends StatelessWidget {
                   color: context.primary.withValues(alpha: 0.05),
                   child: Hero(
                     tag: 'product_store_${product.id}',
-                    child: _buildProductImage(product),
+                    child: _buildProductImage(context, product),
                   ),
                 ),
                 Positioned.fill(
@@ -52,7 +52,9 @@ class ProductCard extends StatelessWidget {
                         stops: const [0.7, 1.0],
                         colors: [
                           Colors.transparent,
-                          AppColors.neutralBlack.withValues(alpha: context.isDark ? 0.6 : 0.3),
+                          AppColors.neutralBlack.withValues(
+                            alpha: context.isDark ? 0.6 : 0.3,
+                          ),
                         ],
                       ),
                     ),
@@ -62,7 +64,10 @@ class ProductCard extends StatelessWidget {
                   top: 10,
                   start: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: context.primary,
                       borderRadius: BorderRadius.circular(6),
@@ -168,7 +173,7 @@ class ProductCard extends StatelessWidget {
                   color: context.primary.withValues(alpha: 0.05),
                   child: Hero(
                     tag: 'product_store_${product.id}',
-                    child: _buildProductImage(product),
+                    child: _buildProductImage(context, product),
                   ),
                 ),
                 Positioned.fill(
@@ -180,7 +185,9 @@ class ProductCard extends StatelessWidget {
                         stops: const [0.6, 1.0],
                         colors: [
                           Colors.transparent,
-                          AppColors.neutralBlack.withValues(alpha: context.isDark ? 0.5 : 0.25),
+                          AppColors.neutralBlack.withValues(
+                            alpha: context.isDark ? 0.5 : 0.25,
+                          ),
                         ],
                       ),
                     ),
@@ -190,7 +197,10 @@ class ProductCard extends StatelessWidget {
                   top: 10,
                   start: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: context.primary,
                       borderRadius: BorderRadius.circular(6),
@@ -223,7 +233,10 @@ class ProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: context.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
@@ -283,7 +296,7 @@ class ProductCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.add_shopping_cart_rounded,
                           color: Colors.white,
                           size: 20,
@@ -300,13 +313,9 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProductImage(ProductModel product) {
+  Widget _buildProductImage(BuildContext context, ProductModel product) {
     if (product.images.isEmpty) {
-      return Icon(
-        Icons.image_not_supported,
-        color: AppColors.primary,
-        size: 32,
-      );
+      return Icon(Icons.image_not_supported, color: context.primary, size: 32);
     }
     return CustomImage(imageUrl: product.images.first, fit: BoxFit.cover);
   }

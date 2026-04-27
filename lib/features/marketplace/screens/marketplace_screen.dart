@@ -58,7 +58,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
 
   void _setupProviderListener() {
     _marketplaceProvider.addListener(_onProviderUpdated);
-    _syncTabControllerWithCategories(_marketplaceProvider.dynamicCategories.length);
+    _syncTabControllerWithCategories(
+      _marketplaceProvider.dynamicCategories.length,
+    );
   }
 
   void _onProviderUpdated() {
@@ -72,12 +74,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     if (provider.stores.isEmpty || provider.products.isEmpty) {
       provider.refreshMarketplace();
     }
-    
+
     final user = context.read<AuthProvider>().currentUser;
     if (user != null && user.isSeller) {
       context.read<SellerProvider>().loadSellerDashboardData();
     }
-    
+
     if (user != null && !user.canSell && !isBuying) {
       setState(() => isBuying = true);
     }
@@ -127,7 +129,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: context.isDark ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness: context.isDark
+            ? Brightness.light
+            : Brightness.dark,
         systemNavigationBarColor: context.backgroundColor,
         systemNavigationBarIconBrightness: context.isDark
             ? Brightness.light
@@ -136,7 +140,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
       child: Scaffold(
         backgroundColor: context.backgroundColor,
         body: RefreshIndicator(
-          color: AppColors.primary,
+          color: context.primary,
           onRefresh: _onRefresh,
           child: NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,
@@ -160,7 +164,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
   Future<void> _onRefresh() async {
     final marketplaceProvider = context.read<MarketplaceProvider>();
     final sellerProvider = context.read<SellerProvider>();
-    
+
     await Future.wait([
       marketplaceProvider.refreshMarketplace(),
       sellerProvider.loadSellerDashboardData(),
@@ -204,7 +208,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     );
   }
 
-
   Widget _buildStickyHeaderSliver() {
     final provider = context.watch<MarketplaceProvider>();
     final dynamicCategories = provider.dynamicCategories;
@@ -214,12 +217,14 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     }
 
     return MarketplaceStickyHeader(
-      key: ValueKey('sticky_header_${dynamicCategories.length}_$_isSearchVisible'),
+      key: ValueKey(
+        'sticky_header_${dynamicCategories.length}_$_isSearchVisible',
+      ),
       isBuying: isBuying,
       tabController: _tabController!,
       categories: dynamicCategories,
       onCategoryTap: (index) => setState(() {}),
-      searchWidget: _isSearchVisible 
+      searchWidget: _isSearchVisible
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: FadeInSlide(
@@ -230,9 +235,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
                   onChanged: (val) => setState(() => _searchQuery = val),
                 ),
               ),
-            ) 
+            )
           : null,
-      filterWidget: isBuying 
+      filterWidget: isBuying
           ? MarketplacePremiumFilterBar(
               selectedFilter: _selectedFilter,
               onFilterSelected: (val) => setState(() => _selectedFilter = val),
@@ -267,7 +272,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
   Widget _buildLoadingSliver() {
     final provider = context.watch<MarketplaceProvider>();
 
-    bool isLoadingMore = isBuying ? provider.isLoadingMoreStores : provider.isLoadingMoreProducts;
+    bool isLoadingMore = isBuying
+        ? provider.isLoadingMoreStores
+        : provider.isLoadingMoreProducts;
 
     if (!isLoadingMore) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());

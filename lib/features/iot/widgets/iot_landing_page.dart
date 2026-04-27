@@ -24,7 +24,7 @@ class IotLandingPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  _buildHeaderIcon(),
+                  _buildHeaderIcon(context),
                   const SizedBox(height: 32),
                   _buildMainTitle(isDark),
                   const SizedBox(height: 16),
@@ -49,7 +49,7 @@ class IotLandingPage extends StatelessWidget {
       expandedHeight: 0,
       toolbarHeight: 70,
       pinned: true,
-      backgroundColor: AppColors.primary,
+      backgroundColor: context.primary,
       elevation: 0,
       automaticallyImplyLeading: false,
       title: Row(
@@ -63,28 +63,24 @@ class IotLandingPage extends StatelessWidget {
           const SizedBox(width: 12),
           const Text(
             'خدمة الري الذكي',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeaderIcon() {
+  Widget _buildHeaderIcon(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: context.primary.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
-      child: const Icon(
+      child: Icon(
         Icons.settings_input_component_rounded,
         size: 80,
-        color: AppColors.primary,
+        color: context.primary,
       ),
     );
   }
@@ -96,7 +92,7 @@ class IotLandingPage extends StatelessWidget {
       style: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.w900,
-        
+
         color: AppColors.getTextColor(isDark),
         height: 1.2,
       ),
@@ -107,11 +103,7 @@ class IotLandingPage extends StatelessWidget {
     return const Text(
       'استخدم أحدث تقنيات IoT لمراقبة مزرعتك والتحكم بالري من أي مكان في العالم.',
       textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 16,
-        color: Colors.grey,
-        
-      ),
+      style: TextStyle(fontSize: 16, color: Colors.grey),
     );
   }
 
@@ -172,17 +164,13 @@ class IotLandingPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  
+
                   color: AppColors.getTextColor(isDark),
                 ),
               ),
               Text(
                 desc,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                  
-                ),
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),
@@ -198,7 +186,7 @@ class IotLandingPage extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
+            color: context.primary.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -207,7 +195,7 @@ class IotLandingPage extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => _handleRequest(context, provider),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: context.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -219,7 +207,6 @@ class IotLandingPage extends StatelessWidget {
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            
           ),
         ),
       ),
@@ -234,7 +221,6 @@ class IotLandingPage extends StatelessWidget {
         fontSize: 12,
         color: Colors.grey,
         fontStyle: FontStyle.italic,
-        
       ),
     );
   }
@@ -245,7 +231,10 @@ class IotLandingPage extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('تم إرسال طلبك بنجاح. سنقوم بمراجعته قريباً.', style: TextStyle()),
+            content: Text(
+              'تم إرسال طلبك بنجاح. سنقوم بمراجعته قريباً.',
+              style: TextStyle(),
+            ),
             backgroundColor: Colors.green,
           ),
         );

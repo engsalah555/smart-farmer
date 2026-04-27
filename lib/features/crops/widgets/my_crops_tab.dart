@@ -36,8 +36,8 @@ class _MyCropsTabState extends State<MyCropsTab> {
     return Consumer<CropsProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading && provider.myCrops.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          return Center(
+            child: CircularProgressIndicator(color: context.primary),
           );
         }
 
@@ -55,7 +55,8 @@ class _MyCropsTabState extends State<MyCropsTab> {
 
         return Column(
           children: [
-            if (!widget.searchQuery.isNotEmpty) _buildLimitIndicator(provider.myCrops.length, widget.isDark),
+            if (!widget.searchQuery.isNotEmpty)
+              _buildLimitIndicator(provider.myCrops.length, widget.isDark),
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
@@ -65,7 +66,10 @@ class _MyCropsTabState extends State<MyCropsTab> {
                   return FadeInSlide(
                     duration: const Duration(milliseconds: 600),
                     delay: Duration(milliseconds: index * 100),
-                    child: UserCropCard(userCrop: userCrop, isDark: widget.isDark),
+                    child: UserCropCard(
+                      userCrop: userCrop,
+                      isDark: widget.isDark,
+                    ),
                   );
                 },
               ),
@@ -87,7 +91,9 @@ class _MyCropsTabState extends State<MyCropsTab> {
         color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isFull ? Colors.red.withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.1),
+          color: isFull
+              ? Colors.red.withValues(alpha: 0.3)
+              : context.primary.withValues(alpha: 0.1),
         ),
         boxShadow: [
           if (!isDark)
@@ -106,8 +112,10 @@ class _MyCropsTabState extends State<MyCropsTab> {
               Row(
                 children: [
                   Icon(
-                    isFull ? Icons.warning_amber_rounded : Icons.info_outline_rounded,
-                    color: isFull ? Colors.red : AppColors.primary,
+                    isFull
+                        ? Icons.warning_amber_rounded
+                        : Icons.info_outline_rounded,
+                    color: isFull ? Colors.red : context.primary,
                     size: 18,
                   ),
                   const SizedBox(width: 8),
@@ -115,7 +123,9 @@ class _MyCropsTabState extends State<MyCropsTab> {
                     isFull ? 'وصلت للحد الأقصى' : 'سعة مزرعتك',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: isFull ? Colors.red : (isDark ? Colors.white70 : Colors.black87),
+                      color: isFull
+                          ? Colors.red
+                          : (isDark ? Colors.white70 : Colors.black87),
                     ),
                   ),
                 ],
@@ -124,7 +134,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
                 '$count / 8 محاصيل',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
-                  color: isFull ? Colors.red : AppColors.primary,
+                  color: isFull ? Colors.red : context.primary,
                 ),
               ),
             ],
@@ -137,7 +147,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
               minHeight: 8,
               backgroundColor: isDark ? Colors.white10 : Colors.grey[200],
               valueColor: AlwaysStoppedAnimation<Color>(
-                isFull ? Colors.red : AppColors.primary,
+                isFull ? Colors.red : context.primary,
               ),
             ),
           ),
@@ -168,7 +178,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
                 ? Icons.search_off_rounded
                 : Icons.energy_savings_leaf_rounded,
             size: 80,
-            color: AppColors.primary.withValues(alpha: 0.2),
+            color: context.primary.withValues(alpha: 0.2),
           ),
           const SizedBox(height: 24),
           Text(
@@ -190,14 +200,14 @@ class _MyCropsTabState extends State<MyCropsTab> {
           ElevatedButton(
             onPressed: () => widget.tabController.animateTo(1),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: context.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
               elevation: 5,
-              shadowColor: AppColors.primary.withValues(alpha: 0.4),
+              shadowColor: context.primary.withValues(alpha: 0.4),
             ),
             child: Text(
               isSearch ? 'انتقل للدليل' : 'استكشف الدليل الآن',

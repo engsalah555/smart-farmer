@@ -50,15 +50,17 @@ class AreaTab extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.straighten_rounded,
-                      color: AppColors.primary,
+                      color: context.primary,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'المساحة المزروعة',
-                      style: AppTypography.h3(isDark: isDark).copyWith(fontSize: 16),
+                      style: AppTypography.h3(
+                        isDark: isDark,
+                      ).copyWith(fontSize: 16),
                     ),
                   ],
                 ),
@@ -77,7 +79,7 @@ class AreaTab extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(child: _buildUnitSelector()),
+                    Expanded(child: _buildUnitSelector(context)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -87,17 +89,17 @@ class AreaTab extends StatelessWidget {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.05),
+                    color: context.primary.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: context.primary.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.info_outline_rounded,
-                        color: AppColors.primary,
+                        color: context.primary,
                         size: 16,
                       ),
                       const SizedBox(width: 8),
@@ -105,15 +107,16 @@ class AreaTab extends StatelessWidget {
                         'ما يعادل: ',
                         style: AppTypography.bodySmall(isDark: isDark).copyWith(
                           fontSize: 12,
-                          color: isDark ? AppColors.darkTextSecondary : Colors.grey,
+                          color: isDark
+                              ? AppColors.darkTextSecondary
+                              : Colors.grey,
                         ),
                       ),
                       Text(
                         '${areaHa.toStringAsFixed(4)} هكتار',
-                        style: AppTypography.valueLabel(isDark: isDark).copyWith(
-                          fontSize: 14,
-                          color: AppColors.primary,
-                        ),
+                        style: AppTypography.valueLabel(
+                          isDark: isDark,
+                        ).copyWith(fontSize: 14, color: context.primary),
                       ),
                     ],
                   ),
@@ -141,7 +144,9 @@ class AreaTab extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       'الإنتاجية المخطط لها',
-                      style: AppTypography.h3(isDark: isDark).copyWith(fontSize: 16),
+                      style: AppTypography.h3(
+                        isDark: isDark,
+                      ).copyWith(fontSize: 16),
                     ),
                   ],
                 ),
@@ -165,20 +170,19 @@ class AreaTab extends StatelessWidget {
               icon: const Icon(Icons.science_outlined, size: 18),
               label: Text(
                 'التالي: تحليل التربة',
-                style: AppTypography.bodyMedium(isDark: false).copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: AppTypography.bodyMedium(
+                  isDark: false,
+                ).copyWith(fontWeight: FontWeight.bold, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: context.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                 ),
                 elevation: 4,
-                shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                shadowColor: context.primary.withValues(alpha: 0.4),
               ),
               onPressed: onNext,
             ),
@@ -195,15 +199,16 @@ class AreaTab extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark).copyWith(
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primary.withValues(alpha: 0.1),
-            AppColors.secondary.withValues(alpha: 0.05),
-          ],
-        ),
-      ),
+      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark)
+          .copyWith(
+            border: Border.all(color: context.primary.withValues(alpha: 0.2)),
+            gradient: LinearGradient(
+              colors: [
+                context.primary.withValues(alpha: 0.1),
+                AppColors.secondary.withValues(alpha: 0.05),
+              ],
+            ),
+          ),
       child: Row(
         children: [
           Container(
@@ -222,10 +227,9 @@ class AreaTab extends StatelessWidget {
               children: [
                 Text(
                   crop!.name,
-                  style: AppTypography.h3(isDark: isDark).copyWith(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                  ),
+                  style: AppTypography.h3(
+                    isDark: isDark,
+                  ).copyWith(fontSize: 22, fontWeight: FontWeight.w900),
                 ),
                 Text(
                   'متوسط الإنتاجية: ${crop!.avgYield} طن/هكتار',
@@ -242,7 +246,7 @@ class AreaTab extends StatelessWidget {
     );
   }
 
-  Widget _buildUnitSelector() {
+  Widget _buildUnitSelector(BuildContext context) {
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -251,15 +255,15 @@ class AreaTab extends StatelessWidget {
             ? Colors.white.withValues(alpha: 0.05)
             : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: context.primary.withValues(alpha: 0.3)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: areaUnit,
           isExpanded: true,
-          icon: const Icon(
+          icon: Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: AppColors.primary,
+            color: context.primary,
           ),
           items: areaUnits
               .map(
@@ -267,10 +271,9 @@ class AreaTab extends StatelessWidget {
                   value: u,
                   child: Text(
                     u,
-                    style: AppTypography.bodySmall(isDark: isDark).copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
+                    style: AppTypography.bodySmall(
+                      isDark: isDark,
+                    ).copyWith(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                 ),
               )

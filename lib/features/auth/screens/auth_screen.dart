@@ -141,10 +141,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          textAlign: TextAlign.right,
-        ),
+        content: Text(message, textAlign: TextAlign.right),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -157,8 +154,12 @@ class _AuthScreenState extends State<AuthScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.darkBackground : AppColors.background;
     final borderColor = AppColors.border(isDark);
-    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textPrimary = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.textPrimary;
+    final textSecondary = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -257,7 +258,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       children: [
                         Checkbox(
                           value: _rememberMe,
-                          activeColor: AppColors.primary,
+                          activeColor: context.primary,
                           onChanged: (val) {
                             setState(() {
                               _rememberMe = val ?? false;
@@ -280,7 +281,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           child: Text(
                             'نسيت كلمة المرور؟',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: context.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -302,16 +303,15 @@ class _AuthScreenState extends State<AuthScreen> {
                               ? null
                               : _handleAuth,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: context.primary,
                             elevation: 4, // Slight elevation for pop
-                            shadowColor: AppColors.primary.withValues(
-                              alpha: 0.4,
-                            ),
+                            shadowColor: context.primary.withValues(alpha: 0.4),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            disabledBackgroundColor: AppColors.primary
-                                .withValues(alpha: 0.6),
+                            disabledBackgroundColor: context.primary.withValues(
+                              alpha: 0.6,
+                            ),
                           ),
                           child: authProvider.isLoading
                               ? const SizedBox(
@@ -387,17 +387,14 @@ class _AuthScreenState extends State<AuthScreen> {
                     children: [
                       Text(
                         isLogin ? 'ليس لديك حساب؟ ' : '��ديك حساب بالفعل؟ ',
-                        style: TextStyle(
-                          color: textSecondary,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: textSecondary, fontSize: 14),
                       ),
                       GestureDetector(
                         onTap: () => setState(() => isLogin = !isLogin),
                         child: Text(
                           isLogin ? 'سجل الآن' : 'تسجيل الدخول',
                           style: TextStyle(
-                            color: AppColors.primary,
+                            color: context.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
@@ -427,8 +424,12 @@ class _AuthScreenState extends State<AuthScreen> {
   }) {
     final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
     final borderColor = AppColors.border(isDark);
-    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-    final hintColor = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.textPrimary;
+    final hintColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
 
     return Container(
       decoration: BoxDecoration(
@@ -441,14 +442,11 @@ class _AuthScreenState extends State<AuthScreen> {
         keyboardType: inputType,
         obscureText: obscureText ?? false,
         textAlign: TextAlign.right,
-        style: TextStyle(
-          color: textColor,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(color: hintColor, fontSize: 14),
-          prefixIcon: Icon(icon, color: AppColors.primary, size: 22),
+          prefixIcon: Icon(icon, color: context.primary, size: 22),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
@@ -462,7 +460,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 20,
+          ),
         ),
       ),
     );
@@ -477,7 +478,9 @@ class _AuthScreenState extends State<AuthScreen> {
   }) {
     final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
     final borderColor = AppColors.border(isDark);
-    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.textPrimary;
 
     return InkWell(
       onTap: onTap,
@@ -509,9 +512,13 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildRoleSelector(bool isDark) {
-    final containerColor = isDark ? AppColors.darkSurface : const Color(0xFFF1F5F4);
+    final containerColor = isDark
+        ? AppColors.darkSurface
+        : const Color(0xFFF1F5F4);
     final borderColor = AppColors.border(isDark);
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textSecondary = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
 
     return Container(
       decoration: BoxDecoration(
@@ -529,7 +536,12 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Widget _buildRoleItem(String label, String value, bool isDark, Color secondaryColor) {
+  Widget _buildRoleItem(
+    String label,
+    String value,
+    bool isDark,
+    Color secondaryColor,
+  ) {
     final isSelected = userType == value;
     return Expanded(
       child: GestureDetector(
@@ -537,7 +549,7 @@ class _AuthScreenState extends State<AuthScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : Colors.transparent,
+            color: isSelected ? context.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(26),
           ),
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -545,9 +557,7 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected
-                  ? AppColors.neutralWhite
-                  : secondaryColor,
+              color: isSelected ? AppColors.neutralWhite : secondaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -560,7 +570,9 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildStoreTypeSelector(bool isDark) {
     final fillColor = isDark ? AppColors.darkSurface : AppColors.surface;
     final borderColor = AppColors.border(isDark);
-    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.textPrimary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -584,11 +596,18 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
           child: DropdownButtonFormField<String>(
             initialValue: storeType,
-            icon: Icon(Icons.keyboard_arrow_down, color: AppColors.primary),
+            icon: Icon(Icons.keyboard_arrow_down, color: context.primary),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              prefixIcon: Icon(Icons.store_outlined, color: AppColors.primary, size: 22),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 20,
+              ),
+              prefixIcon: Icon(
+                Icons.store_outlined,
+                color: context.primary,
+                size: 22,
+              ),
             ),
             dropdownColor: fillColor,
             borderRadius: BorderRadius.circular(20),

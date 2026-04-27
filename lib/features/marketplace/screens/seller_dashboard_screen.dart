@@ -84,7 +84,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                 expandedHeight: 240,
                 pinned: true,
                 stretch: true,
-                backgroundColor: AppColors.primary,
+                backgroundColor: context.primary,
                 leading: Container(
                   margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -147,12 +147,12 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                               fit: BoxFit.cover,
                             )
                           : Container(
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    AppColors.primary,
+                                    context.primary,
                                     AppColors.secondary,
                                   ],
                                 ),
@@ -205,9 +205,9 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                         imageUrl: store.logo,
                                         fit: BoxFit.cover,
                                       )
-                                    : const Icon(
+                                    : Icon(
                                         Icons.store,
-                                        color: AppColors.primary,
+                                        color: context.primary,
                                         size: 40,
                                       ),
                               ),
@@ -267,7 +267,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                               title: 'المنتجات',
                               value: '${allMyProducts.length}',
                               icon: Icons.inventory_2_outlined,
-                              color: AppColors.primary,
+                              color: context.primary,
                               isDark: isDark,
                             ),
                           ),
@@ -398,7 +398,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                 width: 40,
                                 margin: const EdgeInsets.only(top: 4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary,
+                                  color: context.primary,
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                               ),
@@ -412,10 +412,9 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                             ),
                             label: const Text('إضافة جديد'),
                             style: TextButton.styleFrom(
-                              foregroundColor: AppColors.primary,
+                              foregroundColor: context.primary,
                               textStyle: context.font14.bold,
                             ),
-                            
                           ),
                         ],
                       ),
@@ -465,7 +464,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
         floatingActionButton: FloatingActionButton.extended(
           heroTag: 'dashboard_add_btn',
           onPressed: () => context.push('/add_product'),
-          backgroundColor: AppColors.primary,
+          backgroundColor: context.primary,
           elevation: 4,
           icon: const Icon(Icons.add_shopping_cart, color: Colors.white),
           label: const Text(
@@ -552,7 +551,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 20, color: AppColors.primary),
+            Icon(icon, size: 20, color: context.primary),
             const SizedBox(width: 8),
             Text(
               label,
@@ -625,7 +624,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           children: [
             Opacity(
               opacity: 0.5,
-              child: Icon(Icons.storefront, size: 80, color: AppColors.primary),
+              child: Icon(Icons.storefront, size: 80, color: context.primary),
             ),
             const SizedBox(height: 20),
             const Text(

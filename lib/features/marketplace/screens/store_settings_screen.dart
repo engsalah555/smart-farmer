@@ -180,12 +180,8 @@ class _StoreSettingsScreenState extends State<StoreSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final store = context.select<SellerProvider, StoreModel?>(
-      (p) => p.myStore,
-    );
-    final isLoading = context.select<SellerProvider, bool>(
-      (p) => p.isLoading,
-    );
+    final store = context.select<SellerProvider, StoreModel?>((p) => p.myStore);
+    final isLoading = context.select<SellerProvider, bool>((p) => p.isLoading);
 
     if (store == null) {
       return Scaffold(
@@ -309,10 +305,7 @@ class _StoreSettingsScreenState extends State<StoreSettingsScreen> {
                         children: [
                           Row(
                             children: [
-                              const Icon(
-                                Icons.location_on,
-                                color: AppColors.primary,
-                              ),
+                              Icon(Icons.location_on, color: context.primary),
                               const SizedBox(width: 8),
                               const Text(
                                 'الموقع الجغرافي (GPS)',
@@ -355,7 +348,7 @@ class _StoreSettingsScreenState extends State<StoreSettingsScreen> {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(16),
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: context.primary,
                       ),
                       onPressed: _saveSettings,
                       child: const Text(
@@ -373,15 +366,15 @@ class _StoreSettingsScreenState extends State<StoreSettingsScreen> {
   Widget _buildCatalogLink(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.05),
+        color: context.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: context.primary.withValues(alpha: 0.2)),
       ),
       child: ListTile(
         onTap: () => context.push('/catalog_manager'),
-        leading: const Icon(
+        leading: Icon(
           Icons.collections_bookmark_outlined,
-          color: AppColors.primary,
+          color: context.primary,
         ),
         title: const Text(
           'إدارة الكتالوجات (التصنيفات)',

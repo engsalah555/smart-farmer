@@ -110,7 +110,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         await context.read<PostProvider>().editPost(
           widget.postToEdit!.id,
           content,
-          title: content.length > 30 ? '${content.substring(0, 30)}...' : content,
+          title: content.length > 30
+              ? '${content.substring(0, 30)}...'
+              : content,
           imageFile: _selectedImage,
           removeImage: _removeExistingImage,
         );
@@ -120,7 +122,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           userId: authProvider.currentUser?.id ?? '',
           author: authorName,
           time: DateTime.now().toIso8601String(),
-          title: content.length > 30 ? '${content.substring(0, 30)}...' : content,
+          title: content.length > 30
+              ? '${content.substring(0, 30)}...'
+              : content,
           content: content,
           likesCount: 0,
           commentsCount: 0,
@@ -142,14 +146,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.floating,
-            backgroundColor: AppColors.primary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            backgroundColor: context.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             content: Row(
               children: [
                 const Icon(Icons.check_circle_outline, color: Colors.white),
                 const SizedBox(width: 12),
                 Text(
-                  widget.postToEdit != null ? 'تم تعديل المنشور بنجاح' : 'تم نشر المنشور بنجاح',
+                  widget.postToEdit != null
+                      ? 'تم تعديل المنشور بنجاح'
+                      : 'تم نشر المنشور بنجاح',
                   style: const TextStyle(),
                 ),
               ],
@@ -164,7 +172,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           SnackBar(
             behavior: SnackBarBehavior.floating,
             backgroundColor: Colors.redAccent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             content: Text('حدث خطأ أثناء النشر: $e', style: const TextStyle()),
           ),
         );
@@ -201,34 +211,47 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: context.sp(20).clamp(18, 24),
-              
+
               color: isDark ? Colors.white : Colors.black87,
             ),
           ),
-          backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+          backgroundColor: isDark
+              ? AppColors.darkBackground
+              : AppColors.background,
           elevation: 0,
           centerTitle: true,
           actions: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.wp(2), vertical: 8),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.wp(2),
+                vertical: 8,
+              ),
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _publishPost,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: context.primary,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: EdgeInsets.symmetric(horizontal: context.wp(4)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
                 child: _isLoading
                     ? const SizedBox(
                         height: 18,
                         width: 18,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
                       )
                     : Text(
                         widget.postToEdit != null ? 'تحديث' : 'نشر',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
               ),
             ),
@@ -239,7 +262,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: context.wp(4), vertical: context.hp(1)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.wp(4),
+                  vertical: context.hp(1),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -257,13 +283,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             controller: _contentController,
                             maxLength: _maxChars,
                             decoration: InputDecoration(
-                              hintText: 'بماذا تفكر؟ شاركنا يومياتك الزراعية...',
+                              hintText:
+                                  'بماذا تفكر؟ شاركنا يومياتك الزراعية...',
                               border: InputBorder.none,
                               counterText: '',
                               hintStyle: TextStyle(
                                 color: Colors.grey.shade400,
                                 fontSize: context.sp(18).clamp(16, 22),
-                                
+
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -273,23 +300,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             style: TextStyle(
                               fontSize: context.sp(16).clamp(14, 18),
                               height: 1.6,
-                              
+
                               color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
-                          
+
                           // Image Preview
-                          if (_selectedImage != null || _existingImageUrl != null) ...[
+                          if (_selectedImage != null ||
+                              _existingImageUrl != null) ...[
                             SizedBox(height: context.hp(2)),
                             _buildImagePreview(context),
                           ],
                         ],
                       ),
                     ),
-                    
+
                     // Stats / Info
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.wp(2), vertical: context.hp(1)),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.wp(2),
+                        vertical: context.hp(1),
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -297,8 +328,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             '$_charCount / $_maxChars',
                             style: TextStyle(
                               fontSize: context.sp(12).clamp(10, 14),
-                              color: _charCount > _maxChars * 0.9 ? Colors.orange : Colors.grey,
-                              
+                              color: _charCount > _maxChars * 0.9
+                                  ? Colors.orange
+                                  : Colors.grey,
                             ),
                           ),
                         ],
@@ -331,16 +363,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.primary.withValues(alpha: 0.3), width: 2),
+                border: Border.all(
+                  color: context.primary.withValues(alpha: 0.3),
+                  width: 2,
+                ),
               ),
               child: CircleAvatar(
                 radius: context.wp(6),
-                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                backgroundImage: user?.profileImage != null && user!.profileImage!.isNotEmpty
+                backgroundColor: context.primary.withValues(alpha: 0.1),
+                backgroundImage:
+                    user?.profileImage != null && user!.profileImage!.isNotEmpty
                     ? CachedNetworkImageProvider(user.profileImage!)
                     : null,
                 child: user?.profileImage == null || user!.profileImage!.isEmpty
-                    ? Icon(Icons.person, color: AppColors.primary, size: context.wp(7))
+                    ? Icon(
+                        Icons.person,
+                        color: context.primary,
+                        size: context.wp(7),
+                      )
                     : null,
               ),
             ),
@@ -353,7 +393,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: context.sp(16).clamp(14, 18),
-                    
                   ),
                 ),
                 Text(
@@ -361,7 +400,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   style: TextStyle(
                     fontSize: context.sp(13).clamp(11, 15),
                     color: Colors.grey,
-                    
                   ),
                 ),
               ],
@@ -424,7 +462,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Widget _buildBottomBar(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return ClipRRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
@@ -436,8 +474,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             bottom: context.hp(2) + MediaQuery.of(context).viewInsets.bottom,
           ),
           decoration: BoxDecoration(
-            color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.8),
-            border: Border(top: BorderSide(color: isDark ? Colors.white12 : Colors.black12)),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.6)
+                : Colors.white.withValues(alpha: 0.8),
+            border: Border(
+              top: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
+            ),
           ),
           child: Row(
             children: [
@@ -461,27 +503,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Widget _buildToolButton(BuildContext context, IconData icon, String label, {required VoidCallback onTap}) {
+  Widget _buildToolButton(
+    BuildContext context,
+    IconData icon,
+    String label, {
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: context.wp(4), vertical: context.hp(1)),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.wp(4),
+          vertical: context.hp(1),
+        ),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: context.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.primary, size: context.wp(5)),
+            Icon(icon, color: context.primary, size: context.wp(5)),
             SizedBox(width: context.wp(2)),
             Text(
               label,
               style: TextStyle(
-                color: AppColors.primary,
+                color: context.primary,
                 fontSize: context.sp(14).clamp(12, 16),
                 fontWeight: FontWeight.w600,
-                
               ),
             ),
           ],

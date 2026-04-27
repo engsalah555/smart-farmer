@@ -56,7 +56,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       case 'order':
         return Colors.purple;
       default:
-        return AppColors.primary;
+        return context.primary;
     }
   }
 
@@ -82,8 +82,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           elevation: 0,
           leading: Container(
             margin: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: AppColors.primary,
+            decoration: BoxDecoration(
+              color: context.primary,
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -143,12 +143,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppColors.primary, AppColors.secondary],
+                        colors: [context.primary, AppColors.secondary],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
+                          color: context.primary.withValues(alpha: 0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -206,20 +206,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                             decoration: BoxDecoration(
                               color: selected
-                                  ? AppColors.primary
+                                  ? context.primary
                                   : (isDark
                                         ? const Color(0xFF27272A)
                                         : Colors.white),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: selected
-                                    ? AppColors.primary
+                                    ? context.primary
                                     : Colors.grey.shade300,
                               ),
                               boxShadow: selected
                                   ? [
                                       BoxShadow(
-                                        color: AppColors.primary.withValues(
+                                        color: context.primary.withValues(
                                           alpha: 0.3,
                                         ),
                                         blurRadius: 8,
@@ -249,9 +249,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 // List
                 Expanded(
                   child: provider.isLoading
-                      ? const Center(
+                      ? Center(
                           child: CircularProgressIndicator(
-                            color: AppColors.primary,
+                            color: context.primary,
                           ),
                         )
                       : filtered.isEmpty
@@ -293,8 +293,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           color: n.isRead
               ? (isDark ? const Color(0xFF27272A) : Colors.white)
               : (isDark
-                    ? AppColors.primary.withValues(alpha: 0.08)
-                    : AppColors.primary.withValues(alpha: 0.04)),
+                    ? context.primary.withValues(alpha: 0.08)
+                    : context.primary.withValues(alpha: 0.04)),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: n.isRead
@@ -390,13 +390,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: context.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.notifications_off_outlined,
               size: 56,
-              color: AppColors.primary.withValues(alpha: 0.5),
+              color: context.primary.withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 16),

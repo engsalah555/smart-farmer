@@ -32,7 +32,7 @@ class CropsStickyHeader extends StatelessWidget {
         minHeight: headerHeight,
         maxHeight: headerHeight,
         child: Container(
-          color: AppColors.primary,
+          color: context.primary,
           child: Container(
             decoration: BoxDecoration(
               color: AppColors.getBackground(isDark),
@@ -116,7 +116,7 @@ class CropsStickyHeader extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppColors.primary
+                            ? context.primary
                             : AppColors.getSurface(isDark),
                         borderRadius: BorderRadius.circular(25),
                         border: Border.all(
@@ -132,9 +132,7 @@ class CropsStickyHeader extends StatelessWidget {
                           Icon(
                             cat['icon'],
                             size: 16,
-                            color: isSelected
-                                ? Colors.white
-                                : AppColors.primary,
+                            color: isSelected ? Colors.white : context.primary,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -149,7 +147,6 @@ class CropsStickyHeader extends StatelessWidget {
                                   ? FontWeight.bold
                                   : FontWeight.w600,
                               fontSize: 14,
-                              
                             ),
                           ),
                         ],

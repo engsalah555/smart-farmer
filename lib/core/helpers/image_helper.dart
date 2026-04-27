@@ -40,7 +40,7 @@ class ImageHelper {
           uiSettings: [
             AndroidUiSettings(
               toolbarTitle: 'تعديل الصورة',
-              toolbarColor: AppColors.primary,
+              toolbarColor: context.primary,
               toolbarWidgetColor: Colors.white,
               initAspectRatio: initAspectRatio,
               lockAspectRatio: lockAspectRatio,
