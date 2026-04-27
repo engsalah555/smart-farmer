@@ -88,7 +88,6 @@ class ForumList extends StatelessWidget {
 
         // Forum Posts List (Lazy loading via SliverList)
         SliverList(
-<<<<<<< HEAD
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               return Padding(
@@ -105,19 +104,6 @@ class ForumList extends StatelessWidget {
             },
             childCount: postIds.length,
           ),
-=======
-          delegate: SliverChildBuilderDelegate((context, index) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: context.hp(1)),
-              child: FadeInSlide(
-                duration: const Duration(milliseconds: 500),
-                // Cap delay to first 5 items to prevent performance issues on long lists
-                delay: Duration(milliseconds: index < 5 ? 100 * index : 0),
-                child: SocialMediaPost(post: posts[index]),
-              ),
-            );
-          }, childCount: posts.length),
->>>>>>> b0e685f0ffd6a3b1faea4a5064397d709de298ff
         ),
       ],
     );
