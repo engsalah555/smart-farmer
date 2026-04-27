@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
@@ -325,10 +326,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 )
                               : Text(
                                   isLogin ? 'تسجيل الدخول' : 'إنشاء حساب',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                  style: context.font18.bold.copyWith(
+                                    color: context.white,
                                   ),
                                 ),
                         ),
