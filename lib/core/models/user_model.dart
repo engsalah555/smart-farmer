@@ -55,6 +55,13 @@ class User {
   }
 
   factory User.fromJson(Map<String, dynamic> json) {
+    // ✅ الباكند يُرسل 'profile_photo_url' (accessor كامل URL) من AuthController
+    // و 'profile_image' هو العمود الخام. نُفضّل الـ accessor إذا كان موجوداً.
+    final rawPhoto =
+        json['profile_photo_url']?.toString() ??
+        json['profile_image']?.toString() ??
+        json['profileImage']?.toString();
+
     return User(
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
@@ -62,9 +69,7 @@ class User {
       userType:
           json['user_type'] ?? json['userType'] ?? json['role'] ?? 'farmer',
       phone: json['phone'],
-      profileImage: AppConstants.buildUrl(
-        (json['profile_image'] as String?) ?? (json['profileImage'] as String?),
-      ),
+      profileImage: AppConstants.buildUrl(rawPhoto),
       isVerified:
           json['is_verified'] == 1 ||
           json['is_verified'] == true ||
