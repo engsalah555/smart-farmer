@@ -47,9 +47,7 @@ class HomeHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark
-              ? [AppColors.darkSurface, AppColors.darkBackground]
-              : [context.primary, context.primary.withValues(alpha: 0.8)],
+          colors: [context.primary, context.primary.withValues(alpha: 0.8)],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(40),
