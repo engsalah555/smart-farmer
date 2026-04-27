@@ -105,7 +105,7 @@ class HomeHeader extends StatelessWidget {
                             Icon(
                               Icons.verified,
                               color: isDark
-                                  ? AppColors.darkAccent
+                                  ? AppColors.primaryDark
                                   : AppColors.white,
                               size: context.sp(18).clamp(16, 22),
                             ),
