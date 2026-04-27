@@ -46,7 +46,7 @@ class AppTypography {
   static TextStyle valueLabel({required bool isDark}) => GoogleFonts.outfit(
     fontSize: 18,
     fontWeight: FontWeight.w700,
-    color: isDark ? AppColors.primaryMain : AppColors.primaryDeep,
+    color: isDark ? AppColors.darkAccent : AppColors.primaryMain,
   );
 
   static TextStyle buttonLabel({required bool isDark}) => GoogleFonts.cairo(

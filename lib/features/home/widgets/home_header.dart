@@ -42,14 +42,25 @@ class HomeHeader extends StatelessWidget {
         bottom: context.hp(2),
       ),
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark 
+              ? [AppColors.darkSurface, AppColors.darkBackground] 
+              : [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
+        ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(40),
           bottomRight: Radius.circular(40),
         ),
+        border: isDark ? Border(
+          bottom: BorderSide(color: AppColors.darkBorder, width: 1.5),
+          left: BorderSide(color: AppColors.darkBorder, width: 1.5),
+          right: BorderSide(color: AppColors.darkBorder, width: 1.5),
+        ) : null,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.25),
+            color: (isDark ? AppColors.black : AppColors.primary).withValues(alpha: 0.25),
             blurRadius: 25,
             offset: const Offset(0, 12),
             spreadRadius: -8,
@@ -72,32 +83,32 @@ class HomeHeader extends StatelessWidget {
                         children: [
                           Semantics(
                             label: 'اسم المستخدم: $userName',
-                              child: Text(
-                                'مرحباً , $userName',
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: context.sp(20).clamp(18, 26),
-                                  fontWeight: FontWeight.bold,
+                                  child: Text(
+                                    'مرحباً , $userName',
+                                    style: TextStyle(
+                                      color: isDark ? AppColors.darkTextPrimary : AppColors.white,
+                                      fontSize: context.sp(20).clamp(18, 26),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          if (user?.isVerified ?? false) ...[
-                            SizedBox(width: context.wp(1.5)),
-                            Icon(
-                              Icons.verified,
-                              color: AppColors.white,
-                              size: context.sp(18).clamp(16, 22),
-                            ),
-                          ],
-                        ],
-                      ),
+                              if (user?.isVerified ?? false) ...[
+                                SizedBox(width: context.wp(1.5)),
+                                Icon(
+                                  Icons.verified,
+                                  color: isDark ? AppColors.darkAccent : AppColors.white,
+                                  size: context.sp(18).clamp(16, 22),
+                                ),
+                              ],
+                            ],
+                          ),
                       SizedBox(height: context.hp(0.5)),
                       Text(
                         userRole,
                         style: TextStyle(
-                          color: AppColors.white.withValues(alpha: 0.9),
+                          color: (isDark ? AppColors.darkTextSecondary : AppColors.white).withValues(alpha: 0.9),
                           fontSize: context.sp(14).clamp(12, 18),
                           fontWeight: FontWeight.w500,
                         ),
@@ -109,47 +120,47 @@ class HomeHeader extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Semantics(
-                      label: 'التنبيهات',
-                      button: true,
-                      child: ProMaxIconButton(
-                        icon: Icons.notifications_none_rounded,
-                        onTap: () => context.push('/notifications'),
-                        size: context.wp(11).clamp(40, 55),
-                        iconSize: context.wp(5.5).clamp(20, 26),
-                        borderRadius: 22,
-                        color: isDark ? AppColors.white : AppColors.primary,
-                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : AppColors.white,
-                      ),
-                    ),
-                    SizedBox(width: context.wp(2)),
-                    Semantics(
-                      label: 'المحاصيل',
-                      button: true,
-                      child: ProMaxIconButton(
-                        icon: Icons.eco_outlined,
-                        onTap: () => context.go('/crops'),
-                        size: context.wp(11).clamp(40, 55),
-                        iconSize: context.wp(5.5).clamp(20, 26),
-                        borderRadius: 22,
-                        color: isDark ? AppColors.white : AppColors.primary,
-                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : AppColors.white,
-                      ),
-                    ),
-                    SizedBox(width: context.wp(2)),
-                    Semantics(
-                      label: 'المساعد الذكي',
-                      button: true,
-                      child: ProMaxIconButton(
-                        icon: Icons.smart_toy_outlined,
-                        onTap: () => context.push('/chatbot'),
-                        size: context.wp(11).clamp(40, 55),
-                        iconSize: context.wp(5.5).clamp(20, 26),
-                        borderRadius: 22,
-                        color: isDark ? AppColors.white : AppColors.primary,
-                        backgroundColor: isDark ? AppColors.darkSurface.withValues(alpha: 0.6) : AppColors.white,
-                      ),
-                    ),
+                        Semantics(
+                          label: 'التنبيهات',
+                          button: true,
+                          child: ProMaxIconButton(
+                            icon: Icons.notifications_none_rounded,
+                            onTap: () => context.push('/notifications'),
+                            size: context.wp(11).clamp(40, 55),
+                            iconSize: context.wp(5.5).clamp(20, 26),
+                            borderRadius: 22,
+                            color: isDark ? AppColors.darkAccent : AppColors.primary,
+                            backgroundColor: isDark ? AppColors.darkCard.withValues(alpha: 0.6) : AppColors.white,
+                          ),
+                        ),
+                        SizedBox(width: context.wp(2)),
+                        Semantics(
+                          label: 'المحاصيل',
+                          button: true,
+                          child: ProMaxIconButton(
+                            icon: Icons.eco_outlined,
+                            onTap: () => context.go('/crops'),
+                            size: context.wp(11).clamp(40, 55),
+                            iconSize: context.wp(5.5).clamp(20, 26),
+                            borderRadius: 22,
+                            color: isDark ? AppColors.darkAccent : AppColors.primary,
+                            backgroundColor: isDark ? AppColors.darkCard.withValues(alpha: 0.6) : AppColors.white,
+                          ),
+                        ),
+                        SizedBox(width: context.wp(2)),
+                        Semantics(
+                          label: 'المساعد الذكي',
+                          button: true,
+                          child: ProMaxIconButton(
+                            icon: Icons.smart_toy_outlined,
+                            onTap: () => context.push('/chatbot'),
+                            size: context.wp(11).clamp(40, 55),
+                            iconSize: context.wp(5.5).clamp(20, 26),
+                            borderRadius: 22,
+                            color: isDark ? AppColors.darkAccent : AppColors.primary,
+                            backgroundColor: isDark ? AppColors.darkCard.withValues(alpha: 0.6) : AppColors.white,
+                          ),
+                        ),
                   ],
                 ),
               ],
@@ -188,15 +199,15 @@ class HomeHeader extends StatelessWidget {
                                     const Color(0xFF0D1B2A).withValues(alpha: 0.9),
                                   ]
                                 : [
-                                    AppColors.white.withValues(alpha: 0.35), // Increased opacity for readability
-                                    AppColors.white.withValues(alpha: 0.2),
+                                    (isDark ? AppColors.darkCard : AppColors.white).withValues(alpha: isDark ? 0.7 : 0.35),
+                                    (isDark ? AppColors.darkBackground : AppColors.white).withValues(alpha: isDark ? 0.8 : 0.2),
                                   ],
                           ),
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
                             color: isNight
                                 ? Colors.blueAccent.withValues(alpha: 0.4)
-                                : AppColors.white.withValues(alpha: 0.4),
+                                : (isDark ? AppColors.darkBorder : AppColors.white.withValues(alpha: 0.4)),
                             width: 1.5,
                           ),
                           boxShadow: [

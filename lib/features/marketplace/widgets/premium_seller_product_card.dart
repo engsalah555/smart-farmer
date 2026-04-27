@@ -62,7 +62,7 @@ class PremiumSellerProductCard extends StatelessWidget {
                             stops: const [0.6, 1.0],
                             colors: [
                               Colors.transparent,
-                              AppColors.neutralBlack.withValues(alpha: isDark ? 0.5 : 0.3),
+                              (isDark ? AppColors.darkBackground : AppColors.neutralBlack).withValues(alpha: isDark ? 0.8 : 0.4),
                             ],
                           ),
                         ),
@@ -198,21 +198,21 @@ class PremiumSellerProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      '${product.price}',
-                      style: context.font18.bold.copyWith(
-                        color: context.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'ريال',
-                      style: context.font12.bold.copyWith(
-                        color: context.primary.withValues(alpha: 0.7),
-                      ),
-                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '${product.price}',
+                          style: context.font18.bold.copyWith(
+                            color: context.isDark ? context.darkAccent : context.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'ريال',
+                          style: context.font12.bold.copyWith(
+                            color: (context.isDark ? context.darkAccent : context.primary).withValues(alpha: 0.7),
+                          ),
+                        ),
                     const SizedBox(width: 8),
                     Text(
                       '/ ${product.unit}',

@@ -32,13 +32,14 @@ class AppColors {
   static const Color textSecondary = Color(0xFF4A5248);
   static const Color textMuted = Color(0xFF6B7B6B);
 
-  // --- Dark Mode Palette ---
-  static const Color darkBackground = neutralDark;
-  static const Color darkSurface = neutralSurface;
-  static const Color darkBorder = Color(0xFF1D261D);
-  static const Color darkTextPrimary = Color(0xFFE8EEE8); // Minty soft
-  static const Color darkTextSecondary = Color(0xFF8A9B85); // Sage
-  static const Color darkCard = Color(0xFF1A221A); // Subtle green tint
+  // --- Dark Mode Palette (Enhanced) ---
+  static const Color darkBackground = Color(0xFF0F1410); // Deep rich forest-slate
+  static const Color darkSurface = Color(0xFF19201B);    // Elevated surface
+  static const Color darkCard = Color(0xFF1E2620);       // Rich card background
+  static const Color darkBorder = Color(0xFF263028);     // Defined borders
+  static const Color darkTextPrimary = Color(0xFFE8F2E9); // Minty soft white
+  static const Color darkTextSecondary = Color(0xFF94A696); // Sage/Slate mix
+  static const Color darkAccent = Color(0xFF2ECC71);     // Vibrant Action Green
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -51,7 +52,7 @@ class AppColors {
 
   // --- Functional Methods ---
   static Color border(bool isDark) => isDark
-      ? darkTextSecondary.withValues(alpha: 0.15)
+      ? darkBorder
       : textMuted.withValues(alpha: 0.3);
 
   static Color getBackground(bool isDark) =>
@@ -60,7 +61,9 @@ class AppColors {
   static Color getTextColor(bool isDark) =>
       isDark ? darkTextPrimary : textPrimary;
   static Color glass(bool isDark) =>
-      neutralWhite.withValues(alpha: isDark ? 0.05 : 0.15);
+      isDark 
+          ? const Color(0xFFFFFFFF).withValues(alpha: 0.05)
+          : const Color(0xFF000000).withValues(alpha: 0.05);
 
   // --- Shimmer Colors ---
   static const Color shimmerBaseLight = Color(0xFFE2E8E1);
@@ -75,8 +78,8 @@ class AppColors {
 extension ThemeColors on BuildContext {
   bool get isDark => Theme.of(this).brightness == Brightness.dark;
 
-  Color get primary => AppColors.primary;
-  Color get accent => AppColors.accent;
+  Color get primary => isDark ? AppColors.darkAccent : AppColors.primary;
+  Color get accent => isDark ? AppColors.darkAccent : AppColors.accent;
   Color get secondary => AppColors.secondary;
   Color get background => AppColors.getBackground(isDark);
   Color get surface => AppColors.getSurface(isDark);
@@ -88,6 +91,7 @@ extension ThemeColors on BuildContext {
   Color get warning => AppColors.warning;
   Color get info => AppColors.info;
   Color get border => AppColors.border(isDark);
+  Color get darkAccent => AppColors.darkAccent;
 
   Color get darkBackground => AppColors.darkBackground;
   Color get darkSurface => AppColors.darkSurface;

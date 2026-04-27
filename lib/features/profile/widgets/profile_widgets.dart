@@ -38,12 +38,12 @@ class ProfileHeader extends StatelessWidget {
             ),
             CircleAvatar(
               radius: 50,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+              backgroundColor: (isDark ? AppColors.darkAccent : AppColors.primary).withValues(alpha: 0.1),
               backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
                   ? NetworkImage(imageUrl!)
                   : null,
               child: (imageUrl == null || imageUrl!.isEmpty)
-                  ? const Icon(Icons.person, size: 50, color: AppColors.primary)
+                  ? Icon(Icons.person, size: 50, color: isDark ? AppColors.darkAccent : AppColors.primary)
                   : null,
             ),
           ],
@@ -58,9 +58,9 @@ class ProfileHeader extends StatelessWidget {
             ),
             if (isVerified) ...[
               const SizedBox(width: 8),
-              const Icon(
+              Icon(
                 Icons.verified,
-                color: AppColors.primary,
+                color: isDark ? AppColors.darkAccent : AppColors.primary,
                 size: 20,
               ),
             ],
@@ -100,7 +100,7 @@ class SettingsGroup extends StatelessWidget {
               title!,
               style: AppTypography.bodySmall(isDark: isDark).copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+                color: isDark ? AppColors.darkAccent : AppColors.primary,
               ),
             ),
           ),
@@ -169,12 +169,12 @@ class SettingsTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDestructive
               ? AppColors.error.withValues(alpha: 0.1)
-              : AppColors.primary.withValues(alpha: 0.1),
+              : (isDark ? AppColors.darkAccent : AppColors.primary).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
           icon,
-          color: isDestructive ? AppColors.error : AppColors.primary,
+          color: isDestructive ? AppColors.error : (isDark ? AppColors.darkAccent : AppColors.primary),
           size: 20,
         ),
       ),
@@ -195,7 +195,7 @@ class SettingsTile extends StatelessWidget {
           ? Switch.adaptive(
               value: switchValue,
               onChanged: onToggle,
-              activeThumbColor: AppColors.primary,
+              activeThumbColor: isDark ? AppColors.darkAccent : AppColors.primary,
             )
           : (hasArrow
               ? Icon(
