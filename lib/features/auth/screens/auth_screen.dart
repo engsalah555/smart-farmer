@@ -579,13 +579,31 @@ class _AuthScreenState extends State<AuthScreen> {
             dropdownColor: fillColor,
             borderRadius: BorderRadius.circular(20),
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
-            items: const [
-              DropdownMenuItem(value: 'بذور', child: Text('بذور')),
-              DropdownMenuItem(value: 'اسمدة', child: Text('اسمدة')),
-              DropdownMenuItem(value: 'مبيدات', child: Text('مبيدات')),
-              DropdownMenuItem(value: 'محاصيل', child: Text('محاصيل')),
-              DropdownMenuItem(value: 'معدات', child: Text('معدات')),
-              DropdownMenuItem(value: 'المشاتل', child: Text('المشاتل')),
+            items: [
+              DropdownMenuItem(
+                value: 'بذور',
+                child: Text('بذور', style: context.font14),
+              ),
+              DropdownMenuItem(
+                value: 'اسمدة',
+                child: Text('اسمدة', style: context.font14),
+              ),
+              DropdownMenuItem(
+                value: 'مبيدات',
+                child: Text('مبيدات', style: context.font14),
+              ),
+              DropdownMenuItem(
+                value: 'محاصيل',
+                child: Text('محاصيل', style: context.font14),
+              ),
+              DropdownMenuItem(
+                value: 'معدات',
+                child: Text('معدات', style: context.font14),
+              ),
+              DropdownMenuItem(
+                value: 'المشاتل',
+                child: Text('المشاتل', style: context.font14),
+              ),
             ],
             onChanged: (value) {
               if (value != null) {
