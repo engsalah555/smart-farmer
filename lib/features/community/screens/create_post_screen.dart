@@ -262,56 +262,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-<<<<<<< HEAD
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.wp(4),
-                  vertical: context.hp(1),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // User Profile Snippet
-                    _buildUserHeader(context),
-                    SizedBox(height: context.hp(2)),
-
-                    // Main Input Area
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.wp(2)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextField(
-                            controller: _contentController,
-                            maxLength: _maxChars,
-                            decoration: InputDecoration(
-                              hintText:
-                                  'بماذا تفكر؟ شاركنا يومياتك الزراعية...',
-                              border: InputBorder.none,
-                              counterText: '',
-                              hintStyle: TextStyle(
-                                color: Colors.grey.shade400,
-                                fontSize: context.sp(18).clamp(16, 22),
-
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            maxLines: null,
-                            minLines: 5,
-                            keyboardType: TextInputType.multiline,
-                            style: TextStyle(
-                              fontSize: context.sp(16).clamp(14, 18),
-                              height: 1.6,
-
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
-                          ),
-
-                          // Image Preview
-                          if (_selectedImage != null ||
-                              _existingImageUrl != null) ...[
-                            SizedBox(height: context.hp(2)),
-                            _buildImagePreview(context),
-=======
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.wp(5)),
                   child: Column(
@@ -371,31 +321,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 ),
                               ),
                             ),
->>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
                           ],
                         ),
                       ),
-<<<<<<< HEAD
-                    ),
-
-                    // Stats / Info
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.wp(2),
-                        vertical: context.hp(1),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            '$_charCount / $_maxChars',
-                            style: TextStyle(
-                              fontSize: context.sp(12).clamp(10, 14),
-                              color: _charCount > _maxChars * 0.9
-                                  ? Colors.orange
-                                  : Colors.grey,
-=======
-                      
                       // Community Tips
                       Container(
                         padding: EdgeInsets.all(context.wp(4)),
@@ -413,7 +341,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(Icons.tips_and_updates_rounded, color: AppColors.primary, size: 18),
->>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
                             ),
                             SizedBox(width: context.wp(3)),
                             Expanded(
@@ -447,50 +374,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         final user = auth.currentUser;
-<<<<<<< HEAD
-        return Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: context.primary.withValues(alpha: 0.3),
-                  width: 2,
-                ),
-              ),
-              child: CircleAvatar(
-                radius: context.wp(6),
-                backgroundColor: context.primary.withValues(alpha: 0.1),
-                backgroundImage:
-                    user?.profileImage != null && user!.profileImage!.isNotEmpty
-                    ? CachedNetworkImageProvider(user.profileImage!)
-                    : null,
-                child: user?.profileImage == null || user!.profileImage!.isEmpty
-                    ? Icon(
-                        Icons.person,
-                        color: context.primary,
-                        size: context.wp(7),
-                      )
-                    : null,
-              ),
-            ),
-            SizedBox(width: context.wp(3)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user?.name ?? 'مستخدم زائر',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: context.sp(16).clamp(14, 18),
-                  ),
-                ),
-                Text(
-                  'سيتم نشر هذا المنشور للعامة',
-                  style: TextStyle(
-                    fontSize: context.sp(13).clamp(11, 15),
-                    color: Colors.grey,
-=======
         return Container(
           padding: EdgeInsets.symmetric(vertical: context.hp(2)),
           child: Row(
@@ -529,7 +412,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
                     ],
->>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
                   ),
                 ],
               ),
@@ -604,13 +486,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             bottom: context.hp(1) + MediaQuery.of(context).padding.bottom,
           ),
           decoration: BoxDecoration(
-<<<<<<< HEAD
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.6)
-                : Colors.white.withValues(alpha: 0.8),
-            border: Border(
-              top: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
-=======
             color: isDark 
                 ? Colors.black.withValues(alpha: 0.8) 
                 : Colors.white.withValues(alpha: 0.9),
@@ -619,7 +494,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.05),
                 width: 0.5,
               ),
->>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
             ),
           ),
           child: Row(

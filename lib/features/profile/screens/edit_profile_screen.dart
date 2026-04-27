@@ -225,10 +225,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         prefixIcon: Icon(Icons.person_outline),
                       ),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty)
+                        if (v == null || v.trim().isEmpty) {
                           return 'يرجى إدخال الاسم';
-                        if (v.trim().length < 3)
+                        }
+                        if (v.trim().length < 3) {
                           return 'الاسم يجب أن يكون 3 أحرف على الأقل';
+                        }
                         return null;
                       },
                     ),

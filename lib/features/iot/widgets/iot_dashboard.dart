@@ -22,11 +22,13 @@ class IotDashboard extends StatelessWidget {
     final device = context.select<IotProvider, IotDevice?>((p) => p.device);
     final hasDevice = context.select<IotProvider, bool>((p) => p.hasDevice);
 
-    if (isLoading && device == null)
+    if (isLoading && device == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     if (!hasDevice && device == null) return const IotLandingPage();
-    if (device != null && device.status == 'pending')
+    if (device != null && device.status == 'pending') {
       return const IotPendingPage();
+    }
     if (device == null) return const IotLandingPage();
 
     return Scaffold(

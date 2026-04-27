@@ -118,21 +118,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                   Expanded(
                     child: Consumer<PostProvider>(
                       builder: (context, provider, _) {
-<<<<<<< HEAD
-                        final currentPost =
-                            [
-                              ...provider.posts,
-                              ...provider.myPosts,
-                              ...provider.savedPosts,
-                            ].firstWhere(
-                              (p) => p.id == widget.post.id,
-                              orElse: () => widget.post,
-                            );
-
-=======
                         final currentPost = provider.getPost(widget.post.id) ?? widget.post;
-                        
->>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
                         return Text(
                           'التعليقات (${currentPost.commentsCount})',
                           style: TextStyle(

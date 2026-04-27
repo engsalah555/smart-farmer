@@ -35,6 +35,8 @@ class ImageHelper {
 
       // 2. Crop Image
       if (cropImage) {
+        if (!context.mounted) return null;
+        
         final CroppedFile? croppedFile = await ImageCropper().cropImage(
           sourcePath: filePath,
           uiSettings: [
