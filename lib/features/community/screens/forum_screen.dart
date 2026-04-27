@@ -51,12 +51,12 @@ class _ForumScreenState extends State<ForumScreen> {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: context.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: AppColors.primary,
+                color: context.primary,
                 size: context.sp(16).clamp(14, 22),
               ),
             ),
@@ -79,7 +79,6 @@ class _ForumScreenState extends State<ForumScreen> {
                 color: Theme.of(context).textTheme.titleLarge?.color,
                 fontWeight: FontWeight.w900,
                 fontSize: context.sp(18).clamp(16, 24),
-                
               ),
             ),
           ),
@@ -144,7 +143,10 @@ class _ForumScreenState extends State<ForumScreen> {
                     const SizedBox(height: 24),
                     const Text(
                       'المنتدى هادئ جداً اليوم',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -155,11 +157,22 @@ class _ForumScreenState extends State<ForumScreen> {
                     OutlinedButton.icon(
                       onPressed: () => context.push('/create_post'),
                       icon: const Icon(Icons.edit_note_rounded),
-                      label: const Text('اكتب منشوراً الآن', style: TextStyle(fontWeight: FontWeight.bold)),
+                      label: const Text(
+                        'اكتب منشوراً الآن',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        side: const BorderSide(color: AppColors.primary, width: 2),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 12,
+                        ),
+                        side: BorderSide(
+                          color: context.primary,
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ],
@@ -173,24 +186,19 @@ class _ForumScreenState extends State<ForumScreen> {
         onPressed: () async {
           await context.push('/create_post');
         },
-        backgroundColor: AppColors.primary,
+        backgroundColor: context.primary,
         elevation: 4,
         highlightElevation: 8,
         icon: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
         label: const Text(
           'شاركنا تجربتك',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
 }
-
 
 class _PostSearchDelegate extends SearchDelegate<String> {
   final PostProvider _provider;
@@ -275,8 +283,7 @@ class _PostSearchDelegate extends SearchDelegate<String> {
               overflow: TextOverflow.ellipsis,
             ),
             leading: CircleAvatar(
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              child: const Icon(Icons.article, color: AppColors.primary),
+              child: Icon(Icons.article, color: context.primary),
             ),
             trailing: Column(
               mainAxisSize: MainAxisSize.min,

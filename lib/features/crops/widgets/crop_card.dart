@@ -82,12 +82,12 @@ class _CropCardState extends State<CropCard>
             border: Border.all(
               color: isDark
                   ? AppColors.darkBorder.withValues(alpha: 0.6)
-                  : AppColors.primary.withValues(alpha: 0.08),
+                  : context.primary.withValues(alpha: 0.08),
               width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(
+                color: context.primary.withValues(
                   alpha: _isPressed ? 0.15 : 0.08,
                 ),
                 blurRadius: _isPressed ? 12 : 24,
@@ -132,7 +132,9 @@ class _CropCardState extends State<CropCard>
                               stops: const [0.4, 1.0],
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withValues(alpha: isDark ? 0.85 : 0.60),
+                                Colors.black.withValues(
+                                  alpha: isDark ? 0.85 : 0.60,
+                                ),
                               ],
                             ),
                           ),
@@ -173,7 +175,10 @@ class _CropCardState extends State<CropCard>
               Expanded(
                 flex: 3,
                 child: GlassmorphicContainer(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   color: AppColors.getSurface(isDark),
                   opacity: isDark ? 0.6 : 0.85,
                   blur: 15.0,
@@ -182,9 +187,9 @@ class _CropCardState extends State<CropCard>
                   ),
                   border: Border(
                     top: BorderSide(
-                      color: isDark 
-                          ? Colors.white.withValues(alpha: 0.08) 
-                          : AppColors.primary.withValues(alpha: 0.1),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : context.primary.withValues(alpha: 0.1),
                       width: 1.5,
                     ),
                   ),
@@ -197,10 +202,11 @@ class _CropCardState extends State<CropCard>
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w900,
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.textPrimary,
                           letterSpacing: -0.5,
                           height: 1.1,
-                          
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -215,10 +221,12 @@ class _CropCardState extends State<CropCard>
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                              color: context.primary.withValues(
+                                alpha: isDark ? 0.2 : 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: AppColors.primary.withValues(alpha: 0.22),
+                                color: context.primary.withValues(alpha: 0.22),
                                 width: 1,
                               ),
                             ),
@@ -228,16 +236,16 @@ class _CropCardState extends State<CropCard>
                                   CropConstants.categoryIcons[crop.category] ??
                                       Icons.eco_rounded,
                                   size: 11,
-                                  color: AppColors.primary,
+                                  color: context.primary,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
                                   crop.category,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w800,
-                                    
-                                    color: AppColors.primary,
+
+                                    color: context.primary,
                                   ),
                                 ),
                               ],
@@ -248,15 +256,17 @@ class _CropCardState extends State<CropCard>
                             width: 28,
                             height: 28,
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [AppColors.primary, AppColors.secondary],
+                              gradient: LinearGradient(
+                                colors: [context.primary, AppColors.secondary],
                                 begin: Alignment.topRight,
                                 end: Alignment.bottomLeft,
                               ),
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.45),
+                                  color: context.primary.withValues(
+                                    alpha: 0.45,
+                                  ),
                                   blurRadius: 8,
                                   offset: const Offset(0, 3),
                                 ),

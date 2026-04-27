@@ -102,7 +102,7 @@ class ResultSheet extends StatelessWidget {
                       _buildProTips(isDark),
 
                       const SizedBox(height: 40),
-                      _buildFooter(isDark),
+                      _buildFooter(context, isDark),
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -118,25 +118,24 @@ class ResultSheet extends StatelessWidget {
   Widget _buildHeader(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark).copyWith(
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primary.withValues(alpha: 0.1),
-            AppColors.secondary.withValues(alpha: 0.05),
-          ],
-        ),
-      ),
+      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark)
+          .copyWith(
+            border: Border.all(color: context.primary.withValues(alpha: 0.3)),
+            gradient: LinearGradient(
+              colors: [
+                context.primary.withValues(alpha: 0.1),
+                AppColors.secondary.withValues(alpha: 0.05),
+              ],
+            ),
+          ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: context.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.2),
-              ),
+              border: Border.all(color: context.primary.withValues(alpha: 0.2)),
             ),
             child: Text(crop.emoji, style: const TextStyle(fontSize: 40)),
           ),
@@ -148,17 +147,16 @@ class ResultSheet extends StatelessWidget {
                 Text(
                   'تقرير التوصية الفنية',
                   style: AppTypography.bodySmall(isDark: isDark).copyWith(
-                    color: AppColors.primary,
+                    color: context.primary,
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
                 ),
                 Text(
                   'محصول ${crop.name}',
-                  style: AppTypography.h3(isDark: isDark).copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                  ),
+                  style: AppTypography.h3(
+                    isDark: isDark,
+                  ).copyWith(fontSize: 24, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 8),
                 SingleChildScrollView(
@@ -233,9 +231,10 @@ class ResultSheet extends StatelessWidget {
   Widget _buildProTips(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark).copyWith(
-        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-      ),
+      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark)
+          .copyWith(
+            border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -262,7 +261,7 @@ class ResultSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter(bool isDark) {
+  Widget _buildFooter(BuildContext context, bool isDark) {
     return Column(
       children: [
         InfoTip(
@@ -275,7 +274,7 @@ class ResultSheet extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: context.primary,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -284,10 +283,9 @@ class ResultSheet extends StatelessWidget {
             ),
             child: Text(
               'حفظ في سجل المزرعة',
-              style: AppTypography.h3(isDark: true).copyWith(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+              style: AppTypography.h3(
+                isDark: true,
+              ).copyWith(color: Colors.white, fontSize: 16),
             ),
           ),
         ),
@@ -311,19 +309,18 @@ class _CompactInfoTag extends StatelessWidget {
             ? Colors.white.withValues(alpha: 0.05)
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
+        border: Border.all(color: context.primary.withValues(alpha: 0.1)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary),
+          Icon(icon, size: 14, color: context.primary),
           const SizedBox(width: 6),
           Text(
             text,
-            style: AppTypography.valueLabel(isDark: isDark).copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTypography.valueLabel(
+              isDark: isDark,
+            ).copyWith(fontSize: 11, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -358,30 +355,33 @@ class _NutrientChart extends StatelessWidget {
                     color: Colors.blue,
                     title: 'N',
                     radius: 50,
-                    titleStyle: AppTypography.valueLabel(isDark: isDark).copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    titleStyle: AppTypography.valueLabel(isDark: isDark)
+                        .copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   PieChartSectionData(
                     value: result.requiredP,
                     color: Colors.orange,
                     title: 'P',
                     radius: 50,
-                    titleStyle: AppTypography.valueLabel(isDark: isDark).copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    titleStyle: AppTypography.valueLabel(isDark: isDark)
+                        .copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   PieChartSectionData(
                     value: result.requiredK,
                     color: Colors.purple,
                     title: 'K',
                     radius: 50,
-                    titleStyle: AppTypography.valueLabel(isDark: isDark).copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    titleStyle: AppTypography.valueLabel(isDark: isDark)
+                        .copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ],
               ),
@@ -422,10 +422,9 @@ class _ChartLegend extends StatelessWidget {
       const SizedBox(width: 8),
       Text(
         label,
-        style: AppTypography.bodyMedium(isDark: false).copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: 13,
-        ),
+        style: AppTypography.bodyMedium(
+          isDark: false,
+        ).copyWith(fontWeight: FontWeight.bold, fontSize: 13),
       ),
       const SizedBox(width: 8),
       Text(
@@ -495,7 +494,7 @@ class _TimelineStep extends StatelessWidget {
                 width: 14,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: isFirst ? AppColors.primary : Colors.grey.shade400,
+                  color: isFirst ? context.primary : Colors.grey.shade400,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2.5),
                 ),
@@ -504,7 +503,7 @@ class _TimelineStep extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 1.5,
-                    color: AppColors.primary.withValues(alpha: 0.15),
+                    color: context.primary.withValues(alpha: 0.15),
                   ),
                 ),
             ],
@@ -528,7 +527,7 @@ class _TimelineStep extends StatelessWidget {
                         title,
                         style: AppTypography.h3(isDark: isDark).copyWith(
                           fontSize: 14,
-                          color: isFirst ? AppColors.primary : null,
+                          color: isFirst ? context.primary : null,
                         ),
                       ),
                       Container(
@@ -537,16 +536,17 @@ class _TimelineStep extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: context.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           amount,
-                          style: AppTypography.valueLabel(isDark: isDark).copyWith(
-                            fontSize: 12,
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTypography.valueLabel(isDark: isDark)
+                              .copyWith(
+                                fontSize: 12,
+                                color: context.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ),
                     ],
@@ -554,10 +554,9 @@ class _TimelineStep extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     desc,
-                    style: AppTypography.bodySmall(isDark: isDark).copyWith(
-                      fontSize: 11,
-                      color: Colors.grey,
-                    ),
+                    style: AppTypography.bodySmall(
+                      isDark: isDark,
+                    ).copyWith(fontSize: 11, color: Colors.grey),
                   ),
                 ],
               ),
@@ -591,7 +590,10 @@ class _FertItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark, radius: 18),
+      decoration: AppDecorations.premiumGlassDecorationV2(
+        isDark: isDark,
+        radius: 18,
+      ),
       child: Row(
         children: [
           Container(
@@ -609,14 +611,15 @@ class _FertItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: AppTypography.h3(isDark: isDark).copyWith(fontSize: 14),
+                  style: AppTypography.h3(
+                    isDark: isDark,
+                  ).copyWith(fontSize: 14),
                 ),
                 Text(
                   desc,
-                  style: AppTypography.bodySmall(isDark: isDark).copyWith(
-                    color: Colors.grey,
-                    fontSize: 10,
-                  ),
+                  style: AppTypography.bodySmall(
+                    isDark: isDark,
+                  ).copyWith(color: Colors.grey, fontSize: 10),
                 ),
               ],
             ),
@@ -634,10 +637,9 @@ class _FertItem extends StatelessWidget {
               ),
               Text(
                 'كجم',
-                style: AppTypography.bodySmall(isDark: isDark).copyWith(
-                  fontSize: 9,
-                  color: Colors.grey,
-                ),
+                style: AppTypography.bodySmall(
+                  isDark: isDark,
+                ).copyWith(fontSize: 9, color: Colors.grey),
               ),
             ],
           ),
@@ -666,7 +668,9 @@ class _TipItem extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: AppTypography.bodySmall(isDark: false).copyWith(fontSize: 11),
+              style: AppTypography.bodySmall(
+                isDark: false,
+              ).copyWith(fontSize: 11),
             ),
           ),
         ],

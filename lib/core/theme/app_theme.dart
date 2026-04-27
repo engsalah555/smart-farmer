@@ -74,7 +74,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppDecorations.inputRadius),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
       ),
 
       // Bottom Navigation Bar Theme
@@ -93,10 +96,10 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       fontFamily: AppTypography.fontFamily,
-      primaryColor: AppColors.primary,
+      primaryColor: AppColors.darkAccent,
       scaffoldBackgroundColor: AppColors.darkBackground,
       colorScheme: ColorScheme.dark(
-        primary: AppColors.primary,
+        primary: AppColors.darkAccent,
         onPrimary: Colors.white,
         secondary: AppColors.darkAccent,
         onSecondary: Colors.white,
@@ -136,24 +139,33 @@ class AppTheme {
 
       // Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDecorations.buttonRadius),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ).copyWith(
-          overlayColor: WidgetStateProperty.all(Colors.white.withValues(alpha: 0.1)),
-        ),
+        style:
+            ElevatedButton.styleFrom(
+              backgroundColor: AppColors.darkAccent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  AppDecorations.buttonRadius,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ).copyWith(
+              overlayColor: WidgetStateProperty.all(
+                Colors.white.withValues(alpha: 0.1),
+              ),
+            ),
       ),
 
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.darkCard, // Use card color for inputs for better definition
+        fillColor: AppColors
+            .darkCard, // Use card color for inputs for better definition
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDecorations.inputRadius),
           borderSide: BorderSide(color: AppColors.darkBorder, width: 1.5),
@@ -164,11 +176,14 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDecorations.inputRadius),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderSide: const BorderSide(color: AppColors.darkAccent, width: 2),
         ),
         labelStyle: const TextStyle(color: AppColors.darkTextSecondary),
         hintStyle: const TextStyle(color: AppColors.darkTextSecondary),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
       ),
 
       // Bottom Navigation Bar Theme

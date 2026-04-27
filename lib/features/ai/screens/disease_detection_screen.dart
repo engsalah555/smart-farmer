@@ -37,9 +37,10 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    _pulseAnim = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut),
-    );
+    _pulseAnim = Tween<double>(
+      begin: 0.95,
+      end: 1.05,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
 
     _resultCtrl = AnimationController(
       vsync: this,
@@ -150,7 +151,11 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
       backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
       elevation: 0,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_new_rounded, color: textColor, size: 20),
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: textColor,
+          size: 20,
+        ),
         onPressed: () => context.canPop() ? context.pop() : context.go('/home'),
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -169,7 +174,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppColors.primary.withValues(alpha: 0.12),
+                context.primary.withValues(alpha: 0.12),
                 AppColors.accent.withValues(alpha: 0.06),
               ],
             ),
@@ -187,7 +192,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+            color: context.primary.withValues(alpha: isDark ? 0.15 : 0.08),
             blurRadius: 24,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -195,7 +200,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
         ],
         border: Border.all(
           color: _image != null
-              ? AppColors.primary.withValues(alpha: 0.4)
+              ? context.primary.withValues(alpha: 0.4)
               : (isDark ? AppColors.darkBorder : Colors.grey.shade200),
           width: 1.5,
         ),
@@ -233,8 +238,8 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
             decoration: BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.18),
-                  AppColors.primary.withValues(alpha: 0.04),
+                  context.primary.withValues(alpha: 0.18),
+                  context.primary.withValues(alpha: 0.04),
                 ],
               ),
               shape: BoxShape.circle,
@@ -242,7 +247,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
             child: Icon(
               Icons.biotech_rounded,
               size: 64,
-              color: AppColors.primary,
+              color: context.primary,
             ),
           ),
         ),
@@ -261,7 +266,9 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13,
-            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
             height: 1.5,
           ),
         ),
@@ -278,9 +285,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.2),
-            ),
+            border: Border.all(color: context.primary.withValues(alpha: 0.2)),
           ),
           child: Column(
             children: [
@@ -288,9 +293,9 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 width: 56,
                 height: 56,
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                  valueColor: AlwaysStoppedAnimation(context.primary),
                   strokeWidth: 4,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+                  backgroundColor: context.primary.withValues(alpha: 0.15),
                 ),
               ),
               const SizedBox(height: 20),
@@ -308,7 +313,9 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                   height: 1.5,
                 ),
               ),
@@ -376,7 +383,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           const SizedBox(height: 12),
           _DiagnosisCard(
             icon: Icons.shield_rounded,
-            iconColor: AppColors.primary,
+            iconColor: context.primary,
             title: 'نصائح الوقاية',
             content: r.preventionTips,
             isDark: isDark,
@@ -433,7 +440,9 @@ class _StatusCard extends StatelessWidget {
           colors: [
             gradStart,
             gradEnd,
-            isHealthy ? const Color(0xFF047857) : const Color(0xFF8B0000), // Deep rich end color
+            isHealthy
+                ? const Color(0xFF047857)
+                : const Color(0xFF8B0000), // Deep rich end color
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -467,7 +476,10 @@ class _StatusCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.25),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.4),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.white.withValues(alpha: 0.1),
@@ -513,7 +525,11 @@ class _StatusCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.warning_rounded, color: Colors.white70, size: 16),
+                const Icon(
+                  Icons.warning_rounded,
+                  color: Colors.white70,
+                  size: 16,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'مستوى الخطورة: ${result.severityLevel}',
@@ -558,10 +574,7 @@ class _DiagnosisCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            surface,
-            iconColor.withValues(alpha: 0.03),
-          ],
+          colors: [surface, iconColor.withValues(alpha: 0.03)],
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
@@ -623,7 +636,9 @@ class _DiagnosisCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               height: 1.7,
-              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
             ),
           ),
         ],
@@ -652,15 +667,15 @@ class _GradientButton extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.primary, AppColors.accent],
+          gradient: LinearGradient(
+            colors: [context.primary, AppColors.accent],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.4),
+              color: context.primary.withValues(alpha: 0.4),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -707,17 +722,17 @@ class _OutlineButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.primary, width: 1.8),
+          border: Border.all(color: context.primary, width: 1.8),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.primary, size: 22),
+            Icon(icon, color: context.primary, size: 22),
             const SizedBox(width: 10),
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(
+                color: context.primary,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

@@ -92,6 +92,8 @@ extension ThemeColors on BuildContext {
   Color get info => AppColors.info;
   Color get border => AppColors.border(isDark);
   Color get darkAccent => AppColors.darkAccent;
+  Color get primaryDeep => AppColors.primaryDeep;
+  Color get primaryDark => AppColors.primaryDark;
 
   Color get darkBackground => AppColors.darkBackground;
   Color get darkSurface => AppColors.darkSurface;

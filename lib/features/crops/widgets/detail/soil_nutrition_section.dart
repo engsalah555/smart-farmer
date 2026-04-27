@@ -14,11 +14,7 @@ class SoilNutritionSection extends StatelessWidget {
   final Crop crop;
   final VoidCallback? onSpeak;
 
-  const SoilNutritionSection({
-    super.key,
-    required this.crop,
-    this.onSpeak,
-  });
+  const SoilNutritionSection({super.key, required this.crop, this.onSpeak});
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +90,7 @@ class SoilNutritionSection extends StatelessWidget {
             icon: const Icon(Icons.calculate_rounded),
             label: const Text('حاسبة الأسمدة'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: context.primary,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(vertical: context.hp(1.8)),
               shape: RoundedRectangleBorder(

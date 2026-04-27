@@ -19,7 +19,7 @@ class FertilizerCalculatorBanner extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.2),
+                color: context.primary.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -33,8 +33,8 @@ class FertilizerCalculatorBanner extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppColors.primary,
-                        AppColors.primary.withValues(alpha: 0.7),
+                        context.primary,
+                        context.primary.withValues(alpha: 0.7),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,

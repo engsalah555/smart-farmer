@@ -48,33 +48,22 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          navigationShell,
-        ],
-      ),
+      body: Stack(children: [navigationShell]),
       floatingActionButton: Container(
         height: 64,
         width: 64,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(
-                alpha: isDark ? 0.4 : 0.2,
-              ),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
+        decoration: BoxDecoration(shape: BoxShape.circle),
         child: FloatingActionButton(
           heroTag: 'scanner_fab',
           onPressed: () => context.push('/disease_detection'),
-          backgroundColor: AppColors.primary,
+          backgroundColor: context.primary,
           elevation: 0,
           shape: const CircleBorder(),
-          child: const Icon(Icons.qr_code_scanner_rounded, size: 28, color: Colors.white),
+          child: const Icon(
+            Icons.qr_code_scanner_rounded,
+            size: 28,
+            color: Colors.white,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -88,11 +77,35 @@ class MainScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(context, Icons.home_rounded, 'الرئيسية', 0, currentUiIndex),
-              _buildNavItem(context, Icons.eco_rounded, 'المحاصيل', 3, currentUiIndex),
+              _buildNavItem(
+                context,
+                Icons.home_rounded,
+                'الرئيسية',
+                0,
+                currentUiIndex,
+              ),
+              _buildNavItem(
+                context,
+                Icons.eco_rounded,
+                'المحاصيل',
+                3,
+                currentUiIndex,
+              ),
               const SizedBox(width: 48), // Space for FAB
-              _buildNavItem(context, Icons.shopping_bag_rounded, 'المتجر', 1, currentUiIndex),
-              _buildNavItem(context, Icons.person_rounded, 'حسابي', 4, currentUiIndex),
+              _buildNavItem(
+                context,
+                Icons.shopping_bag_rounded,
+                'المتجر',
+                1,
+                currentUiIndex,
+              ),
+              _buildNavItem(
+                context,
+                Icons.person_rounded,
+                'حسابي',
+                4,
+                currentUiIndex,
+              ),
             ],
           ),
         ),
@@ -109,8 +122,9 @@ class MainScreen extends StatelessWidget {
   ) {
     final isSelected = currentUiIndex == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeColor = AppColors.primary;
-    final inactiveColor = (isDark ? Colors.white : AppColors.textPrimary).withValues(alpha: 0.4);
+    final activeColor = context.primary;
+    final inactiveColor = (isDark ? Colors.white : AppColors.textPrimary)
+        .withValues(alpha: 0.4);
 
     return InkWell(
       onTap: () => _onItemTapped(context, index),
@@ -133,7 +147,6 @@ class MainScreen extends StatelessWidget {
                 fontSize: 10,
                 color: isSelected ? activeColor : inactiveColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                
               ),
             ),
           ],
@@ -142,4 +155,3 @@ class MainScreen extends StatelessWidget {
     );
   }
 }
-

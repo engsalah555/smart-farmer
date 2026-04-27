@@ -28,10 +28,9 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
     final products = context.select<SellerProvider, List<ProductModel>>(
       (p) => p.myProducts,
     );
-    final orders = context
-        .select<SellerProvider, List<Map<String, dynamic>>>(
-          (p) => p.storeOrders,
-        );
+    final orders = context.select<SellerProvider, List<Map<String, dynamic>>>(
+      (p) => p.storeOrders,
+    );
     final myCatalogsCount = context.select<SellerProvider, int>(
       (p) => p.myCatalogs.length,
     );
@@ -90,15 +89,15 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.secondary],
+                  gradient: LinearGradient(
+                    colors: [context.primary, AppColors.secondary],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
+                      color: context.primary.withValues(alpha: 0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),

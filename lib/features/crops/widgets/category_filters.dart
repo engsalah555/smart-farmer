@@ -34,29 +34,36 @@ class CategoryFilterChips extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOutCubic,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppColors.primary
+                      ? context.primary
                       : AppColors.getSurface(isDark),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSelected
-                        ? AppColors.primary
-                        : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05)),
+                        ? context.primary
+                        : (isDark
+                              ? Colors.white10
+                              : Colors.black.withValues(alpha: 0.05)),
                     width: 1,
                   ),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: context.primary.withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
                         ]
                       : [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.2 : 0.03,
+                            ),
                             blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),

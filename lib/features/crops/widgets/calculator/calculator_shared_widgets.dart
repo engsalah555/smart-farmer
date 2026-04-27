@@ -15,7 +15,7 @@ class SectionLabel extends StatelessWidget {
       child: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 20, color: AppColors.primary),
+            Icon(icon, size: 20, color: context.primary),
             const SizedBox(width: 10),
           ],
           Text(
@@ -23,7 +23,7 @@ class SectionLabel extends StatelessWidget {
             style: AppTypography.h3(isDark: false).copyWith(
               fontSize: 14,
               fontWeight: FontWeight.w900,
-              color: AppColors.primary,
+              color: context.primary,
             ),
           ),
         ],
@@ -68,14 +68,15 @@ class StyledField extends StatelessWidget {
           ),
         ),
         Container(
-          decoration: AppDecorations.premiumGlassDecorationV2(
-            isDark: isDark,
-            radius: 16,
-          ).copyWith(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.grey.shade50,
-          ),
+          decoration:
+              AppDecorations.premiumGlassDecorationV2(
+                isDark: isDark,
+                radius: 16,
+              ).copyWith(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.grey.shade50,
+              ),
           child: TextField(
             controller: ctrl,
             keyboardType: keyboard,
@@ -87,7 +88,7 @@ class StyledField extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
-              prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
+              prefixIcon: Icon(icon, color: context.primary, size: 20),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -95,10 +96,7 @@ class StyledField extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(
-                  color: AppColors.primary,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: context.primary, width: 2),
               ),
             ),
           ),
@@ -148,19 +146,22 @@ class NutrientField extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Container(
-          decoration: AppDecorations.premiumGlassDecorationV2(
-            isDark: isDark,
-            radius: 14,
-          ).copyWith(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.white,
-          ),
+          decoration:
+              AppDecorations.premiumGlassDecorationV2(
+                isDark: isDark,
+                radius: 14,
+              ).copyWith(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.white,
+              ),
           child: TextField(
             controller: ctrl,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            style: AppTypography.valueLabel(isDark: isDark).copyWith(fontSize: 16),
+            style: AppTypography.valueLabel(
+              isDark: isDark,
+            ).copyWith(fontSize: 16),
             decoration: InputDecoration(
               hintText: '0',
               border: InputBorder.none,
@@ -196,18 +197,15 @@ class NutrientField extends StatelessWidget {
           label,
           style: AppTypography.h3(isDark: isDark).copyWith(color: color),
         ),
-        content: Text(
-          info,
-          style: AppTypography.bodyMedium(isDark: isDark),
-        ),
+        content: Text(info, style: AppTypography.bodyMedium(isDark: isDark)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               'فهمت',
-              style: AppTypography.bodyMedium(isDark: isDark).copyWith(
-                color: AppColors.primary,
-              ),
+              style: AppTypography.bodyMedium(
+                isDark: isDark,
+              ).copyWith(color: context.primary),
             ),
           ),
         ],
@@ -245,10 +243,9 @@ class NPKMini extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               value.toStringAsFixed(1),
-              style: AppTypography.valueLabel(isDark: false).copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTypography.valueLabel(
+                isDark: false,
+              ).copyWith(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -266,9 +263,9 @@ class InfoTip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
+        color: context.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: context.primary.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -278,9 +275,9 @@ class InfoTip extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.auto_awesome_outlined,
-            color: AppColors.primary,
+            color: context.primary,
             size: 24,
           ),
           const SizedBox(width: 12),

@@ -56,7 +56,7 @@ class ProMaxIconButton extends StatelessWidget {
         child: Center(
           child: Icon(
             icon,
-            color: color ?? (isGlass ? Colors.white : AppColors.primary),
+            color: color ?? (isGlass ? Colors.white : context.primary),
             size: iconSize,
           ),
         ),

@@ -47,9 +47,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
       if (mounted) {
         final seller = context.read<SellerProvider>();
         final settings = context.read<SettingsProvider>();
-        
+
         seller.loadMyCatalogs();
-        
+
         // Initialize defaults from dynamic metadata
         if (widget.productToEdit == null) {
           setState(() {
@@ -101,7 +101,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : AppColors.primary,
+        backgroundColor: isError ? Colors.red : context.primary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -148,7 +148,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final provider = context.read<SellerProvider>();
     final bool success;
 
-    final localImages = _selectedImages.where((path) => !path.startsWith('http')).toList();
+    final localImages = _selectedImages
+        .where((path) => !path.startsWith('http'))
+        .toList();
     final imagePath = localImages.isNotEmpty ? localImages.first : null;
     final otherImages = localImages.length > 1 ? localImages.sublist(1) : null;
 
@@ -218,7 +220,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.productToEdit != null ? 'تعديل المنتج' : 'إضافة منتج جديد'),
+        title: Text(
+          widget.productToEdit != null ? 'تعديل المنتج' : 'إضافة منتج جديد',
+        ),
         centerTitle: true,
       ),
       body: Form(
@@ -230,8 +234,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
             AddProductImagePicker(
               selectedImages: _selectedImages,
               onImageAdded: (path) => setState(() => _selectedImages.add(path)),
-              onImageRemoved: (index) => setState(() => _selectedImages.removeAt(index)),
-              showSnackBar: (msg, {isError = false}) => _showSnackBar(msg, isError: isError),
+              onImageRemoved: (index) =>
+                  setState(() => _selectedImages.removeAt(index)),
+              showSnackBar: (msg, {isError = false}) =>
+                  _showSnackBar(msg, isError: isError),
             ),
             const SizedBox(height: 24),
 
@@ -261,7 +267,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
               label: 'الموقع/المدينة',
               hint: 'مثال: الرياض',
               icon: Icons.location_on_outlined,
-              validator: (v) => (v == null || v.isEmpty) ? 'يرجى إدخال الموقع' : null,
+              validator: (v) =>
+                  (v == null || v.isEmpty) ? 'يرجى إدخال الموقع' : null,
             ),
             const SizedBox(height: 16),
             AddProductTextField(
@@ -270,7 +277,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
               hint: '05xxxxxxxx',
               icon: Icons.phone_outlined,
               keyboardType: TextInputType.phone,
-              validator: (v) => (v == null || v.isEmpty) ? 'يرجى إدخال رقم الهاتف' : null,
+              validator: (v) =>
+                  (v == null || v.isEmpty) ? 'يرجى إدخال رقم الهاتف' : null,
             ),
             const SizedBox(height: 24),
 
@@ -306,7 +314,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return ElevatedButton(
       onPressed: _isSubmitting ? null : _submitForm,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
+        backgroundColor: context.primary,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
@@ -314,7 +322,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ? const CircularProgressIndicator(color: Colors.white)
           : Text(
               widget.productToEdit != null ? 'تعديل المنتج' : 'إضافة المنتج',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
     );
   }

@@ -48,8 +48,7 @@ class UpdateDialog extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-              
+              color: context.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -58,14 +57,13 @@ class UpdateDialog extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.white70 : Colors.black54,
-              
             ),
           ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.05),
+              color: context.primary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
@@ -74,8 +72,9 @@ class UpdateDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 height: 1.5,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-                
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
             ),
           ),
@@ -89,7 +88,6 @@ class UpdateDialog extends StatelessWidget {
                     child: Text(
                       'لاحقاً',
                       style: TextStyle(
-                        
                         color: Colors.grey,
                         fontWeight: FontWeight.w600,
                       ),
@@ -102,11 +100,14 @@ class UpdateDialog extends StatelessWidget {
                   onPressed: () async {
                     final url = Uri.parse(updateInfo.updateUrl);
                     if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: context.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -116,11 +117,7 @@ class UpdateDialog extends StatelessWidget {
                   ),
                   child: Text(
                     'تحديث الآن',
-                    style: TextStyle(
-                      
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ),
               ),
@@ -130,11 +127,7 @@ class UpdateDialog extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               '* هذا التحديث إلزامي للاستمرار في استخدام التطبيق',
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.redAccent,
-                
-              ),
+              style: TextStyle(fontSize: 11, color: Colors.redAccent),
             ),
           ],
         ],

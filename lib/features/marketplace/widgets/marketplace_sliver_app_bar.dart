@@ -39,7 +39,7 @@ class MarketplaceSliverAppBar extends StatelessWidget {
       floating: false,
       pinned: true,
       stretch: true,
-      backgroundColor: AppColors.primary,
+      backgroundColor: context.primary,
       elevation: 0,
       automaticallyImplyLeading: false,
       leadingWidth: 0,
@@ -90,7 +90,7 @@ class MarketplaceSliverAppBar extends StatelessWidget {
           StretchMode.zoomBackground,
           StretchMode.blurBackground,
         ],
-        background: Container(color: AppColors.primary),
+        background: Container(color: context.primary),
       ),
     );
   }

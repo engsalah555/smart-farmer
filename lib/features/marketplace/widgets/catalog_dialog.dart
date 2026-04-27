@@ -124,14 +124,14 @@ class _CatalogDialogState extends State<CatalogDialog> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color: context.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Icon(
                         isEditing
                             ? Icons.edit_note_rounded
                             : Icons.add_box_rounded,
-                        color: AppColors.primary,
+                        color: context.primary,
                         size: 28,
                       ),
                     ),

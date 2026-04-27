@@ -14,7 +14,7 @@ class CropsSliverAppBar extends StatelessWidget {
       floating: false,
       pinned: true,
       stretch: true,
-      backgroundColor: AppColors.primary,
+      backgroundColor: context.primary,
       elevation: 0,
       automaticallyImplyLeading: false,
       leadingWidth: 0,
@@ -41,7 +41,6 @@ class CropsSliverAppBar extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 26,
-                
               ),
             ),
             const Spacer(),
@@ -57,7 +56,7 @@ class CropsSliverAppBar extends StatelessWidget {
           StretchMode.zoomBackground,
           StretchMode.blurBackground,
         ],
-        background: Container(color: AppColors.primary),
+        background: Container(color: context.primary),
       ),
     );
   }

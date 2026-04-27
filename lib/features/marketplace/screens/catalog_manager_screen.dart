@@ -61,7 +61,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
+                            color: context.primary.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: ClipRRect(
@@ -73,9 +73,9 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
                                     imageUrl: catalog.imageUrl!,
                                     fit: BoxFit.cover,
                                   )
-                                : const Icon(
+                                : Icon(
                                     Icons.category_outlined,
-                                    color: AppColors.primary,
+                                    color: context.primary,
                                   ),
                           ),
                         ),
@@ -94,9 +94,9 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.add_shopping_cart,
-                                color: AppColors.primary,
+                                color: context.primary,
                               ),
                               onPressed: () => ProductAssignmentDialog.show(
                                 context,
@@ -131,7 +131,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
             ? null
             : FloatingActionButton.extended(
                 onPressed: () => CatalogDialog.show(context),
-                backgroundColor: AppColors.primary,
+                backgroundColor: context.primary,
                 icon: const Icon(Icons.add, color: Colors.white),
                 label: const Text(
                   'كتالوج جديد',
@@ -145,7 +145,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
   void _showDeleteConfirmation(BuildContext context, CatalogModel catalog) {
     showDialog(
       context: context,
-      
+
       builder: (context) => AlertDialog(
         title: const Text('حذف الكتالوج'),
         content: Text(
@@ -209,7 +209,7 @@ class _CatalogManagerScreenState extends State<CatalogManagerScreen> {
             icon: const Icon(Icons.add),
             label: const Text('إنشاء أول كتالوج'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: context.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),

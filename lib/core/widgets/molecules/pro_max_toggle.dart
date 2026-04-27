@@ -29,7 +29,7 @@ class ProMaxToggle extends StatelessWidget {
         color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.14),
         borderRadius: BorderRadius.circular(height / 2),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: context.primary.withValues(alpha: 0.1),
           width: 1,
         ),
       ),

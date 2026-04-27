@@ -158,7 +158,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   ),
                                   prefixIcon: Icon(
                                     Icons.mail_outline,
-                                    color: AppColors.primary,
+                                    color: context.primary,
                                     size: 22,
                                   ),
                                   border: InputBorder.none,
@@ -178,9 +178,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               child: ElevatedButton(
                                 onPressed: _handleSendCode,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
+                                  backgroundColor: context.primary,
                                   elevation: 4,
-                                  shadowColor: AppColors.primary.withValues(
+                                  shadowColor: context.primary.withValues(
                                     alpha: 0.4,
                                   ),
                                   shape: RoundedRectangleBorder(

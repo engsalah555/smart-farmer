@@ -49,7 +49,7 @@ class HomeHeader extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: isDark
               ? [AppColors.darkSurface, AppColors.darkBackground]
-              : [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
+              : [context.primary, context.primary.withValues(alpha: 0.8)],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(40),
@@ -64,7 +64,7 @@ class HomeHeader extends StatelessWidget {
             : null,
         boxShadow: [
           BoxShadow(
-            color: (isDark ? AppColors.black : AppColors.primary).withValues(
+            color: (isDark ? AppColors.black : context.primary).withValues(
               alpha: 0.25,
             ),
             blurRadius: 25,

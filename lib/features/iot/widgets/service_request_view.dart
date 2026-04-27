@@ -33,23 +33,22 @@ class ServiceRequestView extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: context.primary.withValues(alpha: 0.1),
                           blurRadius: 20,
                           spreadRadius: 10,
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.settings_input_component_outlined,
                       size: 80,
-                      color: AppColors.primary,
+                      color: context.primary,
                     ),
                   ),
                   const SizedBox(height: 40),
                   Text(
                     'خدمة الري الذكي',
                     style: TextStyle(
-                      
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: AppColors.getTextColor(isDark),
@@ -60,7 +59,6 @@ class ServiceRequestView extends StatelessWidget {
                   Text(
                     'تحكم بمزرعتك عن بُعد، وفر المياه، وضاعف إنتاجك مع نظام الري الذكي المتطور.',
                     style: TextStyle(
-                      
                       fontSize: 16,
                       color: Colors.grey[isDark ? 400 : 700],
                       height: 1.5,
@@ -68,30 +66,47 @@ class ServiceRequestView extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
-                  _buildFeatureRow(Icons.timer_outlined, 'جدولة الري بدقة', isDark),
-                  _buildFeatureRow(Icons.water_drop_outlined, 'توفير استهلاك المياه', isDark),
-                  _buildFeatureRow(Icons.phone_android_outlined, 'تحكم كامل من هاتفك', isDark),
+                  _buildFeatureRow(
+                    context,
+                    Icons.timer_outlined,
+                    'جدولة الري بدقة',
+                    isDark,
+                  ),
+                  _buildFeatureRow(
+                    context,
+                    Icons.water_drop_outlined,
+                    'توفير استهلاك المياه',
+                    isDark,
+                  ),
+                  _buildFeatureRow(
+                    context,
+                    Icons.phone_android_outlined,
+                    'تحكم كامل من هاتفك',
+                    isDark,
+                  ),
                   const Spacer(),
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () async {
-                        final success = await context.read<IotProvider>().requestService();
+                        final success = await context
+                            .read<IotProvider>()
+                            .requestService();
                         if (success && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                               content: Text(
                                 'تم إرسال طلبك بنجاح! سنتواصل معك قريباً.',
-                                style: TextStyle( fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              backgroundColor: AppColors.primary,
+                              backgroundColor: context.primary,
                             ),
                           );
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: context.primary,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -101,7 +116,6 @@ class ServiceRequestView extends StatelessWidget {
                       child: const Text(
                         'طلب الخدمة الآن',
                         style: TextStyle(
-                          
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -125,7 +139,7 @@ class ServiceRequestView extends StatelessWidget {
       floating: false,
       pinned: true,
       stretch: true,
-      backgroundColor: AppColors.primary,
+      backgroundColor: context.primary,
       elevation: 0,
       automaticallyImplyLeading: false,
       leadingWidth: 0,
@@ -152,7 +166,6 @@ class ServiceRequestView extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 26,
-                
               ),
             ),
           ],
@@ -163,22 +176,26 @@ class ServiceRequestView extends StatelessWidget {
           StretchMode.zoomBackground,
           StretchMode.blurBackground,
         ],
-        background: Container(color: AppColors.primary),
+        background: Container(color: context.primary),
       ),
     );
   }
 
-  Widget _buildFeatureRow(IconData icon, String text, bool isDark) {
+  Widget _buildFeatureRow(
+    BuildContext context,
+    IconData icon,
+    String text,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.primary, size: 24),
+          Icon(icon, color: context.primary, size: 24),
           const SizedBox(width: 16),
           Text(
             text,
             style: TextStyle(
-              
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: AppColors.getTextColor(isDark),
@@ -189,4 +206,3 @@ class ServiceRequestView extends StatelessWidget {
     );
   }
 }
-

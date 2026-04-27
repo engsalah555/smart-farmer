@@ -58,7 +58,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
       _commentController.clear();
       FocusScope.of(context).unfocus();
       HapticFeedback.lightImpact();
-      
+
       // Scroll to bottom to see the new comment
       Future.delayed(const Duration(milliseconds: 300), () {
         if (_scrollController.hasClients) {
@@ -104,23 +104,40 @@ class _CommentsSheetState extends State<CommentsSheet> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            
+
             // Header
             Padding(
-              padding: EdgeInsets.fromLTRB(context.wp(2), context.hp(1), context.wp(5), context.hp(1)),
+              padding: EdgeInsets.fromLTRB(
+                context.wp(2),
+                context.hp(1),
+                context.wp(5),
+                context.hp(1),
+              ),
               child: Row(
                 children: [
                   Expanded(
                     child: Consumer<PostProvider>(
                       builder: (context, provider, _) {
+<<<<<<< HEAD
+                        final currentPost =
+                            [
+                              ...provider.posts,
+                              ...provider.myPosts,
+                              ...provider.savedPosts,
+                            ].firstWhere(
+                              (p) => p.id == widget.post.id,
+                              orElse: () => widget.post,
+                            );
+
+=======
                         final currentPost = provider.getPost(widget.post.id) ?? widget.post;
                         
+>>>>>>> 0a37f17d97305944923b55e75747c356e060a2f0
                         return Text(
                           'التعليقات (${currentPost.commentsCount})',
                           style: TextStyle(
                             fontSize: context.sp(18).clamp(16, 22),
                             fontWeight: FontWeight.bold,
-                            
                           ),
                         );
                       },
@@ -159,9 +176,13 @@ class _CommentsSheetState extends State<CommentsSheet> {
                             padding: const EdgeInsets.all(16),
                             physics: const AlwaysScrollableScrollPhysics(),
                             itemCount: comments.length,
-                            separatorBuilder: (context, index) => const SizedBox(height: 16),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 16),
                             itemBuilder: (context, index) {
-                              return _buildCommentItem(context, comments[index]);
+                              return _buildCommentItem(
+                                context,
+                                comments[index],
+                              );
                             },
                           ),
                   );
@@ -189,21 +210,21 @@ class _CommentsSheetState extends State<CommentsSheet> {
               Container(
                 padding: EdgeInsets.all(context.wp(6)),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.05),
+                  color: context.primary.withValues(alpha: 0.05),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.chat_bubble_outline_rounded, 
-                  size: context.wp(16), 
-                  color: AppColors.primary.withValues(alpha: 0.3)
+                child: Icon(
+                  Icons.chat_bubble_outline_rounded,
+                  size: context.wp(16),
+                  color: context.primary.withValues(alpha: 0.3),
                 ),
               ),
               SizedBox(height: context.hp(3)),
               Text(
                 'لا توجد تعليقات بعد',
                 style: TextStyle(
-                  fontSize: context.sp(18).clamp(16, 20), 
-                  fontWeight: FontWeight.bold, 
-                  
+                  fontSize: context.sp(18).clamp(16, 20),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: context.hp(1)),
@@ -211,8 +232,7 @@ class _CommentsSheetState extends State<CommentsSheet> {
                 'كن أول من يشارك رأيه في هذا الموضوع!',
                 style: TextStyle(
                   fontSize: context.sp(14).clamp(12, 16),
-                  color: Theme.of(context).hintColor, 
-                  
+                  color: Theme.of(context).hintColor,
                 ),
               ),
             ],
@@ -231,8 +251,11 @@ class _CommentsSheetState extends State<CommentsSheet> {
         bottom: 12 + bottomInset + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? 
-              (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white),
+        color:
+            Theme.of(context).cardTheme.color ??
+            (Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF1E1E1E)
+                : Colors.white),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -249,16 +272,12 @@ class _CommentsSheetState extends State<CommentsSheet> {
               controller: _commentController,
               maxLines: 4,
               minLines: 1,
-              style: TextStyle(
-                fontSize: context.sp(15).clamp(13, 17), 
-                
-              ),
+              style: TextStyle(fontSize: context.sp(15).clamp(13, 17)),
               decoration: InputDecoration(
                 hintText: 'اكتب تعليقاً...',
                 hintStyle: TextStyle(
                   color: Theme.of(context).hintColor.withValues(alpha: 0.6),
                   fontSize: context.sp(14).clamp(12, 16),
-                  
                 ),
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
@@ -282,12 +301,15 @@ class _CommentsSheetState extends State<CommentsSheet> {
               width: context.wp(12),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
+                  colors: [
+                    context.primary,
+                    context.primary.withValues(alpha: 0.8),
+                  ],
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: context.primary.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -300,7 +322,9 @@ class _CommentsSheetState extends State<CommentsSheet> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       ),
                     )
@@ -317,8 +341,9 @@ class _CommentsSheetState extends State<CommentsSheet> {
   }
 
   Widget _buildCommentItem(BuildContext context, Comment comment) {
-    final isOwner = context.read<AuthProvider>().currentUser?.id.toString() == 
-                    comment.userId.toString();
+    final isOwner =
+        context.read<AuthProvider>().currentUser?.id.toString() ==
+        comment.userId.toString();
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,18 +355,26 @@ class _CommentsSheetState extends State<CommentsSheet> {
             width: context.wp(10),
             height: context.wp(10),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: context.primary.withValues(alpha: 0.1),
             ),
             child: comment.userAvatar != null
                 ? CachedNetworkImage(
                     imageUrl: comment.userAvatar!,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Center(child: SizedBox(width: context.wp(4), height: context.wp(4), child: const CircularProgressIndicator(strokeWidth: 1))),
+                    placeholder: (context, url) => Center(
+                      child: SizedBox(
+                        width: context.wp(4),
+                        height: context.wp(4),
+                        child: const CircularProgressIndicator(strokeWidth: 1),
+                      ),
+                    ),
                     errorWidget: (context, url, error) => Center(
                       child: Text(
-                        comment.userName.isNotEmpty ? comment.userName[0].toUpperCase() : '?',
+                        comment.userName.isNotEmpty
+                            ? comment.userName[0].toUpperCase()
+                            : '?',
                         style: TextStyle(
-                          color: AppColors.primary, 
+                          color: context.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: context.sp(14).clamp(12, 16),
                         ),
@@ -350,9 +383,11 @@ class _CommentsSheetState extends State<CommentsSheet> {
                   )
                 : Center(
                     child: Text(
-                      comment.userName.isNotEmpty ? comment.userName[0].toUpperCase() : '?',
+                      comment.userName.isNotEmpty
+                          ? comment.userName[0].toUpperCase()
+                          : '?',
                       style: TextStyle(
-                        color: AppColors.primary, 
+                        color: context.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: context.sp(14).clamp(12, 16),
                       ),
@@ -368,8 +403,8 @@ class _CommentsSheetState extends State<CommentsSheet> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark 
-                      ? Colors.white.withValues(alpha: 0.05) 
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white.withValues(alpha: 0.05)
                       : Colors.grey.shade100,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(16),
@@ -390,30 +425,27 @@ class _CommentsSheetState extends State<CommentsSheet> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: context.sp(14).clamp(12, 16),
-                                
                               ),
                             ),
                             if (comment.isVerified) ...[
                               SizedBox(width: context.wp(1)),
                               Icon(
                                 Icons.verified,
-                                color: AppColors.primary,
+                                color: context.primary,
                                 size: context.sp(14).clamp(12, 16),
                               ),
                             ],
                           ],
                         ),
-                        if (isOwner)
-                          _buildCommentOptions(context, comment),
+                        if (isOwner) _buildCommentOptions(context, comment),
                       ],
                     ),
                     const SizedBox(height: 6),
                     Text(
                       comment.content,
                       style: TextStyle(
-                        fontSize: context.sp(14).clamp(12, 16), 
+                        fontSize: context.sp(14).clamp(12, 16),
                         height: 1.5,
-                        
                       ),
                     ),
                   ],
@@ -428,7 +460,6 @@ class _CommentsSheetState extends State<CommentsSheet> {
                       style: TextStyle(
                         fontSize: 11,
                         color: Theme.of(context).hintColor,
-                        
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -527,9 +558,11 @@ class _CommentsSheetState extends State<CommentsSheet> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: context.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
@@ -568,7 +601,9 @@ class _CommentsSheetState extends State<CommentsSheet> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             onPressed: () {
               Navigator.pop(context);

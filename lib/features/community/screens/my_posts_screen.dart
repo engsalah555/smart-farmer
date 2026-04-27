@@ -42,8 +42,8 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
           title: Text(
             'منشوراتي',
             style: TextStyle(
-              fontWeight: FontWeight.bold, 
-              
+              fontWeight: FontWeight.bold,
+
               fontSize: context.sp(18).clamp(16, 22),
             ),
           ),
@@ -73,7 +73,6 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
                       style: TextStyle(
                         color: Theme.of(context).hintColor,
                         fontSize: context.sp(16).clamp(14, 18),
-                        
                       ),
                     ),
                     SizedBox(height: context.hp(3)),
@@ -83,14 +82,16 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
                       label: Text(
                         'أنشئ أول منشور لك',
                         style: TextStyle(
-                          
                           fontSize: context.sp(14).clamp(12, 16),
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: context.primary,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: context.wp(6), vertical: context.hp(1.5)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.wp(6),
+                          vertical: context.hp(1.5),
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),

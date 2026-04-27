@@ -46,10 +46,13 @@ class AddProductTextField extends StatelessWidget {
           color: Theme.of(context).hintColor.withValues(alpha: 0.5),
           fontSize: 14,
         ),
-        suffixIcon: Icon(icon, color: AppColors.primary, size: 22),
+        suffixIcon: Icon(icon, color: context.primary, size: 22),
         filled: true,
         fillColor: Theme.of(context).cardTheme.color ?? Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -63,7 +66,7 @@ class AddProductTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: BorderSide(color: context.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

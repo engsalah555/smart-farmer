@@ -46,7 +46,7 @@ class CropsTabBar extends StatelessWidget {
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: AppColors.primary,
+                color: context.primary,
               ),
               dividerColor: Colors.transparent,
               labelStyle: const TextStyle(

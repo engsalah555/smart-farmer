@@ -19,7 +19,10 @@ class AddProductImagePicker extends StatelessWidget {
     required this.showSnackBar,
   });
 
-  Future<void> _pickImage(BuildContext context, {required ImageSource source}) async {
+  Future<void> _pickImage(
+    BuildContext context, {
+    required ImageSource source,
+  }) async {
     if (selectedImages.length >= 5) {
       showSnackBar('يمكنك إضافة 5 صور كحد أقصى', isError: true);
       return;
@@ -41,7 +44,9 @@ class AddProductImagePicker extends StatelessWidget {
       }
     } catch (_) {
       showSnackBar(
-        source == ImageSource.gallery ? 'فشل في اختيار الصورة' : 'فشل في التقاط الصورة',
+        source == ImageSource.gallery
+            ? 'فشل في اختيار الصورة'
+            : 'فشل في التقاط الصورة',
         isError: true,
       );
     }
@@ -64,7 +69,7 @@ class AddProductImagePicker extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: context.primary.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -97,7 +102,11 @@ class AddProductImagePicker extends StatelessWidget {
                             color: Colors.red,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.close, color: Colors.white, size: 16),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 16,
+                          ),
                         ),
                       ),
                     ),
@@ -152,18 +161,18 @@ class AddProductImagePicker extends StatelessWidget {
           color: Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.3),
+            color: context.primary.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.primary, size: 28),
+            Icon(icon, color: context.primary, size: 28),
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(
+                color: context.primary,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),

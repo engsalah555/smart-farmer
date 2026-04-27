@@ -39,8 +39,8 @@ class _CropsGuideTabState extends State<CropsGuideTab> {
     return Consumer<CropsProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading && provider.allPlants.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          return Center(
+            child: CircularProgressIndicator(color: context.primary),
           );
         }
 
@@ -66,7 +66,7 @@ class _CropsGuideTabState extends State<CropsGuideTab> {
         }
 
         return RefreshIndicator(
-          color: AppColors.primary,
+          color: context.primary,
           onRefresh: () async => provider.fetchPlants(),
           child: CustomScrollView(
             slivers: [
@@ -118,7 +118,7 @@ class _CropsGuideTabState extends State<CropsGuideTab> {
                 icon: const Icon(Icons.travel_explore_rounded),
                 label: const Text('ابحث في الدليل العالمي'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: context.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -136,7 +136,7 @@ class _CropsGuideTabState extends State<CropsGuideTab> {
               }),
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('إعادة ضبط الفلاتر'),
-              style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+              style: TextButton.styleFrom(foregroundColor: context.primary),
             ),
           ],
         ),

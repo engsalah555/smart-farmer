@@ -36,15 +36,19 @@ class AddProductPaymentMethods extends StatelessWidget {
               label: Text(method['label']),
               selected: isSelected,
               onSelected: (_) => onMethodToggled(method['id']),
-              selectedColor: AppColors.primary.withValues(alpha: 0.2),
+              selectedColor: context.primary.withValues(alpha: 0.2),
               labelStyle: TextStyle(
-                color: isSelected ? AppColors.primary : Theme.of(context).hintColor,
+                color: isSelected
+                    ? context.primary
+                    : Theme.of(context).hintColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
                 side: BorderSide(
-                  color: isSelected ? AppColors.primary : Colors.grey.withValues(alpha: 0.3),
+                  color: isSelected
+                      ? context.primary
+                      : Colors.grey.withValues(alpha: 0.3),
                 ),
               ),
             );

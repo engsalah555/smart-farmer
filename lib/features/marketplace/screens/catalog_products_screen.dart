@@ -30,12 +30,16 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
   Widget build(BuildContext context) {
     final products = widget.isSeller
         ? context.select<SellerProvider, List<ProductModel>>(
-            (p) => p.myProducts.where((p) => p.catalogId == widget.catalog.id).toList(),
+            (p) => p.myProducts
+                .where((p) => p.catalogId == widget.catalog.id)
+                .toList(),
           )
         : context.select<MarketplaceProvider, List<ProductModel>>(
-            (p) => (p.getStoreDetailsFromCache(widget.catalog.storeId)?.products ?? [])
-                  .where((p) => p.catalogId == widget.catalog.id)
-                  .toList(),
+            (p) =>
+                (p.getStoreDetailsFromCache(widget.catalog.storeId)?.products ??
+                        [])
+                    .where((p) => p.catalogId == widget.catalog.id)
+                    .toList(),
           );
 
     return Scaffold(
@@ -48,7 +52,7 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
             expandedHeight: 200,
             pinned: true,
             stretch: true,
-            backgroundColor: AppColors.primary,
+            backgroundColor: context.primary,
             leading: IconButton(
               icon: Container(
                 padding: const EdgeInsets.all(8),
@@ -83,7 +87,7 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
                     )
                   else
                     Container(
-                      color: AppColors.primary.withValues(alpha: 0.8),
+                      color: context.primary.withValues(alpha: 0.8),
                       child: const Icon(
                         Icons.category,
                         size: 80,
@@ -213,14 +217,14 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: context.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+        border: Border.all(color: context.primary.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: AppColors.primary, size: 20),
+          Icon(icon, color: context.primary, size: 20),
           const SizedBox(width: 8),
           Text(
             '$label: ',
@@ -228,8 +232,8 @@ class _CatalogProductsScreenState extends State<CatalogProductsScreen> {
           ),
           Text(
             value,
-            style: const TextStyle(
-              color: AppColors.primary,
+            style: TextStyle(
+              color: context.primary,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),

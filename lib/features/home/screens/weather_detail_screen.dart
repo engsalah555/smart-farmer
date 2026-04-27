@@ -43,11 +43,10 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
 
         return Scaffold(
           body: isLoading
-              ? const Center(
-                  child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : weather == null
-                  ? _buildEmpty(context, provider)
-                  : _buildContent(context, weather, provider),
+              ? _buildEmpty(context, provider)
+              : _buildContent(context, weather, provider),
         );
       },
     );
@@ -64,22 +63,23 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.cloud_off_rounded,
-                      color: Colors.white54, size: 64),
+                  const Icon(
+                    Icons.cloud_off_rounded,
+                    color: Colors.white54,
+                    size: 64,
+                  ),
                   const SizedBox(height: 16),
-                  const Text('لا توجد بيانات طقس',
-                      style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 18,
-                          )),
+                  const Text(
+                    'لا توجد بيانات طقس',
+                    style: TextStyle(color: Colors.white70, fontSize: 18),
+                  ),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     onPressed: () => provider.fetchWeather(),
                     icon: const Icon(Icons.refresh_rounded),
-                    label: const Text('تحديث',
-                        style: TextStyle()),
+                    label: const Text('تحديث', style: TextStyle()),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: context.primary,
                     ),
                   ),
                 ],
@@ -93,28 +93,40 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
 
   // ─── المحتوى الرئيسي ─────────────────────────────────────────────────────────
   Widget _buildContent(
-      BuildContext context, WeatherModel weather, HomeProvider provider) {
+    BuildContext context,
+    WeatherModel weather,
+    HomeProvider provider,
+  ) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: weather.isDay
-              ? [AppColors.accent, AppColors.primary, AppColors.primaryDeep]
-              : [AppColors.primaryDark, AppColors.darkSurface, AppColors.darkBackground],
+              ? [AppColors.accent, context.primary, context.primaryDeep]
+              : [
+                  context.primaryDark,
+                  AppColors.darkSurface,
+                  AppColors.darkBackground,
+                ],
         ),
       ),
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              backgroundColor: innerBoxIsScrolled 
-                  ? (weather.isDay ? AppColors.primary : AppColors.darkSurface).withValues(alpha: 0.95)
+              backgroundColor: innerBoxIsScrolled
+                  ? (weather.isDay ? context.primary : AppColors.darkSurface)
+                        .withValues(alpha: 0.95)
                   : Colors.transparent,
               elevation: innerBoxIsScrolled ? 8 : 0,
               pinned: true,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               title: Text(
@@ -123,22 +135,23 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  
                 ),
               ),
               centerTitle: true,
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.refresh_rounded, color: Colors.white70, size: 22),
+                  icon: const Icon(
+                    Icons.refresh_rounded,
+                    color: Colors.white70,
+                    size: 22,
+                  ),
                   onPressed: () => provider.fetchWeather(),
                 ),
                 const Center(child: DigitalClock()),
                 const SizedBox(width: 16),
               ],
             ),
-            SliverToBoxAdapter(
-              child: _WeatherHeroSection(weather: weather),
-            ),
+            SliverToBoxAdapter(child: _WeatherHeroSection(weather: weather)),
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverAppBarDelegate(
@@ -149,12 +162,10 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.white38,
                   labelStyle: const TextStyle(
-                    
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
                   unselectedLabelStyle: const TextStyle(
-                    
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
@@ -186,9 +197,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
 // قسم البطولة العلوية (Hero)
 // ─────────────────────────────────────────────────────────────────────────────
 class _WeatherHeroSection extends StatelessWidget {
-  const _WeatherHeroSection({
-    required this.weather,
-  });
+  const _WeatherHeroSection({required this.weather});
 
   final WeatherModel weather;
 
@@ -215,11 +224,13 @@ class _WeatherHeroSection extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 72,
                         fontWeight: FontWeight.w900,
-                        
+
                         height: 1,
                         shadows: [
                           Shadow(
-                            color: weather.isDay ? Colors.white.withValues(alpha: 0.5) : Colors.blue,
+                            color: weather.isDay
+                                ? Colors.white.withValues(alpha: 0.5)
+                                : Colors.blue,
                             blurRadius: 20,
                           ),
                         ],
@@ -230,7 +241,7 @@ class _WeatherHeroSection extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 18,
-                        
+
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -240,7 +251,6 @@ class _WeatherHeroSection extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white54,
                           fontSize: 14,
-                          
                         ),
                       ),
                   ],
@@ -248,7 +258,10 @@ class _WeatherHeroSection extends StatelessWidget {
 
                 RepaintBoundary(
                   child: AnimatedWeatherIcon(
-                      code: weather.weatherCode, isDay: weather.isDay, size: 80),
+                    code: weather.weatherCode,
+                    isDay: weather.isDay,
+                    size: 80,
+                  ),
                 ),
               ],
             ),
@@ -260,27 +273,31 @@ class _WeatherHeroSection extends StatelessWidget {
             child: Row(
               children: [
                 _QuickStat(
-                    icon: Icons.water_drop_rounded,
-                    label: 'الرطوبة',
-                    value: '${weather.humidity}%'),
+                  icon: Icons.water_drop_rounded,
+                  label: 'الرطوبة',
+                  value: '${weather.humidity}%',
+                ),
                 _QuickStat(
-                    icon: Icons.air_rounded,
-                    label: 'الرياح',
-                    value: weather.windSpeed != null
-                        ? '${weather.windSpeed!.round()} km/h'
-                        : '--'),
+                  icon: Icons.air_rounded,
+                  label: 'الرياح',
+                  value: weather.windSpeed != null
+                      ? '${weather.windSpeed!.round()} km/h'
+                      : '--',
+                ),
                 _QuickStat(
-                    icon: Icons.cloud_rounded,
-                    label: 'الغيوم',
-                    value: weather.cloudCover != null
-                        ? '${weather.cloudCover}%'
-                        : '--'),
+                  icon: Icons.cloud_rounded,
+                  label: 'الغيوم',
+                  value: weather.cloudCover != null
+                      ? '${weather.cloudCover}%'
+                      : '--',
+                ),
                 _QuickStat(
-                    icon: Icons.umbrella_rounded,
-                    label: 'الأمطار',
-                    value: weather.rain != null
-                        ? '${weather.rain!.toStringAsFixed(1)} مم'
-                        : '0 مم'),
+                  icon: Icons.umbrella_rounded,
+                  label: 'الأمطار',
+                  value: weather.rain != null
+                      ? '${weather.rain!.toStringAsFixed(1)} مم'
+                      : '0 مم',
+                ),
               ],
             ),
           ),
@@ -301,7 +318,8 @@ class _HourlyTab extends StatefulWidget {
   State<_HourlyTab> createState() => _HourlyTabState();
 }
 
-class _HourlyTabState extends State<_HourlyTab> with AutomaticKeepAliveClientMixin {
+class _HourlyTabState extends State<_HourlyTab>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -310,8 +328,10 @@ class _HourlyTabState extends State<_HourlyTab> with AutomaticKeepAliveClientMix
     super.build(context);
     if (widget.hourlyData.isEmpty) {
       return const Center(
-        child: Text('لا توجد بيانات ساعية',
-            style: TextStyle(color: Colors.white54)),
+        child: Text(
+          'لا توجد بيانات ساعية',
+          style: TextStyle(color: Colors.white54),
+        ),
       );
     }
 
@@ -346,7 +366,7 @@ class _HourlyCard extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 13,
-                
+
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -356,7 +376,11 @@ class _HourlyCard extends StatelessWidget {
           const SizedBox(width: 10),
 
           RepaintBoundary(
-            child: AnimatedWeatherIcon(code: data.weatherCode, isDay: true, size: 28),
+            child: AnimatedWeatherIcon(
+              code: data.weatherCode,
+              isDay: true,
+              size: 28,
+            ),
           ),
 
           const SizedBox(width: 12),
@@ -368,7 +392,6 @@ class _HourlyCard extends StatelessWidget {
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              
             ),
           ),
 
@@ -378,11 +401,7 @@ class _HourlyCard extends StatelessWidget {
           if (data.apparentTemperature != null)
             Text(
               'إحساس ${data.apparentTemperature!.round()}°',
-              style: const TextStyle(
-                color: Colors.white38,
-                fontSize: 12,
-                
-              ),
+              style: const TextStyle(color: Colors.white38, fontSize: 12),
             ),
 
           const Spacer(),
@@ -391,16 +410,15 @@ class _HourlyCard extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.water_drop_rounded,
-                  color: Colors.blue, size: 14),
+              const Icon(
+                Icons.water_drop_rounded,
+                color: Colors.blue,
+                size: 14,
+              ),
               const SizedBox(width: 3),
               Text(
                 '${data.humidity}%',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                  
-                ),
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
               ),
             ],
           ),
@@ -412,16 +430,15 @@ class _HourlyCard extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.umbrella_rounded,
-                    color: Colors.lightBlueAccent, size: 14),
+                const Icon(
+                  Icons.umbrella_rounded,
+                  color: Colors.lightBlueAccent,
+                  size: 14,
+                ),
                 const SizedBox(width: 3),
                 Text(
                   '${data.precipitationProbability}%',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                    
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],
             ),
@@ -435,8 +452,7 @@ class _HourlyCard extends StatelessWidget {
 // تبويب 7 أيام
 // ─────────────────────────────────────────────────────────────────────────────
 class _DailyTab extends StatefulWidget {
-  const _DailyTab(
-      {required this.dailyForecasts, required this.currentWeather});
+  const _DailyTab({required this.dailyForecasts, required this.currentWeather});
   final List<DailyForecast> dailyForecasts;
   final WeatherModel currentWeather;
 
@@ -444,7 +460,8 @@ class _DailyTab extends StatefulWidget {
   State<_DailyTab> createState() => _DailyTabState();
 }
 
-class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin {
+class _DailyTabState extends State<_DailyTab>
+    with AutomaticKeepAliveClientMixin {
   int _selectedIndex = 0;
 
   @override
@@ -455,8 +472,10 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
     super.build(context);
     if (widget.dailyForecasts.isEmpty) {
       return const Center(
-        child: Text('لا توجد توقعات يومية',
-            style: TextStyle(color: Colors.white54)),
+        child: Text(
+          'لا توجد توقعات يومية',
+          style: TextStyle(color: Colors.white54),
+        ),
       );
     }
 
@@ -481,10 +500,12 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
                     curve: Curves.easeInOut,
                     margin: const EdgeInsets.symmetric(horizontal: 5),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.primary
+                          ? context.primary
                           : Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(16),
                       border: isSelected
@@ -497,18 +518,19 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
                         Text(
                           day.dayName,
                           style: TextStyle(
-                            color: isSelected
-                                ? Colors.white
-                                : Colors.white70,
+                            color: isSelected ? Colors.white : Colors.white70,
                             fontSize: 12,
-                            
+
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 4),
                         RepaintBoundary(
                           child: AnimatedWeatherIcon(
-                              code: day.weatherCode, isDay: true, size: 22),
+                            code: day.weatherCode,
+                            isDay: true,
+                            size: 22,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -517,7 +539,6 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
                             color: isSelected ? Colors.white : Colors.white54,
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            
                           ),
                         ),
                       ],
@@ -532,8 +553,9 @@ class _DailyTabState extends State<_DailyTab> with AutomaticKeepAliveClientMixin
         // ─── تفاصيل اليوم المختار ──────────────────────────────────────────
         SliverToBoxAdapter(
           child: _DayDetailCard(
-              day: widget.dailyForecasts[_selectedIndex],
-              isToday: _selectedIndex == 0),
+            day: widget.dailyForecasts[_selectedIndex],
+            isToday: _selectedIndex == 0,
+          ),
         ),
       ],
     );
@@ -547,7 +569,6 @@ class _DayDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
       child: Column(
@@ -559,22 +580,19 @@ class _DayDetailCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  isToday ? 'تفاصيل اليوم' : '${day.dayName} — ${day.dateLabel}',
+                  isToday
+                      ? 'تفاصيل اليوم'
+                      : '${day.dayName} — ${day.dateLabel}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    
                   ),
                 ),
                 const Spacer(),
                 Text(
                   day.conditionText,
-                  style: const TextStyle(
-                    color: Colors.white60,
-                    fontSize: 13,
-                    
-                  ),
+                  style: const TextStyle(color: Colors.white60, fontSize: 13),
                 ),
               ],
             ),
@@ -694,8 +712,11 @@ class _AppBarRow extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 20),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
           Expanded(
@@ -705,7 +726,6 @@ class _AppBarRow extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -751,18 +771,13 @@ class _QuickStat extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white38,
-                fontSize: 10,
-                
-              ),
+              style: const TextStyle(color: Colors.white38, fontSize: 10),
               maxLines: 1,
             ),
           ],
@@ -816,18 +831,13 @@ class _InfoCard extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 11,
-                    
-                  ),
+                  style: const TextStyle(color: Colors.white54, fontSize: 11),
                   maxLines: 1,
                 ),
               ],
@@ -854,11 +864,11 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Colors.transparent,
-      child: _tabBar,
-    );
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(color: Colors.transparent, child: _tabBar);
   }
 
   @override
@@ -866,6 +876,3 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return false;
   }
 }
-
-
-

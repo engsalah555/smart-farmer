@@ -18,13 +18,13 @@ class NoStoreSliver extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: context.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.storefront_rounded,
                   size: 64,
-                  color: AppColors.primary,
+                  color: context.primary,
                 ),
               ),
               const SizedBox(height: 32),
@@ -36,13 +36,16 @@ class NoStoreSliver extends StatelessWidget {
               Text(
                 'تحتاج إلى التسجيل كتاجر موثق لتبدأ ببيع منتجاتك والوصول إلى آلاف المشترين.',
                 textAlign: TextAlign.center,
-                style: context.font14.copyWith(color: context.textSecondary, height: 1.6),
+                style: context.font14.copyWith(
+                  color: context.textSecondary,
+                  height: 1.6,
+                ),
               ),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: context.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 48,
@@ -53,10 +56,7 @@ class NoStoreSliver extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: Text(
-                  'توثيق حساب التاجر',
-                  style: context.font16.bold,
-                ),
+                child: Text('توثيق حساب التاجر', style: context.font16.bold),
               ),
             ],
           ),
@@ -92,7 +92,9 @@ class NoProductsSliver extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               'لم تضف أي منتج بعد',
-              style: context.font16.medium.copyWith(color: context.textSecondary),
+              style: context.font16.medium.copyWith(
+                color: context.textSecondary,
+              ),
             ),
           ],
         ),
@@ -116,13 +118,13 @@ class NoStoresEmptyState extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.05),
+                color: context.primary.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.search_off_rounded,
                 size: 52,
-                color: AppColors.primary.withValues(alpha: 0.5),
+                color: context.primary.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 32),

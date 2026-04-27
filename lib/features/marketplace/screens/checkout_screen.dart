@@ -70,11 +70,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-            title: const Icon(
-              Icons.check_circle,
-              color: AppColors.primary,
-              size: 60,
-            ),
+            title: Icon(Icons.check_circle, color: context.primary, size: 60),
             content: const Text(
               'تم إرسال طلبك بنجاح، شكراً لتسوقك معنا.',
               textAlign: TextAlign.center,
@@ -88,7 +84,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   context.pop(); // return to marketplace
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: context.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -146,7 +142,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           fontSize: 14,
         ),
         hintText: hint,
-        suffixIcon: Icon(icon, color: AppColors.primary, size: 22),
+        suffixIcon: Icon(icon, color: context.primary, size: 22),
         filled: true,
         fillColor: Theme.of(context).cardTheme.color ?? Colors.white,
         contentPadding: const EdgeInsets.symmetric(
@@ -166,7 +162,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: BorderSide(color: context.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -185,8 +181,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       appBar: AppBar(
         leading: Container(
           margin: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-            color: AppColors.primary,
+          decoration: BoxDecoration(
+            color: context.primary,
             shape: BoxShape.circle,
           ),
           child: IconButton(
@@ -206,9 +202,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            )
+          ? Center(child: CircularProgressIndicator(color: context.primary))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Form(
@@ -266,11 +260,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             horizontal: 20,
                             vertical: 18,
                           ),
-                          suffixIcon: const Padding(
-                            padding: EdgeInsets.only(left: 8.0),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
                             child: Icon(
                               Icons.keyboard_arrow_down_rounded,
-                              color: AppColors.primary,
+                              color: context.primary,
                             ),
                           ),
                         ),
@@ -329,7 +323,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: _receiptImage != null
-                                  ? AppColors.primary
+                                  ? context.primary
                                   : Theme.of(
                                       context,
                                     ).dividerColor.withValues(alpha: 0.1),
@@ -344,13 +338,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     fit: BoxFit.cover,
                                   ),
                                 )
-                              : const Column(
+                              : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.receipt_long_outlined,
                                       size: 40,
-                                      color: AppColors.primary,
+                                      color: context.primary,
                                     ),
                                     SizedBox(height: 10),
                                     Text('انقر هنا لإرفاق صورة السند'),
@@ -386,7 +380,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       child: ElevatedButton(
                         onPressed: () => _submitOrder(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: context.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),

@@ -34,7 +34,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
           Selector<IotProvider, (double, bool)>(
             selector: (_, provider) => (
               provider.device?.soilMoisture ?? 0,
-              provider.device?.isIrrigationOn ?? false
+              provider.device?.isIrrigationOn ?? false,
             ),
             builder: (context, data, _) {
               final soilMoisture = data.$1;
@@ -87,7 +87,6 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: widget.isDark ? Colors.white : AppColors.textPrimary,
-              
             ),
           ),
           const SizedBox(height: 16),
@@ -121,7 +120,6 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               style: TextStyle(
                 color: widget.isDark ? Colors.white24 : Colors.grey[400],
                 fontSize: 12,
-                
               ),
             ),
           ),
@@ -134,7 +132,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
     return GlassmorphicContainer(
       padding: const EdgeInsets.all(24),
       width: double.infinity,
-      color: AppColors.primary,
+      color: context.primary,
       opacity: 0.8,
       child: Column(
         children: [
@@ -144,7 +142,6 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.white70,
-              
             ),
           ),
           const SizedBox(height: 24),
@@ -172,16 +169,11 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
-                      
                     ),
                   ),
                   Text(
                     soilMoisture > 40 ? 'ممتاز' : 'تحتاج ري',
-                    style: const TextStyle(
-                      fontSize: 14, 
-                      color: Colors.white70,
-                      
-                    ),
+                    style: const TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                 ],
               ),
@@ -219,7 +211,6 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             fontSize: 12,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            
           ),
         ),
       ],
@@ -263,7 +254,6 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             style: TextStyle(
               fontSize: 12,
               color: widget.isDark ? Colors.white60 : Colors.grey[600],
-              
             ),
           ),
           Text(
@@ -272,7 +262,6 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               fontSize: 20,
               fontWeight: FontWeight.w900,
               color: widget.isDark ? Colors.white : AppColors.textPrimary,
-              
             ),
           ),
         ],
@@ -299,10 +288,10 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
         secondary: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: context.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: AppColors.primary, size: 20),
+          child: Icon(icon, color: context.primary, size: 20),
         ),
         title: Text(
           title,
@@ -316,8 +305,8 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
           sub,
           style: const TextStyle(fontSize: 11, color: Colors.grey),
         ),
-        activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
-        activeThumbColor: AppColors.primary,
+        activeTrackColor: context.primary.withValues(alpha: 0.5),
+        activeThumbColor: context.primary,
       ),
     );
   }
@@ -331,15 +320,15 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
           colors: isWatering
               ? [Colors.blue.shade400, Colors.blue.shade700]
               : [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.primary.withValues(alpha: 0.05),
+                  context.primary.withValues(alpha: 0.1),
+                  context.primary.withValues(alpha: 0.05),
                 ],
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isWatering
               ? Colors.blue
-              : AppColors.primary.withValues(alpha: 0.2),
+              : context.primary.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -352,7 +341,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
                   isWatering ? 'جاري الري الآن...' : 'ري يدوي طارئ',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: isWatering ? Colors.white : AppColors.primary,
+                    color: isWatering ? Colors.white : context.primary,
                   ),
                 ),
                 Text(
@@ -368,9 +357,10 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             ),
           ),
           ElevatedButton(
-            onPressed: () => context.read<IotProvider>().toggleIrrigation(!isWatering),
+            onPressed: () =>
+                context.read<IotProvider>().toggleIrrigation(!isWatering),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isWatering ? Colors.white : AppColors.primary,
+              backgroundColor: isWatering ? Colors.white : context.primary,
               foregroundColor: isWatering ? Colors.blue : Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

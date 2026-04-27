@@ -18,10 +18,7 @@ class SettingsInfoScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          title,
-          style: AppTypography.h3(isDark: isDark),
-        ),
+        title: Text(title, style: AppTypography.h3(isDark: isDark)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -39,10 +36,7 @@ class SettingsInfoScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.darkCard : AppColors.cardLight,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: AppColors.border(isDark),
-                    width: 1,
-                  ),
+                  border: Border.all(color: AppColors.border(isDark), width: 1),
                   boxShadow: [
                     if (!isDark)
                       BoxShadow(
@@ -54,10 +48,9 @@ class SettingsInfoScreen extends StatelessWidget {
                 ),
                 child: Text(
                   content,
-                  style: AppTypography.bodyLarge(isDark: isDark).copyWith(
-                    height: 1.8,
-                    letterSpacing: 0.2,
-                  ),
+                  style: AppTypography.bodyLarge(
+                    isDark: isDark,
+                  ).copyWith(height: 1.8, letterSpacing: 0.2),
                 ),
               ),
             ),
@@ -72,7 +65,7 @@ class SettingsInfoScreen extends StatelessWidget {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.2),
+                        color: context.primary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),

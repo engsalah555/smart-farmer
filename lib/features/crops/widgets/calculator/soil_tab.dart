@@ -32,7 +32,7 @@ class SoilTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // pH Card
-          _buildPHCard(),
+          _buildPHCard(context),
           const SizedBox(height: 24),
 
           // Nutrients Card
@@ -46,15 +46,19 @@ class SoilTab extends StatelessWidget {
     );
   }
 
-  Widget _buildPHCard() {
+  Widget _buildPHCard(BuildContext context) {
     final double ph = double.tryParse(phCtrl.text) ?? 7.0;
-    final Color phColor = _getPHColor(ph);
+    final Color phColor = _getPHColor(context, ph);
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark).copyWith(
-        border: Border.all(color: phColor.withValues(alpha: 0.3), width: 1.5),
-      ),
+      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark)
+          .copyWith(
+            border: Border.all(
+              color: phColor.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -63,15 +67,17 @@ class SoilTab extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(
+                   Icon(
                     Icons.science_rounded,
-                    color: AppColors.primary,
+                    color: context.primary,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'درجة حموضة التربة (pH)',
-                    style: AppTypography.h3(isDark: isDark).copyWith(fontSize: 16),
+                    style: AppTypography.h3(
+                      isDark: isDark,
+                    ).copyWith(fontSize: 16),
                   ),
                 ],
               ),
@@ -87,10 +93,9 @@ class SoilTab extends StatelessWidget {
                 ),
                 child: Text(
                   ph.toStringAsFixed(1),
-                  style: AppTypography.valueLabel(isDark: isDark).copyWith(
-                    color: phColor,
-                    fontSize: 18,
-                  ),
+                  style: AppTypography.valueLabel(
+                    isDark: isDark,
+                  ).copyWith(color: phColor, fontSize: 18),
                 ),
               ),
             ],
@@ -171,7 +176,8 @@ class SoilTab extends StatelessWidget {
                 child: NutrientField(
                   ctrl: nCtrl,
                   label: 'نيتروجين (N)',
-                  info: 'كمية النيتروجين المتاحة في التربة بوحدة جزء في المليون (ppm). النيتروجين ضروري للنمو الخضري.',
+                  info:
+                      'كمية النيتروجين المتاحة في التربة بوحدة جزء في المليون (ppm). النيتروجين ضروري للنمو الخضري.',
                   isDark: isDark,
                   color: Colors.blue,
                 ),
@@ -181,7 +187,8 @@ class SoilTab extends StatelessWidget {
                 child: NutrientField(
                   ctrl: pCtrl,
                   label: 'فوسفور (P)',
-                  info: 'كمية الفوسفور المتاحة في التربة. الفوسفور حيوي لتطور الجذور والأزهار.',
+                  info:
+                      'كمية الفوسفور المتاحة في التربة. الفوسفور حيوي لتطور الجذور والأزهار.',
                   isDark: isDark,
                   color: Colors.orange,
                 ),
@@ -192,7 +199,8 @@ class SoilTab extends StatelessWidget {
           NutrientField(
             ctrl: kCtrl,
             label: 'بوتاسيوم (K)',
-            info: 'كمية البوتاسيوم المتاحة في التربة. البوتاسيوم يعزز جودة الثمار ومقاومة الأمراض.',
+            info:
+                'كمية البوتاسيوم المتاحة في التربة. البوتاسيوم يعزز جودة الثمار ومقاومة الأمراض.',
             isDark: isDark,
             color: Colors.purple,
           ),
@@ -200,7 +208,6 @@ class SoilTab extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildCalculateButton() {
     return Container(
@@ -249,23 +256,24 @@ class SoilTab extends StatelessWidget {
       children: [
         Text(
           value,
-          style: AppTypography.valueLabel(isDark: isDark).copyWith(
-            fontSize: 10,
-            color: Colors.grey,
-          ),
+          style: AppTypography.valueLabel(
+            isDark: isDark,
+          ).copyWith(fontSize: 10, color: Colors.grey),
         ),
         Text(
           label,
-          style: AppTypography.bodySmall(isDark: isDark).copyWith(fontSize: 9, color: Colors.grey),
+          style: AppTypography.bodySmall(
+            isDark: isDark,
+          ).copyWith(fontSize: 9, color: Colors.grey),
         ),
       ],
     );
   }
 
-  Color _getPHColor(double ph) {
+  Color _getPHColor(BuildContext context, double ph) {
     if (ph < 5.5) return Colors.redAccent;
     if (ph < 6.5) return Colors.orangeAccent;
-    if (ph <= 7.5) return AppColors.primary;
+    if (ph <= 7.5) return context.primary;
     if (ph < 8.5) return Colors.blueAccent;
     return Colors.deepPurpleAccent;
   }
