@@ -19,8 +19,8 @@ import 'features/marketplace/providers/marketplace_provider.dart';
 import 'features/marketplace/providers/seller_provider.dart';
 import 'features/notifications/providers/notifications_provider.dart';
 import 'features/iot/providers/iot_provider.dart';
-import 'l10n/generated/app_localizations.dart';
 import 'core/routes/app_router.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -129,7 +129,6 @@ class _SmartFarmAppState extends State<SmartFarmApp>
     final themeMode = context.select<AppProvider, ThemeMode>(
       (p) => p.themeMode,
     );
-    final locale = context.select<AppProvider, Locale?>((p) => p.locale);
 
     return MaterialApp.router(
       title: 'Smart Farm',
@@ -137,19 +136,13 @@ class _SmartFarmAppState extends State<SmartFarmApp>
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      locale: locale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      localeResolutionCallback: (deviceLocale, supportedLocales) {
-        if (deviceLocale != null) {
-          for (var locale in supportedLocales) {
-            if (locale.languageCode == deviceLocale.languageCode) {
-              return deviceLocale;
-            }
-          }
-        }
-        return supportedLocales.first;
-      },
+      locale: const Locale('ar'),
+      supportedLocales: const [Locale('ar')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: AppRouter.router,
     );
   }
