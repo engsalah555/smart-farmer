@@ -1,55 +1,49 @@
 import 'package:flutter/material.dart';
-import '../../../../core/utils/responsive.dart';
 
 /// Displays a labeled list of items (companion/combative plants, rotation crops).
 class PlantListCard extends StatelessWidget {
   final String title;
   final List<String> items;
   final IconData icon;
-  final Color color;
+  final Color? color;
 
   const PlantListCard({
     super.key,
     required this.title,
     required this.items,
     required this.icon,
-    required this.color,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: EdgeInsets.all(context.wp(4)),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.08 : 0.05),
-        borderRadius: BorderRadius.circular(context.wp(4)),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: color, size: context.sp(16)),
-              SizedBox(width: context.wp(2)),
+              Icon(icon, color: isDark ? Colors.white54 : Colors.black54, size: 20),
+              const SizedBox(width: 8),
               Text(
                 title,
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                  fontSize: context.sp(13),
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                  fontSize: 15,
                 ),
               ),
             ],
           ),
-          SizedBox(height: context.hp(1)),
+          const SizedBox(height: 12),
           Wrap(
-            spacing: context.wp(2),
-            runSpacing: context.hp(0.8),
+            spacing: 8,
+            runSpacing: 8,
             children: items
-                .map((item) => _buildChip(context, item, color, isDark))
+                .map((item) => _buildChip(context, item, isDark))
                 .toList(),
           ),
         ],
@@ -57,27 +51,21 @@ class PlantListCard extends StatelessWidget {
     );
   }
 
-  Widget _buildChip(
-    BuildContext context,
-    String label,
-    Color color,
-    bool isDark,
-  ) {
+  Widget _buildChip(BuildContext context, String label, bool isDark) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.wp(3),
-        vertical: context.hp(0.5),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.15 : 0.1),
-        borderRadius: BorderRadius.circular(context.wp(5)),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Text(
         label,
         style: TextStyle(
-          fontSize: context.sp(11),
-          color: isDark ? Colors.white70 : Colors.black87,
+          fontSize: 14,
+          color: isDark ? Colors.white : Colors.black87,
           fontWeight: FontWeight.w500,
         ),
       ),
