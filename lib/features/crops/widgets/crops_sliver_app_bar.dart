@@ -43,11 +43,6 @@ class CropsSliverAppBar extends StatelessWidget {
                 fontSize: 26,
               ),
             ),
-            const Spacer(),
-            ProMaxIconButton(
-              icon: Icons.notifications_none_rounded,
-              onTap: () {},
-            ),
           ],
         ),
       ),
