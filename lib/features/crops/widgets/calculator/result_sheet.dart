@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_decorations.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -26,7 +27,7 @@ class ResultSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -35,26 +36,19 @@ class ResultSheet extends StatelessWidget {
       builder: (_, ctrl) {
         return Container(
           decoration: BoxDecoration(
-            color: isDark ? AppColors.darkSurface : AppColors.surface,
+            color: context.backgroundColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 40,
-                offset: const Offset(0, -10),
-              ),
-            ],
+            border: Border.all(color: context.border, width: 1.5),
           ),
           child: Column(
             children: [
-              // Grab Handle
               Center(
                 child: Container(
-                  width: 40,
+                  width: 48,
                   height: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  margin: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.3),
+                    color: context.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -64,42 +58,36 @@ class ResultSheet extends StatelessWidget {
                   textDirection: TextDirection.rtl,
                   child: ListView(
                     controller: ctrl,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                     children: [
                       _buildHeader(context, isDark),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
 
-                      _buildNPKSummary(isDark),
+                      _buildNPKDashboard(context, isDark),
                       const SizedBox(height: 32),
 
                       const SectionLabel(
-                        '📊 تحليل الاحتياجات الغذائية',
-                        icon: Icons.analytics_rounded,
+                        'توزيع الاحتياجات الغذائية',
+                        icon: Icons.analytics_outlined,
                       ),
-                      const SizedBox(height: 16),
                       _NutrientChart(result: result, isDark: isDark),
 
                       const SizedBox(height: 32),
                       const SectionLabel(
-                        '🧴 كميات الأسمدة الموصى بها',
-                        icon: Icons.science_rounded,
+                        'خطة التسميد المقترحة',
+                        icon: Icons.science_outlined,
                       ),
-                      const SizedBox(height: 16),
-                      _buildFertList(isDark),
+                      _buildFertList(context, isDark),
 
                       const SizedBox(height: 32),
                       const SectionLabel(
-                        '🗓 جدول المواعيد والمراحل',
-                        icon: Icons.calendar_today_rounded,
+                        'الجدول الزمني للتطبيق',
+                        icon: Icons.event_note_outlined,
                       ),
-                      const SizedBox(height: 16),
                       _FertTimeline(result: result, isDark: isDark),
 
                       const SizedBox(height: 32),
-                      _buildProTips(isDark),
+                      _buildProTips(context, isDark),
 
                       const SizedBox(height: 40),
                       _buildFooter(context, isDark),
@@ -118,26 +106,19 @@ class ResultSheet extends StatelessWidget {
   Widget _buildHeader(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark)
-          .copyWith(
-            border: Border.all(color: context.primary.withValues(alpha: 0.3)),
-            gradient: LinearGradient(
-              colors: [
-                context.primary.withValues(alpha: 0.1),
-                AppColors.secondary.withValues(alpha: 0.05),
-              ],
-            ),
-          ),
+      decoration: AppDecorations.cardDecoration(
+        isDark: isDark,
+      ).copyWith(border: Border.all(color: context.primary, width: 2)),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: context.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-              border: Border.all(color: context.primary.withValues(alpha: 0.2)),
+              color: context.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: context.border),
             ),
-            child: Text(crop.emoji, style: const TextStyle(fontSize: 40)),
+            child: Text(crop.emoji, style: const TextStyle(fontSize: 44)),
           ),
           const SizedBox(width: 20),
           Expanded(
@@ -145,37 +126,42 @@ class ResultSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'تقرير التوصية الفنية',
+                  'التوصية الفنية المتقدمة',
                   style: AppTypography.bodySmall(isDark: isDark).copyWith(
                     color: context.primary,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
                     fontSize: 12,
                   ),
                 ),
+                const SizedBox(height: 4),
                 Text(
                   'محصول ${crop.name}',
-                  style: AppTypography.h3(
+                  style: AppTypography.h2(
                     isDark: isDark,
-                  ).copyWith(fontSize: 24, fontWeight: FontWeight.w900),
+                  ).copyWith(fontSize: 28, fontWeight: FontWeight.w900),
                 ),
-                const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _CompactInfoTag(
-                        Icons.aspect_ratio_rounded,
-                        areaDisplay,
-                        isDark,
-                      ),
-                      const SizedBox(width: 8),
-                      _CompactInfoTag(
-                        Icons.track_changes_rounded,
-                        yieldDisplay,
-                        isDark,
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _CompactInfoTag(
+                      Icons.straighten_rounded,
+                      areaDisplay,
+                      isDark,
+                    ),
+                    _CompactInfoTag(
+                      Icons.auto_graph_rounded,
+                      yieldDisplay,
+                      isDark,
+                    ),
+                    _CompactInfoTag(
+                      Icons.science_rounded,
+                      'pH ${ph.toStringAsFixed(1)}',
+                      isDark,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -185,77 +171,139 @@ class ResultSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildNPKSummary(bool isDark) {
-    return Row(
+  Widget _buildNPKDashboard(BuildContext context, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        NPKMini('نيتروجين (N)', result.requiredN, Colors.blue),
-        const SizedBox(width: 12),
-        NPKMini('فوسفور (P)', result.requiredP, Colors.orange),
-        const SizedBox(width: 12),
-        NPKMini('بوتاسيوم (K)', result.requiredK, Colors.purple),
+        const SectionLabel(
+          'الاحتياج الإجمالي للمزرعة',
+          icon: Icons.data_usage_rounded,
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: AppDecorations.cardDecoration(isDark: isDark),
+          child: Column(
+            children: [
+              _npkRow('نيتروجين (N)', result.requiredN, context.info, isDark),
+              Divider(height: 24, color: context.border),
+              _npkRow('فوسفور (P)', result.requiredP, context.warning, isDark),
+              Divider(height: 24, color: context.border),
+              _npkRow(
+                'بوتاسيوم (K)',
+                result.requiredK,
+                context.primary,
+                isDark,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildFertList(bool isDark) {
+  Widget _npkRow(String label, double value, Color color, bool isDark) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 24,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          label,
+          style: AppTypography.h3(isDark: isDark).copyWith(fontSize: 15),
+        ),
+        const Spacer(),
+        Text(
+          value.toStringAsFixed(1),
+          style: AppTypography.valueLabel(
+            isDark: isDark,
+          ).copyWith(color: color, fontSize: 22, fontWeight: FontWeight.w900),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          'كجم',
+          style: AppTypography.bodySmall(isDark: isDark).copyWith(
+            fontWeight: FontWeight.bold,
+            color: isDark ? AppColors.darkTextSecondary : AppColors.textMuted,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFertList(BuildContext context, bool isDark) {
     return Column(
       children: [
         _FertItem(
-          icon: Icons.science_rounded,
+          icon: Icons.science_outlined,
           name: 'يوريا (46% N)',
           amount: result.urea,
-          color: Colors.amber.shade700,
-          desc: 'مصدر النيتروجين الرئيسي للنبات',
+          color: context.info,
+          desc: 'المصدر الأساسي للنيتروجين لتعزيز النمو الخضري.',
           isDark: isDark,
         ),
         _FertItem(
-          icon: Icons.grain_rounded,
+          icon: Icons.grain_outlined,
           name: 'DAP (18-46-0)',
           amount: result.dap,
-          color: Colors.blue.shade700,
-          desc: 'مصدر النيتروجين والفوسفور الثنائي',
+          color: context.warning,
+          desc: 'توفير الفسفور لتأسيس الجذور والنيتروجين المبكر.',
           isDark: isDark,
         ),
         _FertItem(
-          icon: Icons.eco_rounded,
-          name: 'بُوتاس (50% K₂O)',
+          icon: Icons.eco_outlined,
+          name: 'MOP (بُوتاس)',
           amount: result.mop,
-          color: Colors.purple.shade600,
-          desc: 'بوتاسيوم عالي النقاء لنمو الثمار',
+          color: context.primary,
+          desc: 'تعزيز جودة الثمار ومقاومة المحصول للإجهاد.',
           isDark: isDark,
         ),
       ],
     );
   }
 
-  Widget _buildProTips(bool isDark) {
+  Widget _buildProTips(BuildContext context, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark)
-          .copyWith(
-            border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-          ),
+      padding: const EdgeInsets.all(24),
+      decoration: AppDecorations.cardDecoration(isDark: isDark).copyWith(
+        border: Border.all(color: context.warning.withValues(alpha: 0.5)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.tips_and_updates_rounded,
-                color: Colors.orange,
-                size: 20,
+              Icon(
+                Icons.lightbulb_outline_rounded,
+                color: context.warning,
+                size: 24,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Text(
-                'نصائح الخبراء للـ ${crop.name}',
-                style: AppTypography.h3(isDark: isDark).copyWith(fontSize: 14),
+                'إرشادات التطبيق الميداني',
+                style: AppTypography.h3(isDark: isDark).copyWith(
+                  fontSize: 16,
+                  color: isDark ? AppColors.darkTextPrimary : context.warning,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _TipItem('تأكد من توزيع الأسمدة بانتظام حول منطقة انتشار الجذور.'),
-          _TipItem('يفضل التسميد في الصباح الباكر لتجنب الفقد بالتبخر.'),
-          _TipItem('احرص على ري المحصول مباشرة بعد إتمام عملية التسميد.'),
+          const SizedBox(height: 20),
+          _TipItem(
+            'تجنب خلط الأسمدة في خزانات الري دون التأكد من التوافق الكيميائي.',
+          ),
+          _TipItem(
+            'يفضل تقسيم الجرعات لتقليل الفقد بالتبخر أو الغسيل في التربة الرملية.',
+          ),
+          _TipItem(
+            'التزم بفترة الأمان (PHI) المحددة قبل البدء في عمليات الحصاد.',
+          ),
         ],
       ),
     );
@@ -264,28 +312,30 @@ class ResultSheet extends StatelessWidget {
   Widget _buildFooter(BuildContext context, bool isDark) {
     return Column(
       children: [
-        InfoTip(
-          'هذه التوصيات استرشادية وفق معايير FAO العالمية. يُنصح دائماً بمراجعة المهندس الزراعي المختص.',
+        const InfoTip(
+          'تعتمد هذه التوصيات على معادلات FAO القياسية. قد تختلف الاحتياجات الفعلية حسب التغيرات المناخية ونوع التربة.',
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         SizedBox(
           width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
+          height: 60,
+          child: ElevatedButton.icon(
+            label: Text(
+              'اعتماد وحفظ الخطة',
+              style: context.font16.semiBold.copyWith(color: context.white),
+            ),
             onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: context.primary,
               foregroundColor: Colors.white,
+              elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              elevation: 0,
-            ),
-            child: Text(
-              'حفظ في سجل المزرعة',
-              style: AppTypography.h3(
-                isDark: true,
-              ).copyWith(color: Colors.white, fontSize: 16),
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+              ),
             ),
           ),
         ),
@@ -303,25 +353,18 @@ class _CompactInfoTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: context.primary.withValues(alpha: 0.1)),
+        color: context.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: context.primary),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: AppTypography.valueLabel(
-              isDark: isDark,
-            ).copyWith(fontSize: 11, fontWeight: FontWeight.bold),
-          ),
+          Icon(icon, size: 18, color: context.primary),
+          const SizedBox(width: 8),
+          Text(text, style: context.font14),
         ],
       ),
     );
@@ -338,68 +381,74 @@ class _NutrientChart extends StatelessWidget {
     final total = result.requiredN + result.requiredP + result.requiredK;
     if (total == 0) return const SizedBox.shrink();
 
-    return Container(
-      height: 220,
-      padding: const EdgeInsets.all(24),
-      decoration: AppDecorations.premiumGlassDecorationV2(isDark: isDark),
-      child: Row(
-        children: [
-          Expanded(
-            child: PieChart(
-              PieChartData(
-                sectionsSpace: 4,
-                centerSpaceRadius: 40,
-                sections: [
-                  PieChartSectionData(
-                    value: result.requiredN,
-                    color: Colors.blue,
-                    title: 'N',
-                    radius: 50,
-                    titleStyle: AppTypography.valueLabel(isDark: isDark)
-                        .copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  PieChartSectionData(
-                    value: result.requiredP,
-                    color: Colors.orange,
-                    title: 'P',
-                    radius: 50,
-                    titleStyle: AppTypography.valueLabel(isDark: isDark)
-                        .copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  PieChartSectionData(
-                    value: result.requiredK,
-                    color: Colors.purple,
-                    title: 'K',
-                    radius: 50,
-                    titleStyle: AppTypography.valueLabel(isDark: isDark)
-                        .copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
+    return Semantics(
+      label:
+          'مخطط توزيع العناصر الغذائية: نيتروجين ${result.requiredN}, فوسفور ${result.requiredP}, بوتاسيوم ${result.requiredK}',
+      child: Container(
+        height: 240,
+        margin: const EdgeInsets.only(top: 12),
+        padding: const EdgeInsets.all(24),
+        decoration: AppDecorations.cardDecoration(isDark: isDark),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: PieChart(
+                PieChartData(
+                  sectionsSpace: 4,
+                  centerSpaceRadius: 40,
+                  sections: [
+                    PieChartSectionData(
+                      value: result.requiredN,
+                      color: context.info,
+                      title: 'N',
+                      radius: 50,
+                      titleStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    PieChartSectionData(
+                      value: result.requiredP,
+                      color: context.warning,
+                      title: 'P',
+                      radius: 50,
+                      titleStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    PieChartSectionData(
+                      value: result.requiredK,
+                      color: context.primary,
+                      title: 'K',
+                      radius: 50,
+                      titleStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 24),
+            Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ChartLegend('N', context.info, result.requiredN, isDark),
+                  const SizedBox(height: 16),
+                  _ChartLegend('P', context.warning, result.requiredP, isDark),
+                  const SizedBox(height: 16),
+                  _ChartLegend('K', context.primary, result.requiredK, isDark),
                 ],
               ),
             ),
-          ),
-          const SizedBox(width: 20),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ChartLegend('N', Colors.blue, result.requiredN),
-              const SizedBox(height: 12),
-              _ChartLegend('P', Colors.orange, result.requiredP),
-              const SizedBox(height: 12),
-              _ChartLegend('K', Colors.purple, result.requiredK),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -409,7 +458,8 @@ class _ChartLegend extends StatelessWidget {
   final String label;
   final Color color;
   final double value;
-  const _ChartLegend(this.label, this.color, this.value);
+  final bool isDark;
+  const _ChartLegend(this.label, this.color, this.value, this.isDark);
 
   @override
   Widget build(BuildContext context) => Row(
@@ -417,19 +467,24 @@ class _ChartLegend extends StatelessWidget {
       Container(
         width: 10,
         height: 10,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(2),
+        ),
       ),
-      const SizedBox(width: 8),
+      const SizedBox(width: 10),
       Text(
         label,
-        style: AppTypography.bodyMedium(
-          isDark: false,
-        ).copyWith(fontWeight: FontWeight.bold, fontSize: 13),
+        style: AppTypography.bodySmall(
+          isDark: isDark,
+        ).copyWith(fontWeight: FontWeight.w900),
       ),
-      const SizedBox(width: 8),
+      const Spacer(),
       Text(
         value.toStringAsFixed(1),
-        style: AppTypography.valueLabel(isDark: false).copyWith(color: color),
+        style: AppTypography.valueLabel(
+          isDark: isDark,
+        ).copyWith(color: color, fontWeight: FontWeight.w900),
       ),
     ],
   );
@@ -442,30 +497,34 @@ class _FertTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _TimelineStep(
-          title: 'تجهيز التربة',
-          desc: 'قبل الزراعة: إضافة كامل كمية DAP ونصف كمية البوتاسيوم.',
-          amount: '${(result.dap + result.mop * 0.5).toStringAsFixed(1)} كجم',
-          isFirst: true,
-          isDark: isDark,
-        ),
-        _TimelineStep(
-          title: 'النمو الخضري',
-          desc: 'بعد 30 يوم: إضافة نصف كمية اليوريا مع البوتاسيوم المتبقي.',
-          amount:
-              '${(result.urea * 0.5 + result.mop * 0.5).toStringAsFixed(1)} كجم',
-          isDark: isDark,
-        ),
-        _TimelineStep(
-          title: 'مرحلة الإثمار',
-          desc: 'بعد 60 يوم: إضافة الكمية المتبقية من اليوريا لدعم الثمار.',
-          amount: '${(result.urea * 0.5).toStringAsFixed(1)} كجم',
-          isLast: true,
-          isDark: isDark,
-        ),
-      ],
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        children: [
+          _TimelineStep(
+            title: 'مرحلة التأسيس',
+            desc: 'إضافة كامل الفوسفور (DAP) ونصف البوتاسيوم.',
+            amount: '${(result.dap + result.mop * 0.5).toStringAsFixed(1)} كجم',
+            isFirst: true,
+            isDark: isDark,
+          ),
+          _TimelineStep(
+            title: 'النمو النشط',
+            desc: 'إضافة 50% من اليوريا والنسبة المتبقية من البوتاسيوم.',
+            amount:
+                '${(result.urea * 0.5 + result.mop * 0.5).toStringAsFixed(1)} كجم',
+            isDark: isDark,
+          ),
+          _TimelineStep(
+            title: 'مرحلة التحجيم',
+            desc: 'إضافة ما تبقى من اليوريا لدعم الثمار والإنتاج.',
+            amount: '${(result.urea * 0.5).toStringAsFixed(1)} كجم',
+            isLast: true,
+            isDark: isDark,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -493,17 +552,22 @@ class _TimelineStep extends StatelessWidget {
               Container(
                 width: 14,
                 height: 14,
+                margin: const EdgeInsets.only(top: 6),
                 decoration: BoxDecoration(
-                  color: isFirst ? context.primary : Colors.grey.shade400,
+                  color: isFirst ? context.primary : context.border,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2.5),
+                  border: Border.all(color: context.backgroundColor, width: 2),
                 ),
               ),
               if (!isLast)
                 Expanded(
                   child: Container(
-                    width: 1.5,
-                    color: context.primary.withValues(alpha: 0.15),
+                    width: 2,
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: context.border,
+                      borderRadius: BorderRadius.circular(1),
+                    ),
                   ),
                 ),
             ],
@@ -512,11 +576,8 @@ class _TimelineStep extends StatelessWidget {
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(bottom: 24),
-              padding: const EdgeInsets.all(16),
-              decoration: AppDecorations.premiumGlassDecorationV2(
-                isDark: isDark,
-                radius: 18,
-              ),
+              padding: const EdgeInsets.all(20),
+              decoration: AppDecorations.cardDecoration(isDark: isDark),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -525,38 +586,28 @@ class _TimelineStep extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: AppTypography.h3(isDark: isDark).copyWith(
-                          fontSize: 14,
-                          color: isFirst ? context.primary : null,
-                        ),
+                        style: AppTypography.h3(
+                          isDark: isDark,
+                        ).copyWith(fontSize: 15, fontWeight: FontWeight.w900),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          amount,
-                          style: AppTypography.valueLabel(isDark: isDark)
-                              .copyWith(
-                                fontSize: 12,
-                                color: context.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      Text(
+                        amount,
+                        style: context.font14.bold.copyWith(
+                          color: context.primary,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Text(
                     desc,
-                    style: AppTypography.bodySmall(
-                      isDark: isDark,
-                    ).copyWith(fontSize: 11, color: Colors.grey),
+                    style: AppTypography.bodySmall(isDark: isDark).copyWith(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -590,17 +641,15 @@ class _FertItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: AppDecorations.premiumGlassDecorationV2(
-        isDark: isDark,
-        radius: 18,
-      ),
+      decoration: AppDecorations.cardDecoration(isDark: isDark),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(14),
+              color: context.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: context.border),
             ),
             child: Icon(icon, color: color, size: 24),
           ),
@@ -613,17 +662,23 @@ class _FertItem extends StatelessWidget {
                   name,
                   style: AppTypography.h3(
                     isDark: isDark,
-                  ).copyWith(fontSize: 14),
+                  ).copyWith(fontSize: 16, fontWeight: FontWeight.w900),
                 ),
+                const SizedBox(height: 6),
                 Text(
                   desc,
-                  style: AppTypography.bodySmall(
-                    isDark: isDark,
-                  ).copyWith(color: Colors.grey, fontSize: 10),
+                  style: AppTypography.bodySmall(isDark: isDark).copyWith(
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
+                    fontSize: 12,
+                    height: 1.3,
+                  ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -632,14 +687,18 @@ class _FertItem extends StatelessWidget {
                 style: AppTypography.valueLabel(isDark: isDark).copyWith(
                   color: color,
                   fontWeight: FontWeight.w900,
-                  fontSize: 18,
+                  fontSize: 22,
                 ),
               ),
               Text(
                 'كجم',
-                style: AppTypography.bodySmall(
-                  isDark: isDark,
-                ).copyWith(fontSize: 9, color: Colors.grey),
+                style: AppTypography.bodySmall(isDark: isDark).copyWith(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textMuted,
+                ),
               ),
             ],
           ),
@@ -656,21 +715,20 @@ class _TipItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.check_circle_outline_rounded,
-            color: Colors.green,
-            size: 16,
-          ),
-          const SizedBox(width: 10),
+          Icon(Icons.check_circle_rounded, color: context.primary, size: 18),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               text,
-              style: AppTypography.bodySmall(
-                isDark: false,
-              ).copyWith(fontSize: 11),
+              style: AppTypography.bodySmall(isDark: context.isDark).copyWith(
+                fontSize: 13,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

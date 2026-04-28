@@ -1,107 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_decorations.dart';
+import '../../../core/theme/app_typography.dart';
 
 class FertilizerCalculatorBanner extends StatelessWidget {
   const FertilizerCalculatorBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: InkWell(
         onTap: () => context.push('/fertilizer_calculator'),
         borderRadius: BorderRadius.circular(24),
         child: Container(
-          height: 100,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+          padding: const EdgeInsets.all(20),
+          decoration: AppDecorations.cardDecoration(isDark: isDark).copyWith(
+            color: context.primary,
+            border: Border.all(color: Colors.white10),
             boxShadow: [
               BoxShadow(
-                color: context.primary.withValues(alpha: 0.2),
+                color: context.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
-                offset: const Offset(0, 10),
+                offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              // Gradient Background
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        context.primary,
-                        context.primary.withValues(alpha: 0.7),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+              Positioned(
+                left: -40,
+                top: -40,
+                child: Icon(
+                  Icons.science_outlined,
+                  size: 140,
+                  color: Colors.white.withValues(alpha: 0.08),
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: const Icon(
+                      Icons.calculate_rounded,
+                      color: Colors.white,
+                      size: 28,
                     ),
                   ),
-                ),
-              ),
-              // Abstract Pattern Decoration
-              Positioned(
-                right: -30,
-                bottom: -30,
-                child: Icon(
-                  Icons.calculate_rounded,
-                  size: 140,
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-              ),
-              // Content
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Icon(
-                        Icons.calculate_rounded,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'حاسبة السماد الذكية',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 18,
-                            ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'حاسبة السماد الذكية',
+                          style: AppTypography.h3(isDark: false).copyWith(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'خطط لتسميد محاصيلك بدقة واحترافية',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'نظام التوصيات العلمية المبني على نوع المحصول والتربة',
+                          style: AppTypography.bodySmall(isDark: false).copyWith(
+                            color: Colors.white.withValues(alpha: 0.7),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ],
-                ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ],
               ),
             ],
           ),
@@ -110,3 +96,4 @@ class FertilizerCalculatorBanner extends StatelessWidget {
     );
   }
 }
+
