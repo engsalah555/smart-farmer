@@ -50,7 +50,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: TextButton(
                   onPressed: () {
                     // Navigate to Login
-                    context.go('/language');
+                    context.go('/auth');
                   },
                   child: const Text(
                     'تخطي',
@@ -126,7 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       : 'التالي',
                   onPressed: () {
                     if (_currentPage == _pages.length - 1) {
-                      context.go('/language');
+                      context.go('/auth');
                     } else {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
