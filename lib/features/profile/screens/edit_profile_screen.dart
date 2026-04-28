@@ -26,7 +26,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _phoneController;
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
-  
+
   // Store Fields
   late TextEditingController _storeNameController;
   late TextEditingController _descriptionController;
@@ -34,7 +34,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   File? _coverFile;
   double? _latitude;
   double? _longitude;
-  
+
   File? _selectedImage;
   bool _isLoading = false;
   bool _showPasswordFields = false;
@@ -45,10 +45,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final user = context.read<AuthProvider>().currentUser;
     _nameController = TextEditingController(text: user?.name ?? '');
     _phoneController = TextEditingController(text: user?.phone ?? '');
-    
+
     final store = context.read<SellerProvider>().myStore;
     _storeNameController = TextEditingController(text: store?.name ?? '');
-    _descriptionController = TextEditingController(text: store?.description ?? '');
+    _descriptionController = TextEditingController(
+      text: store?.description ?? '',
+    );
     _addressController = TextEditingController(text: store?.location ?? '');
     _latitude = store?.latitude;
     _longitude = store?.longitude;
@@ -86,7 +88,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       cropStyle: CropStyle.rectangle,
       lockAspectRatio: true,
       initAspectRatio: CropAspectRatioPreset.ratio16x9,
-      aspectRatios: [CropAspectRatioPreset.ratio16x9, CropAspectRatioPreset.ratio3x2],
+      aspectRatios: [
+        CropAspectRatioPreset.ratio16x9,
+        CropAspectRatioPreset.ratio3x2,
+      ],
     );
     if (image != null) {
       setState(() => _coverFile = image);
@@ -101,7 +106,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!serviceEnabled) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('خدمات الموقع غير مفعلة. يرجى تفعيلها من الإعدادات.')),
+          const SnackBar(
+            content: Text('خدمات الموقع غير مفعلة. يرجى تفعيلها من الإعدادات.'),
+          ),
         );
       }
       return;
@@ -123,7 +130,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('أذونات الموقع مرفوضة نهائياً. يرجى تفعيلها من إعدادات التطبيق.')),
+          const SnackBar(
+            content: Text(
+              'أذونات الموقع مرفوضة نهائياً. يرجى تفعيلها من إعدادات التطبيق.',
+            ),
+          ),
         );
       }
       return;
@@ -136,15 +147,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _latitude = position.latitude;
           _longitude = position.longitude;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم تحديد الموقع بنجاح')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('تم تحديد الموقع بنجاح')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطأ في الحصول على الموقع: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('خطأ في الحصول على الموقع: $e')));
       }
     }
   }
@@ -157,7 +168,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     try {
       final authProvider = context.read<AuthProvider>();
       final isSeller = authProvider.currentUser?.isSeller ?? false;
-      
+
       final success = await authProvider.updateProfile(
         name: _nameController.text.trim(),
         phone: _phoneController.text.trim(),
@@ -173,16 +184,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (success && isSeller) {
         if (!mounted) return;
         final sellerProvider = context.read<SellerProvider>();
-        storeSuccess = await sellerProvider.updateStoreInfo(
-          {
-            'store_name': _storeNameController.text.trim(),
-            'description': _descriptionController.text.trim(),
-            'address': _addressController.text.trim(),
-            'latitude': _latitude,
-            'longitude': _longitude,
-          },
-          coverImagePath: _coverFile?.path,
-        );
+        storeSuccess = await sellerProvider.updateStoreInfo({
+          'store_name': _storeNameController.text.trim(),
+          'description': _descriptionController.text.trim(),
+          'address': _addressController.text.trim(),
+          'latitude': _latitude,
+          'longitude': _longitude,
+        }, coverImagePath: _coverFile?.path);
         storeError = sellerProvider.errorMessage;
       }
 
@@ -203,9 +211,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                (!success) 
-                  ? (authProvider.errorMessage ?? 'فشل تحديث الملف الشخصي') 
-                  : (storeError ?? 'فشل تحديث المتجر'),
+                (!success)
+                    ? (authProvider.errorMessage ?? 'فشل تحديث الملف الشخصي')
+                    : (storeError ?? 'فشل تحديث المتجر'),
               ),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
@@ -227,8 +235,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final isSeller = user?.isSeller ?? false;
     final store = context.select<SellerProvider, StoreModel?>((p) => p.myStore);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    final hasCoverNet = store != null && store.coverImage.isNotEmpty && store.coverImage.startsWith('http');
+
+    final hasCoverNet =
+        store != null &&
+        store.coverImage.isNotEmpty &&
+        store.coverImage.startsWith('http');
 
     return Scaffold(
       appBar: AppBar(
@@ -460,7 +471,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: Container(
                           height: 150,
                           decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkCard : Colors.grey.shade200,
+                            color: isDark
+                                ? AppColors.darkCard
+                                : Colors.grey.shade200,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: AppColors.border(isDark)),
                             image: _coverFile != null
@@ -482,11 +495,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.add_photo_alternate, size: 40, color: Colors.grey.shade400),
+                                      Icon(
+                                        Icons.add_photo_alternate,
+                                        size: 40,
+                                        color: Colors.grey.shade400,
+                                      ),
                                       const SizedBox(height: 8),
                                       Text(
                                         'اضغط لاختيار صورة الغلاف',
-                                        style: TextStyle(color: Colors.grey.shade600),
+                                        style: TextStyle(
+                                          color: Colors.grey.shade600,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -531,7 +550,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: isDark ? AppColors.darkCard : Colors.grey.shade100,
+                          color: isDark
+                              ? AppColors.darkCard
+                              : Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppColors.border(isDark)),
                         ),
@@ -544,7 +565,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 Expanded(
                                   child: Text(
                                     'الموقع الجغرافي (GPS)',
-                                    style: AppTypography.bodyLarge(isDark: isDark).copyWith(fontWeight: FontWeight.bold),
+                                    style: AppTypography.bodyLarge(
+                                      isDark: isDark,
+                                    ).copyWith(fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 TextButton.icon(
