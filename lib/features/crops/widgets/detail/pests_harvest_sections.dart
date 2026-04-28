@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/crop_model.dart';
-import '../../../../core/utils/responsive.dart';
 import '../shared/plant_section_header.dart';
 
 /// Section 5: Pests & Diseases
@@ -12,8 +11,7 @@ class PestsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text =
-        crop.pestsAndDiseases ?? crop.careGuide?.pestsAndDiseases;
+    final text = crop.pestsAndDiseases ?? crop.careGuide?.pestsAndDiseases;
     if (text == null || text.isEmpty) return const SizedBox.shrink();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -23,30 +21,20 @@ class PestsSection extends StatelessWidget {
         PlantSectionHeader(
           title: 'الآفات والأمراض',
           icon: Icons.bug_report_rounded,
-          color: Colors.red,
           onSpeak: onSpeak,
         ),
-        Container(
-          padding: EdgeInsets.all(context.wp(4)),
-          decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(context.wp(4)),
-            border: Border.all(color: Colors.red.withValues(alpha: 0.18)),
-          ),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: context.sp(13),
-              color: isDark ? Colors.white70 : Colors.black87,
-              height: 1.7,
-            ),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 15,
+            color: isDark ? Colors.white70 : Colors.black87,
+            height: 1.7,
           ),
         ),
       ],
     );
   }
 }
-
 
 /// Section 6: Harvesting & Storage
 class HarvestSection extends StatelessWidget {
@@ -57,8 +45,7 @@ class HarvestSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text =
-        crop.harvestingAndStorage ?? crop.careGuide?.harvestingAndStorage;
+    final text = crop.harvestingAndStorage ?? crop.careGuide?.harvestingAndStorage;
     if (text == null || text.isEmpty) return const SizedBox.shrink();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -68,23 +55,14 @@ class HarvestSection extends StatelessWidget {
         PlantSectionHeader(
           title: 'الحصاد والتخزين',
           icon: Icons.inventory_2_rounded,
-          color: Colors.amber,
           onSpeak: onSpeak,
         ),
-        Container(
-          padding: EdgeInsets.all(context.wp(4)),
-          decoration: BoxDecoration(
-            color: Colors.amber.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(context.wp(4)),
-            border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
-          ),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: context.sp(13),
-              color: isDark ? Colors.white70 : Colors.black87,
-              height: 1.7,
-            ),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 15,
+            color: isDark ? Colors.white70 : Colors.black87,
+            height: 1.7,
           ),
         ),
       ],
