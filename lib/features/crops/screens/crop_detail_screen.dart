@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/crop_model.dart';
 import '../../../core/providers/auth_provider.dart';
-import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
 import '../../../core/widgets/atoms/pro_max_icon_button.dart';
 import '../providers/crops_provider.dart';
@@ -64,44 +63,41 @@ class _CropDetailScreenState extends State<CropDetailScreen> {
             onAdd: _addToMyCrops,
           ),
           SliverPadding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.wp(5),
-              vertical: context.hp(2),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Overview
                 if (c.description.isNotEmpty)
                   _AboutCard(crop: c, isDark: isDark),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
 
                 // 1. Growth Conditions
                 GrowthConditionsSection(crop: c),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
 
                 // 2. Cultivation
                 CultivationSection(crop: c),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
 
                 // 3. Soil & Nutrition + NPK + Fertilizer CTA
                 SoilNutritionSection(crop: c),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
 
                 // 4. Compatibility & Rotation
                 ManagementRotationSection(crop: c),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
 
                 // 5. Pests
                 PestsSection(crop: c),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
 
                 // 6. Harvest
                 HarvestSection(crop: c),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
 
                 // 7. Uses & Benefits
                 UsesBenefitsSection(crop: c),
-                SizedBox(height: context.hp(12)),
+                const SizedBox(height: 64),
               ]),
             ),
           ),
@@ -129,29 +125,26 @@ class _HeroAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: context.hp(55),
+      expandedHeight: 350,
       pinned: true,
       stretch: true,
       elevation: 0,
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.white,
       leading: Padding(
-        padding: EdgeInsets.all(context.wp(2)),
+        padding: const EdgeInsets.all(8.0),
         child: ProMaxIconButton(
           icon: Icons.arrow_back_ios_new_rounded,
           onTap: () => Navigator.canPop(context)
               ? Navigator.pop(context)
               : context.go('/home'),
-          size: context.wp(10),
-          iconSize: context.wp(4),
+          size: 48,
+          iconSize: 20,
           backgroundColor: Colors.black.withValues(alpha: 0.3),
           color: Colors.white,
         ),
       ),
       flexibleSpace: FlexibleSpaceBar(
-        stretchModes: const [
-          StretchMode.zoomBackground,
-          StretchMode.blurBackground,
-        ],
+        stretchModes: const [StretchMode.zoomBackground],
         collapseMode: CollapseMode.parallax,
         background: Stack(
           fit: StackFit.expand,
@@ -160,26 +153,30 @@ class _HeroAppBar extends StatelessWidget {
               tag: 'crop-${crop.id}',
               child: CustomImage(imageUrl: crop.imageUrl, fit: BoxFit.cover),
             ),
-            const DecoratedBox(
+            DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black45,
+                    isDark
+                        ? AppColors.darkBackground.withValues(alpha: 0.6)
+                        : Colors.black45,
                     Colors.transparent,
                     Colors.transparent,
-                    Colors.black54,
-                    Colors.black87,
+                    isDark
+                        ? AppColors.darkBackground.withValues(alpha: 0.8)
+                        : Colors.black54,
+                    isDark ? AppColors.darkBackground : Colors.black87,
                   ],
-                  stops: [0.0, 0.3, 0.6, 0.85, 1.0],
+                  stops: const [0.0, 0.3, 0.6, 0.85, 1.0],
                 ),
               ),
             ),
             Positioned(
-              bottom: context.hp(3),
-              left: context.wp(5),
-              right: context.wp(5),
+              bottom: 24,
+              left: 20,
+              right: 20,
               child: _AppBarBottom(
                 crop: crop,
                 isAdding: isAdding,
@@ -216,25 +213,25 @@ class _AppBarBottom extends StatelessWidget {
             children: [
               Text(
                 crop.name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
-                  fontSize: context.sp(24),
+                  fontSize: 28,
                   fontWeight: FontWeight.w900,
                 ),
               ),
               if (crop.scientificName != null)
                 Text(
                   crop.scientificName!,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white70,
-                    fontSize: context.sp(13),
+                    fontSize: 15,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
             ],
           ),
         ),
-        SizedBox(width: context.wp(3)),
+        const SizedBox(width: 16),
       ],
     );
   }
@@ -250,59 +247,49 @@ class _AboutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(context.wp(5)),
-      decoration: BoxDecoration(
-        color: isDark
-            ? context.primary.withValues(alpha: 0.08)
-            : context.primary.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(context.wp(5)),
-        border: Border.all(color: context.primary.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.eco_rounded,
-                color: context.primary,
-                size: context.sp(18),
-              ),
-              SizedBox(width: context.wp(2)),
-              Text(
-                'نبذة عن النبتة',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: context.sp(16),
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: context.hp(1.2)),
-          Text(
-            crop.description,
-            style: TextStyle(
-              fontSize: context.sp(13),
-              color: isDark ? Colors.white70 : Colors.black87,
-              height: 1.6,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.eco_rounded,
+              color: isDark ? Colors.white70 : Colors.black54,
+              size: 24,
             ),
-          ),
-          if (crop.scientificDefinition != null) ...[
-            SizedBox(height: context.hp(1)),
+            const SizedBox(width: 12),
             Text(
-              crop.scientificDefinition!,
+              'نبذة عن النبتة',
               style: TextStyle(
-                fontSize: context.sp(12),
-                color: isDark ? Colors.white54 : Colors.black54,
-                fontStyle: FontStyle.italic,
-                height: 1.5,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          crop.description,
+          style: TextStyle(
+            fontSize: 16,
+            color: isDark ? Colors.white70 : Colors.black87,
+            height: 1.6,
+          ),
+        ),
+        if (crop.scientificDefinition != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            crop.scientificDefinition!,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white54 : Colors.black54,
+              fontStyle: FontStyle.italic,
+              height: 1.5,
+            ),
+          ),
         ],
-      ),
+      ],
     );
   }
 }
