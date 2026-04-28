@@ -77,7 +77,7 @@ class AddProductImagePicker extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: selectedImages[index].startsWith('http')
+                      child: (selectedImages[index].startsWith('http') || selectedImages[index].startsWith('blob:'))
                           ? Image.network(
                               selectedImages[index],
                               width: 120,

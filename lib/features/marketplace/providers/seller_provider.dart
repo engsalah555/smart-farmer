@@ -190,7 +190,7 @@ class SellerProvider extends BaseProvider {
       if (validationError != null) throw Exception(validationError);
 
       final updatedProduct = await _sellerService.updateProduct(
-        product.id,
+        product.slug,
         product.toJson(),
         imagePath: imagePath,
         otherImagePaths: otherImagePaths,
@@ -206,12 +206,17 @@ class SellerProvider extends BaseProvider {
   }
 
   Future<bool> deleteProduct(String productId) async {
+    String slug = productId;
+    try {
+      slug = _myProducts.firstWhere((p) => p.id == productId).slug;
+    } catch (_) {}
+
     _myProducts.removeWhere((p) => p.id == productId);
     _pendingDeleteIds.add(productId);
     notifyListeners();
 
     final result = await execute(() async {
-      await _sellerService.deleteProduct(productId);
+      await _sellerService.deleteProduct(slug);
       return true;
     });
 

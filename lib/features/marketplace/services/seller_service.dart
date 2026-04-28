@@ -48,8 +48,14 @@ class SellerService extends BaseApiService {
   }) async {
     final filteredData = <String, dynamic>{};
     productData.forEach((key, value) {
-      if (value != null && value != 'null' && value is! List && value is! Map) {
-        filteredData[key] = value.toString();
+      if (value != null && value != 'null' && value is! Map) {
+        if (value is List) {
+          for (int i = 0; i < value.length; i++) {
+            filteredData['$key[$i]'] = value[i].toString();
+          }
+        } else {
+          filteredData[key] = value.toString();
+        }
       }
     });
 
@@ -82,8 +88,14 @@ class SellerService extends BaseApiService {
   }) async {
     final filteredData = <String, dynamic>{};
     updateData.forEach((key, value) {
-      if (value != null && value != 'null' && value is! List && value is! Map) {
-        filteredData[key] = value.toString();
+      if (value != null && value != 'null' && value is! Map) {
+        if (value is List) {
+          for (int i = 0; i < value.length; i++) {
+            filteredData['$key[$i]'] = value[i].toString();
+          }
+        } else {
+          filteredData[key] = value.toString();
+        }
       }
     });
 

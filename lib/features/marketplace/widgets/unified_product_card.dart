@@ -59,7 +59,6 @@ class UnifiedProductCard extends StatelessWidget {
         children: [
           // Image Section
           Expanded(
-            flex: 5,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -104,43 +103,45 @@ class UnifiedProductCard extends StatelessWidget {
             ),
           ),
           // Details Section
-          Expanded(
-            flex: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.title,
-                    style: context.font14.bold.copyWith(
-                      color: isDark ? Colors.white : Colors.black87,
-                      height: 1.2,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  product.title,
+                  style: context.font14.bold.copyWith(
+                    color: isDark ? Colors.white : Colors.black87,
+                    height: 1.2,
                   ),
-                  if (mode == ProductCardMode.seller) ...[
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.inventory_2_outlined, 
-                            size: 12, color: context.textSecondary),
-                        const SizedBox(width: 4),
-                        Text(
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (mode == ProductCardMode.seller) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.inventory_2_outlined, 
+                          size: 12, color: context.textSecondary),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
                           '${product.quantity} ${product.unit}',
                           style: context.font12.medium.copyWith(color: context.textSecondary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                  ],
-                  const Spacer(),
-                  if (mode == ProductCardMode.buyer)
-                    _buildBuyerPriceRow(context)
-                  else
-                    _buildSellerGridActions(context),
+                      ),
+                    ],
+                  ),
                 ],
-              ),
+                const SizedBox(height: 8),
+                if (mode == ProductCardMode.buyer)
+                  _buildBuyerPriceRow(context)
+                else
+                  _buildSellerGridActions(context),
+              ],
             ),
           ),
         ],
