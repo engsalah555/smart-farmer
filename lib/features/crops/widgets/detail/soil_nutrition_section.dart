@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/crop_model.dart';
-import '../../../../core/utils/responsive.dart';
 import '../../../../core/constants.dart';
 import '../shared/plant_section_header.dart';
 import '../shared/plant_info_grid_tile.dart';
 import '../shared/npk_indicator.dart';
 import '../shared/fertilizer_calculator_sheet.dart';
-import '../../utils/crop_calculator.dart';
 
 /// Section 3: Soil Standards & Nutrition
-/// Shows soil texture, pH, NPK indicators, warning note, and fertilizer calculator button.
 class SoilNutritionSection extends StatelessWidget {
   final Crop crop;
   final VoidCallback? onSpeak;
@@ -29,62 +26,46 @@ class SoilNutritionSection extends StatelessWidget {
         PlantSectionHeader(
           title: 'معايير التربة والتسميد',
           icon: Icons.hub_rounded,
-          color: Colors.purple,
           onSpeak: onSpeak,
         ),
 
-        // Soil info grid
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: context.wp(3),
-          mainAxisSpacing: context.hp(1.5),
-          childAspectRatio: 1.6,
-          children: [
-            PlantInfoGridTile(
-              icon: Icons.layers_rounded,
-              iconColor: Colors.blueGrey,
-              label: 'نوع التربة',
-              value: care.soilTexture ?? '—',
-            ),
-            PlantInfoGridTile(
-              icon: Icons.science_rounded,
-              iconColor: Colors.indigo,
-              label: 'حموضة التربة (pH)',
-              value: crop.phRange,
-            ),
-          ],
+        PlantInfoGridTile(
+          icon: Icons.layers_rounded,
+          label: 'نوع التربة',
+          value: care.soilTexture ?? '—',
+        ),
+        PlantInfoGridTile(
+          icon: Icons.science_rounded,
+          label: 'حموضة التربة (pH)',
+          value: crop.phRange,
         ),
 
-        SizedBox(height: context.hp(2.5)),
+        const SizedBox(height: 24),
 
-        // NPK section
         Text(
           'توزيع العناصر الكبرى (NPK)',
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: context.sp(14),
-            color: Colors.purple,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: isDark ? Colors.white54 : Colors.black54,
           ),
         ),
-        SizedBox(height: context.hp(1.5)),
+        const SizedBox(height: 16),
         NpkIndicator(
           nAmount: care.nAmount,
           pAmount: care.pAmount,
           kAmount: care.kAmount,
         ),
 
-        SizedBox(height: context.hp(2)),
+        const SizedBox(height: 24),
 
-        // تحذير هام — always visible in this section
         _WarningNote(isDark: isDark),
 
-        SizedBox(height: context.hp(2)),
+        const SizedBox(height: 24),
 
-        // Fertilizer calculator button
         SizedBox(
           width: double.infinity,
+          height: 48,
           child: ElevatedButton.icon(
             onPressed: () => FertilizerCalculatorSheet.show(context, crop),
             icon: const Icon(Icons.calculate_rounded),
@@ -92,12 +73,11 @@ class SoilNutritionSection extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: context.primary,
               foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: context.hp(1.8)),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(context.wp(4)),
+                borderRadius: BorderRadius.circular(8),
               ),
-              textStyle: TextStyle(
-                fontSize: context.sp(15),
+              textStyle: const TextStyle(
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -108,7 +88,6 @@ class SoilNutritionSection extends StatelessWidget {
   }
 }
 
-/// Inline warning note shown under NPK data.
 class _WarningNote extends StatelessWidget {
   final bool isDark;
   const _WarningNote({required this.isDark});
@@ -116,38 +95,37 @@ class _WarningNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(context.wp(4)),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.amber.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(context.wp(3)),
-        border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             Icons.warning_amber_rounded,
-            color: Colors.amber.shade700,
-            size: context.sp(18),
+            color: isDark ? Colors.white70 : Colors.black54,
+            size: 20,
           ),
-          SizedBox(width: context.wp(3)),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'تحذير هام',
+                  'تنبيه',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.amber.shade800,
-                    fontSize: context.sp(13),
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 14,
                   ),
                 ),
-                SizedBox(height: context.hp(0.4)),
+                const SizedBox(height: 4),
                 Text(
                   'يجب الحرص التام على دقة بيانات NPK والمواعيد الزراعية المُدخلة، لأن أي خطأ قد يؤدي إلى ضرر حقيقي للمحصول. يُرجى الاعتماد على مراجع زراعية موثوقة.',
                   style: TextStyle(
-                    fontSize: context.sp(11),
+                    fontSize: 13,
                     color: isDark ? Colors.white70 : Colors.black87,
                     height: 1.5,
                   ),
