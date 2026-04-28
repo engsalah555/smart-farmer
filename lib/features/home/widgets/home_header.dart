@@ -140,18 +140,6 @@ class HomeHeader extends StatelessWidget {
                     ),
                     SizedBox(width: context.wp(2)),
                     Semantics(
-                      label: 'المحاصيل',
-                      button: true,
-                      child: ProMaxIconButton(
-                        icon: Icons.eco_outlined,
-                        onTap: () => context.go('/crops'),
-                        iconSize: context.wp(5.5).clamp(24, 28),
-                        color: context.textPrimary,
-                        backgroundColor: context.cardBackground,
-                      ),
-                    ),
-                    SizedBox(width: context.wp(2)),
-                    Semantics(
                       label: 'المساعد الذكي',
                       button: true,
                       child: ProMaxIconButton(
