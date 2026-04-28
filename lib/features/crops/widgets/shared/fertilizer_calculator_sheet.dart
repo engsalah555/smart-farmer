@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/models/crop_model.dart';
-import '../../../../core/utils/responsive.dart';
 import '../../../../core/constants.dart';
 import '../../utils/crop_calculator.dart';
 
@@ -52,34 +51,28 @@ class _FertilizerCalculatorSheetState extends State<FertilizerCalculatorSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF1E2A1A) : const Color(0xFFF5F9F2);
+    final bg = isDark ? const Color(0xFF0F172A) : Colors.white;
 
     return Container(
-      margin: EdgeInsets.only(top: context.hp(10)),
+      margin: const EdgeInsets.only(top: 80),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(context.wp(7)),
-        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: DraggableScrollableSheet(
         initialChildSize: 1,
+        minChildSize: 0.5,
+        maxChildSize: 1,
         expand: false,
         builder: (_, scrollController) => SingleChildScrollView(
           controller: scrollController,
-          padding: EdgeInsets.fromLTRB(
-            context.wp(6),
-            context.hp(2),
-            context.wp(6),
-            context.hp(4),
-          ),
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle bar
               Center(
                 child: Container(
-                  width: context.wp(12),
+                  width: 48,
                   height: 4,
                   decoration: BoxDecoration(
                     color: Colors.grey.withValues(alpha: 0.3),
@@ -87,24 +80,23 @@ class _FertilizerCalculatorSheetState extends State<FertilizerCalculatorSheet> {
                   ),
                 ),
               ),
-              SizedBox(height: context.hp(2)),
+              const SizedBox(height: 24),
 
-              // Title
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(context.wp(2.5)),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: context.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(context.wp(3)),
+                      color: context.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       Icons.calculate_rounded,
                       color: context.primary,
-                      size: context.sp(22),
+                      size: 24,
                     ),
                   ),
-                  SizedBox(width: context.wp(3)),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +104,7 @@ class _FertilizerCalculatorSheetState extends State<FertilizerCalculatorSheet> {
                         Text(
                           'حاسبة الأسمدة',
                           style: TextStyle(
-                            fontSize: context.sp(18),
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : Colors.black87,
                           ),
@@ -120,7 +112,7 @@ class _FertilizerCalculatorSheetState extends State<FertilizerCalculatorSheet> {
                         Text(
                           widget.crop.name,
                           style: TextStyle(
-                            fontSize: context.sp(12),
+                            fontSize: 13,
                             color: context.primary,
                           ),
                         ),
@@ -129,125 +121,111 @@ class _FertilizerCalculatorSheetState extends State<FertilizerCalculatorSheet> {
                   ),
                 ],
               ),
-              SizedBox(height: context.hp(3)),
+              const SizedBox(height: 32),
 
-              // Area input
               Text(
                 'مساحة المزرعة (هكتار)',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: context.sp(13),
+                  fontSize: 14,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
               ),
-              SizedBox(height: context.hp(1)),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _areaController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d*'),
-                        ),
-                      ],
-                      onChanged: (_) => _calculate(),
-                      decoration: InputDecoration(
-                        suffixText: 'هكتار',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(context.wp(3)),
-                          borderSide: BorderSide(
-                            color: context.primary.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(context.wp(3)),
-                          borderSide: BorderSide(color: context.primary),
-                        ),
-                        fillColor: isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : Colors.white,
-                        filled: true,
-                      ),
-                    ),
-                  ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _areaController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                 ],
+                onChanged: (_) => _calculate(),
+                decoration: InputDecoration(
+                  suffixText: 'هكتار',
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: context.primary, width: 2),
+                  ),
+                  fillColor: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.grey.withValues(alpha: 0.05),
+                  filled: true,
+                ),
               ),
-              SizedBox(height: context.hp(3)),
+              const SizedBox(height: 32),
 
-              // Results
               if (_result != null && !_result!.isEmpty) ...[
                 Text(
-                  'الكميات المطلوبة',
+                  'الكميات المطلوبة (كجم)',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: context.sp(15),
+                    fontSize: 15,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
-                SizedBox(height: context.hp(1.5)),
+                const SizedBox(height: 16),
                 _ResultRow(
                   symbol: 'N',
                   name: 'نيتروجين',
                   value: _result!.nitrogen,
-                  color: Colors.green,
                 ),
-                SizedBox(height: context.hp(1)),
+                const SizedBox(height: 12),
                 _ResultRow(
                   symbol: 'P',
                   name: 'فسفور',
                   value: _result!.phosphorus,
-                  color: Colors.purple,
                 ),
-                SizedBox(height: context.hp(1)),
+                const SizedBox(height: 12),
                 _ResultRow(
                   symbol: 'K',
                   name: 'بوتاسيوم',
                   value: _result!.potassium,
-                  color: Colors.orange,
                 ),
-                SizedBox(height: context.hp(3)),
+                const SizedBox(height: 32),
               ],
 
-              // Warning
               Container(
-                padding: EdgeInsets.all(context.wp(4)),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(context.wp(3)),
-                  border: Border.all(
-                    color: Colors.amber.withValues(alpha: 0.35),
-                  ),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
                       Icons.warning_amber_rounded,
-                      color: Colors.amber.shade700,
-                      size: context.sp(18),
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      size: 20,
                     ),
-                    SizedBox(width: context.wp(3)),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'تحذير هام',
+                            'تنبيه',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.amber.shade800,
-                              fontSize: context.sp(13),
+                              color: isDark ? Colors.white : Colors.black87,
+                              fontSize: 14,
                             ),
                           ),
-                          SizedBox(height: context.hp(0.5)),
+                          const SizedBox(height: 4),
                           Text(
-                            'يرجى الحرص التام على أن تكون البيانات المدخلة دقيقة علمياً ومطابقة للممارسات الزراعية المعتمدة. أي خطأ في أرقام التسميد (NPK) قد يؤدي إلى ضرر حقيقي للمحصول. يجب الاعتماد على مراجع زراعية موثوقة.',
+                            'هذه الحاسبة توفر تقديرات تقريبية بناءً على المعايير العامة. ننصح دائماً بإجراء تحليل للتربة واستشارة خبير زراعي للحصول على أفضل النتائج لمحصولك.',
                             style: TextStyle(
-                              fontSize: context.sp(11),
+                              fontSize: 13,
                               color: isDark ? Colors.white70 : Colors.black87,
                               height: 1.5,
                             ),
@@ -258,25 +236,22 @@ class _FertilizerCalculatorSheetState extends State<FertilizerCalculatorSheet> {
                   ],
                 ),
               ),
-              SizedBox(height: context.hp(2)),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
+                height: 48,
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.primary,
                     foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: context.hp(1.8)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(context.wp(4)),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'إغلاق',
-                    style: TextStyle(
-                      fontSize: context.sp(15),
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -292,13 +267,11 @@ class _ResultRow extends StatelessWidget {
   final String symbol;
   final String name;
   final double? value;
-  final Color color;
 
   const _ResultRow({
     required this.symbol,
     required this.name,
     required this.value,
-    required this.color,
   });
 
   @override
@@ -306,51 +279,49 @@ class _ResultRow extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.wp(4),
-        vertical: context.hp(1.2),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.1 : 0.07),
-        borderRadius: BorderRadius.circular(context.wp(3)),
-        border: Border.all(color: color.withValues(alpha: 0.25)),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : Colors.black.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           Container(
-            width: context.wp(9),
-            height: context.wp(9),
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              color: context.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 symbol,
                 style: TextStyle(
-                  color: color,
+                  color: context.primary,
                   fontWeight: FontWeight.w900,
-                  fontSize: context.sp(16),
+                  fontSize: 14,
                 ),
               ),
             ),
           ),
-          SizedBox(width: context.wp(3)),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               name,
               style: TextStyle(
                 color: isDark ? Colors.white70 : Colors.black54,
-                fontSize: context.sp(13),
+                fontSize: 14,
               ),
             ),
           ),
           Text(
-            value != null ? '${value!.toStringAsFixed(1)} kg' : '—',
+            value != null ? '${value!.toStringAsFixed(1)} كجم' : '—',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: color,
-              fontSize: context.sp(15),
+              color: isDark ? Colors.white : Colors.black87,
+              fontSize: 15,
             ),
           ),
         ],
