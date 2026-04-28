@@ -13,7 +13,7 @@ import '../../features/profile/screens/profile_screen.dart';
 import '../../features/ai/screens/disease_detection_screen.dart';
 import '../../features/marketplace/screens/add_product_screen.dart';
 import '../models/product_model.dart';
-import '../../features/marketplace/screens/store_settings_screen.dart';
+
 import '../../features/marketplace/screens/seller_orders_screen.dart';
 import '../../features/community/screens/forum_screen.dart';
 import '../../features/community/screens/create_post_screen.dart';
@@ -131,10 +131,7 @@ class AppRouter {
           return AddProductScreen(productToEdit: product);
         },
       ),
-      GoRoute(
-        path: '/store_settings',
-        builder: (context, state) => const StoreSettingsScreen(),
-      ),
+
       GoRoute(
         path: '/seller_orders',
         builder: (context, state) => const SellerOrdersScreen(),

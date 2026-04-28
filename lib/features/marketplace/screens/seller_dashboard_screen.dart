@@ -113,7 +113,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                         color: Colors.white,
                         size: 20,
                       ),
-                      onPressed: () => context.push('/store_settings'),
+                      onPressed: () => context.push('/edit_profile'),
                     ),
                   ),
                   Container(
