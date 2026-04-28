@@ -125,7 +125,7 @@ class MarketplaceProvider extends BaseProvider {
       if (!loadMore) {
         _products.clear();
         // Save first page to cache
-        await _persistence.save(_boxName, 'products', result.data.map((e) => e.toJson()).toList());
+        await _persistence.save(_boxName, 'products', result.data.map((e) => e.toCacheJson()).toList());
       }
       _products.addAll(result.data);
       _currentProductsPage = result.currentPage;
@@ -147,7 +147,7 @@ class MarketplaceProvider extends BaseProvider {
     }
   }
 
-  Future<void> loadStores({bool loadMore = false}) async {
+  Future<void> loadStores({bool loadMore = false, double? latitude, double? longitude}) async {
     if (loadMore) {
       if (!_hasNextStoresPage || _isLoadingMoreStores) return;
       _isLoadingMoreStores = true;
@@ -160,6 +160,8 @@ class MarketplaceProvider extends BaseProvider {
     await execute(() async {
       final result = await _marketplaceService.getStores(
         page: loadMore ? _currentStoresPage + 1 : 1,
+        latitude: latitude,
+        longitude: longitude,
       );
       
       if (!loadMore) {

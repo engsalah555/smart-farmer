@@ -150,12 +150,30 @@ class ProductModel {
     );
   }
 
-  /// تحويل كائن ProductModel إلى JSON
+  /// تحويل كائن ProductModel إلى JSON — للإرسال للباك‌اند فقط
+  /// يُرسل الحقول التي يقبلها الباك‌اند فقط ويتجاهل الحقول القراءة‌فقط
   Map<String, dynamic> toJson() {
+    return {
+      'name': title,              // اسم المنتج → Backend field
+      'description': description,
+      'price': price,
+      'unit': unit,
+      'stock_quantity': quantity,
+      if (catalogId != null) 'catalog_id': catalogId,
+      if (category.isNotEmpty) 'category': category,
+      if (phoneNumber.isNotEmpty) 'phoneNumber': phoneNumber,
+      if (notes != null && notes!.isNotEmpty) 'notes': notes,
+      // paymentMethods يُعالج كـ List في الـ service
+      'paymentMethods': paymentMethods,
+    };
+  }
+
+  /// تحويل كائن ProductModel إلى JSON كامل (للـ cache المحلي فقط)
+  Map<String, dynamic> toCacheJson() {
     return {
       'id': id,
       'slug': slug,
-      'name': title, // map to backend "name"
+      'name': title,
       'description': description,
       'price': price,
       'unit': unit,

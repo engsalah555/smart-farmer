@@ -30,6 +30,8 @@ import '../../features/crops/screens/crop_detail_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/settings_info_screen.dart';
 import '../../features/marketplace/screens/catalog_manager_screen.dart';
+import '../../features/marketplace/screens/catalog_products_screen.dart';
+import '../../core/models/catalog_model.dart';
 
 import '../../core/models/crop_model.dart';
 import '../../core/models/user_crop_model.dart';
@@ -133,6 +135,15 @@ class AppRouter {
       GoRoute(
         path: '/catalog_manager',
         builder: (context, state) => const CatalogManagerScreen(),
+      ),
+      GoRoute(
+        path: '/catalog_products',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final catalog = extra['catalog'] as CatalogModel;
+          final isSeller = extra['isSeller'] as bool? ?? false;
+          return CatalogProductsScreen(catalog: catalog, isSeller: isSeller);
+        },
       ),
       GoRoute(
         path: '/forum',

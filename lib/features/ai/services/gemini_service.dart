@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
@@ -9,10 +11,15 @@ class GeminiService {
   final String _currentModelName = 'gemini-1.5-flash';
 
   GeminiService() {
-    _initModel();
+    // Initializing lazily
   }
 
-  void _initModel() {
+  Future<void> _ensureInitialized() async {
+    if (_model != null) return;
+    await _initModel();
+  }
+
+  Future<void> _initModel() async {
     try {
       final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
       if (apiKey.isEmpty) {
@@ -20,30 +27,22 @@ class GeminiService {
         return;
       }
 
-      final systemInstruction = Content.system(
-        'أنت استشاري زراعي ذكي ومساعد رسمي لتطبيق "مزرعتي الذكية".\n'
-        'مهمتك الأساسية هي الإجابة عن كافة الأسئلة المتعلقة بالنباتات، الزراعة، المحاصيل، وكل ما يخص الشأن الزراعي، بالإضافة إلى تقديم الدعم والإجابة عن أي أسئلة حول استخدام التطبيق ومميزاته.\n\n'
-        'تعليمات صارمة يجب الالتزام بها في كل رد:\n'
-        '1. أجب دائماً باللغة العربية بأسلوب احترافي، ودود، وسهل الفهم للمزارع والمستخدم العادي.\n'
-        '2. يمكنك تقديم معلومات موسوعة عن أي نبات أو محصول، فوائده، طرق زراعته، الري، التسميد، وحل مشاكل الآفات والأمراض الزراعية.\n'
-        '3. إذا سأل المستخدم عن متجر أدوات زراعية أو مشاتل، أرشده لاستخدام "خريطة المتاجر" أو "المتجر" الموجودة داخل التطبيق.\n'
-        '4. يمكنك الإجابة عن الاستفسارات التقنية البسيطة حول كيفية استخدام التطبيق ومميزاته وكيفية الوصول لأقسامه (مثل حاسبة الأسمدة، المنتدى، الفحص الذكي للآفات).\n'
-        '5. الممنوعات (قيود صارمة): يُمنع منعاً باتاً الإجابة عن أي سؤال خارج عن موضوع الزراعة، النباتات، تطبيقنا، أو الطبيعة المرتبطة بهما. إذا سألك المستخدم عن السياسة، الدين، البرمجة والتكنولوجيا العامة، العلوم الأخرى، أو أي موضوع آخر، اعتذر بلطف وأخبره أنك مبرمج فقط ومختص حصراً بكونك "استشاري زراعي ومساعد للتطبيق ,وتشخيص الامراض" ولا تقدم إجابات خارج هذا النطاق.\n'
-        '6. نسق إجابتك باستخدام النقاط البارزة (Bullet points) لتكون سهلة القراءة على شاشات الجوال.\n'
-        '7. إذا كان المستخدم يلقي التحية (مثل السلام عليكم، كيف الحال) أو يطرح سؤالاً قصيراً للتعارف، رد باختصار شديد وبطريقة ودية عارضاً مساعدتك (مثال: "أهلاً بك! كيف يمكنني خدمتك اليوم؟") ولا تقدم خطاباً طويلاً.',
-      );
+      final promptData = await rootBundle.loadString('assets/ai/chatbot_prompt.json');
+      final Map<String, dynamic> promptJson = jsonDecode(promptData);
+      final systemInstructionText = promptJson['system_instruction'];
 
       _model = GenerativeModel(
         model: _currentModelName,
         apiKey: apiKey,
-        systemInstruction: systemInstruction,
+        systemInstruction: Content.system(systemInstructionText),
         generationConfig: GenerationConfig(
           temperature: 0.7,
           maxOutputTokens: 1024,
+          responseMimeType: 'application/json',
         ),
       );
       _chatSession = _model!.startChat();
-      _initError = null; // clear any previous error
+      _initError = null;
       debugPrint('GeminiService: initialized with model $_currentModelName');
     } catch (e) {
       debugPrint('GeminiService init error: $e');
@@ -70,6 +69,7 @@ class GeminiService {
     String message, {
     Uint8List? imageBytes,
   }) async* {
+    await _ensureInitialized();
     if (_initError != null || _chatSession == null) {
       yield _initError ??
           'المساعد الذكي غير متوفر حالياً. تحقق من مفتاح GEMINI_API_KEY في ملف .env';
@@ -86,9 +86,16 @@ class GeminiService {
         Content.multi(parts),
       );
 
+      String accumulatedBody = '';
       await for (final chunk in responseStream) {
         if (chunk.text != null) {
-          yield chunk.text!;
+          accumulatedBody += chunk.text!;
+          
+          // محاولة استخراج الحقل "text" من الـ JSON المتراكم لعرضه أثناء الكتابة
+          final match = RegExp(r'"text":\s*"([^"]*)').firstMatch(accumulatedBody);
+          if (match != null && match.group(1) != null) {
+            yield _unescapeJsonString(match.group(1)!);
+          }
         }
       }
     } catch (e) {
@@ -111,16 +118,32 @@ class GeminiService {
 
   /// إرسال رسالة واستقبال الرد مرة واحدة
   Future<String> sendMessage(String message) async {
+    await _ensureInitialized();
     if (_initError != null || _chatSession == null) {
       return _initError ?? 'المساعد الذكي غير متوفر حالياً.';
     }
 
     try {
       final response = await _chatSession!.sendMessage(Content.text(message));
-      return response.text ?? 'لم أتمكن من فهم طلبك.';
+      final rawText = response.text ?? '';
+      if (rawText.isEmpty) return 'لم أتمكن من فهم طلبك.';
+      
+      try {
+        final Map<String, dynamic> data = jsonDecode(rawText);
+        return data['text'] ?? 'لم أتمكن من استخراج النص.';
+      } catch (e) {
+        return rawText; // fallback to raw text if json fails
+      }
     } catch (e) {
       debugPrint('GeminiService sendMessage error: $e');
       return 'حدث خطأ في الاتصال بالمساعد الذكي. يرجى المحاولة لاحقاً.';
     }
+  }
+
+  String _unescapeJsonString(String input) {
+    return input
+        .replaceAll(r'\n', '\n')
+        .replaceAll(r'\"', '"')
+        .replaceAll(r'\\', r'\');
   }
 }

@@ -71,10 +71,17 @@ class MarketplaceService extends BaseApiService {
   Future<PaginatedResponse<StoreModel>> getStores({
     int page = 1,
     int perPage = 20,
+    double? latitude,
+    double? longitude,
   }) async {
     return await get<PaginatedResponse<StoreModel>>(
           AppConstants.storesUrl,
-          queryParameters: {'page': page, 'per_page': perPage},
+          queryParameters: {
+            'page': page,
+            'per_page': perPage,
+            'latitude': ?latitude,
+            'longitude': ?longitude,
+          },
           mapper: (data) => PaginatedResponse.fromJson(
             data,
             (item) => StoreModel.fromJson(item as Map<String, dynamic>),

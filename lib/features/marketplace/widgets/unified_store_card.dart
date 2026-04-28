@@ -58,11 +58,6 @@ class UnifiedStoreCard extends StatelessWidget {
                       child: CustomImage(
                         imageUrl: store.coverImage,
                         fit: BoxFit.cover,
-                        errorWidget: Icon(
-                          Icons.storefront_rounded,
-                          size: 60,
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                        ),
                       ),
                     ),
                   ),
@@ -126,10 +121,6 @@ class UnifiedStoreCard extends StatelessWidget {
                         child: CustomImage(
                           imageUrl: store.logo,
                           fit: BoxFit.cover,
-                          errorWidget: Icon(
-                            Icons.person,
-                            color: AppColors.primary.withValues(alpha: 0.4),
-                          ),
                         ),
                       ),
                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -45,10 +46,11 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       debugPrint('Location services are disabled.');
+      if (mounted) setState(() => _isMapLoading = false);
+      _loadStoresWithPosition(null, null);
       return;
     }
 
@@ -57,12 +59,16 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         debugPrint('Location permissions are denied');
+        if (mounted) setState(() => _isMapLoading = false);
+        _loadStoresWithPosition(null, null);
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       debugPrint('Location permissions are permanently denied.');
+      if (mounted) setState(() => _isMapLoading = false);
+      _loadStoresWithPosition(null, null);
       return;
     }
 
@@ -74,14 +80,22 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
           _isMapLoading = false;
         });
         _mapController.move(_userPosition!, 14.5);
+        _loadStoresWithPosition(position.latitude, position.longitude);
       }
     } catch (e) {
       debugPrint('Error getting initial position: $e');
       if (mounted) {
         setState(() => _isMapLoading = false);
+        _loadStoresWithPosition(null, null);
       }
     }
   }
+
+  void _loadStoresWithPosition(double? lat, double? lng) {
+    final provider = context.read<MarketplaceProvider>();
+    provider.loadStores(latitude: lat, longitude: lng);
+  }
+
 
   @override
   void dispose() {
@@ -149,14 +163,8 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
             : const Color(0xFFF7F8F6),
         body: Consumer<MarketplaceProvider>(
           builder: (context, provider, _) {
-            // Load stores if empty
-            if (provider.stores.isEmpty && !provider.isLoading) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                provider.loadProducts();
-              });
-            }
+              final filteredStores = _filterStores(provider.stores);
 
-            final filteredStores = _filterStores(provider.stores);
 
             return Stack(
               children: [
@@ -191,44 +199,82 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                     ),
                     MarkerLayer(
                       markers: [
-                        // User Location Marker
+                        // User Location Marker - Modern pulsing blue dot
                         if (_userPosition != null)
                           Marker(
-                            width: 30.0,
-                            height: 30.0,
+                            width: 44,
+                            height: 44,
                             point: _userPosition!,
                             child: Container(
+                              width: 44,
+                              height: 44,
                               decoration: BoxDecoration(
-                                color: Colors.blue.withValues(alpha: 0.3),
+                                color: const Color(0xFF2196F3).withValues(alpha: 0.2),
                                 shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
+                                border: Border.all(color: Colors.white, width: 2.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.blue.withValues(alpha: 0.4),
+                                    blurRadius: 12,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
                               ),
-                              child: Container(
-                                margin: const EdgeInsets.all(5),
-                                decoration: const BoxDecoration(
-                                  color: Colors.blue,
-                                  shape: BoxShape.circle,
+                              child: Center(
+                                child: Container(
+                                  width: 16,
+                                  height: 16,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF2196F3),
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        // Stores Markers
+                        // Stores Markers - Modern pin with category icon
                         ...filteredStores.map((store) {
                           final isSelected = _selectedStore?.id == store.id;
+                          final catColor = _getCategoryColor(store.category);
                           return Marker(
-                            width: 40.0,
-                            height: 40.0,
+                            width: isSelected ? 56 : 46,
+                            height: isSelected ? 66 : 56,
                             point: LatLng(store.latitude!, store.longitude!),
                             child: GestureDetector(
-                              onTap: () =>
-                                  setState(() => _selectedStore = store),
-                              child: Icon(
-                                Icons.location_on,
-                                size: 40,
-                                color: isSelected ? Colors.green : Colors.red,
+                              onTap: () => setState(() => _selectedStore = store),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: isSelected ? 48 : 38,
+                                    height: isSelected ? 48 : 38,
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? catColor : Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: catColor,
+                                        width: isSelected ? 0 : 2.5,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: catColor.withValues(alpha: isSelected ? 0.5 : 0.25),
+                                          blurRadius: isSelected ? 16 : 8,
+                                          spreadRadius: isSelected ? 2 : 0,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      _getCategoryIcon(store.category),
+                                      size: isSelected ? 24 : 18,
+                                      color: isSelected ? Colors.white : catColor,
+                                    ),
+                                  ),
+                                  CustomPaint(
+                                    size: const Size(12, 7),
+                                    painter: _TrianglePainter(catColor),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -552,30 +598,48 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
     );
   }
 
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'بذور': return Icons.grass_rounded;
+      case 'اسمدة': return Icons.science_rounded;
+      case 'مبيدات': return Icons.bug_report_rounded;
+      case 'محاصيل': return Icons.agriculture_rounded;
+      case 'معدات': return Icons.construction_rounded;
+      case 'المشاتل': return Icons.park_rounded;
+      default: return Icons.storefront_rounded;
+    }
+  }
+
   Widget _buildStoresList(List<StoreModel> stores) {
     if (stores.isEmpty) return const SizedBox();
-    return Container(
-      height: 100,
-      decoration: const BoxDecoration(color: Colors.transparent),
+    return SizedBox(
+      height: 120,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         itemCount: stores.length,
         itemBuilder: (context, index) {
           final store = stores[index];
+          final catColor = _getCategoryColor(store.category);
+          final isSelected = _selectedStore?.id == store.id;
           return GestureDetector(
             onTap: () => _moveToStore(store),
-            child: Container(
-              width: 180,
-              margin: const EdgeInsets.only(left: 10),
-              padding: const EdgeInsets.all(12),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 200,
+              margin: const EdgeInsets.only(left: 12),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                color: isSelected ? catColor : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? catColor : catColor.withValues(alpha: 0.2),
+                  width: 1.5,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
+                    color: catColor.withValues(alpha: isSelected ? 0.35 : 0.12),
+                    blurRadius: isSelected ? 16 : 10,
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -583,21 +647,21 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
               child: Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
-                      color: _getCategoryColor(
-                        store.category,
-                      ).withValues(alpha: 0.15),
+                      color: isSelected
+                          ? Colors.white.withValues(alpha: 0.25)
+                          : catColor.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      Icons.store,
-                      color: _getCategoryColor(store.category),
-                      size: 20,
+                      _getCategoryIcon(store.category),
+                      color: isSelected ? Colors.white : catColor,
+                      size: 22,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -605,20 +669,37 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                       children: [
                         Text(
                           store.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                            fontSize: 13,
+                            color: isSelected ? Colors.white : Colors.black87,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        const SizedBox(height: 3),
                         Text(
                           store.category,
                           style: TextStyle(
                             fontSize: 11,
-                            color: _getCategoryColor(store.category),
+                            color: isSelected
+                                ? Colors.white.withValues(alpha: 0.8)
+                                : catColor,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
+                        if (store.location.isNotEmpty)
+                          Text(
+                            '📍 ${store.location}',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: isSelected
+                                  ? Colors.white.withValues(alpha: 0.7)
+                                  : Colors.grey,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                       ],
                     ),
                   ),
@@ -771,4 +852,24 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
       ),
     );
   }
+}
+
+/// Draws a small downward-pointing triangle used as the pin tip on markers.
+class _TrianglePainter extends CustomPainter {
+  final Color color;
+  _TrianglePainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final path = ui.Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_TrianglePainter old) => old.color != color;
 }

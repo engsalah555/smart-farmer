@@ -22,7 +22,20 @@ class SellerService extends BaseApiService {
     String? logoPath,
     String? coverImagePath,
   }) async {
-    final formData = FormData.fromMap(storeData);
+    final filteredData = <String, dynamic>{};
+    storeData.forEach((key, value) {
+      if (value != null && value != 'null' && value is! Map) {
+        if (value is List) {
+          for (int i = 0; i < value.length; i++) {
+            filteredData['$key[$i]'] = value[i].toString();
+          }
+        } else {
+          filteredData[key] = value.toString();
+        }
+      }
+    });
+
+    final formData = FormData.fromMap(filteredData);
 
     if (logoPath != null && logoPath.isNotEmpty && !logoPath.startsWith('http')) {
       formData.files.add(MapEntry('logo', await MultipartFile.fromFile(logoPath, filename: logoPath.split('/').last)));

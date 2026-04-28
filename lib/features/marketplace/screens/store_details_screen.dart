@@ -144,18 +144,12 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                               ),
                             ),
                             child: ClipOval(
-                              child: store.logo.isNotEmpty
-                                  ? CustomImage(
-                                      imageUrl: store.logo,
-                                      fit: BoxFit.cover,
-                                      width: 70,
-                                      height: 70,
-                                    )
-                                  : Icon(
-                                      Icons.store,
-                                      size: 40,
-                                      color: context.primary,
-                                    ),
+                              child: CustomImage(
+                                imageUrl: store.logo,
+                                fit: BoxFit.cover,
+                                width: 70,
+                                height: 70,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 16),

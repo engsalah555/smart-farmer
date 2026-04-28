@@ -51,29 +51,33 @@ class CustomImage extends StatelessWidget {
   }
 
   Widget _buildPremiumFallback() {
-    // Generate a beautiful gradient based on the URL or Name if possible
-    // For now, use a sophisticated brand-aligned gradient
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
+        color: const Color(0xFFF0F2F5), // Light grey like Instagram/Facebook backgrounds
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
           colors: [
-            Colors.green.shade400,
-            Colors.green.shade700,
+            const Color(0xFFF0F2F5),
+            const Color(0xFFE4E6EB),
           ],
         ),
       ),
       child: Center(
-        child: Opacity(
-          opacity: 0.5,
-          child: Icon(
-            Icons.eco_outlined,
-            color: Colors.white,
-            size: (width ?? 40) / 2.5,
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final size = constraints.maxWidth > 0 ? constraints.maxWidth : (width ?? 50);
+            return Opacity(
+              opacity: 0.4,
+              child: Icon(
+                Icons.person_rounded, // Instagram style person silhouette
+                color: const Color(0xFF8A8D91),
+                size: size * 0.7,
+              ),
+            );
+          },
         ),
       ),
     );
