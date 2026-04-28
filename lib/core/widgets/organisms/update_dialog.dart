@@ -41,7 +41,7 @@ class UpdateDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SmartFarmLogo(width: 100, height: 60),
+          SmartFarmLogo.compact(),
           const SizedBox(height: 16),
           Text(
             'تحديث جديد متاح',

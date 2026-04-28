@@ -6,6 +6,7 @@ import '../../../core/constants.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/atoms/smart_farm_logo.dart';
 import '../../../core/providers/app_provider.dart';
+import '../../../core/theme/app_colors.dart';
 
 class LanguageSelectionScreen extends StatelessWidget {
   const LanguageSelectionScreen({super.key});
@@ -35,8 +36,8 @@ class LanguageSelectionScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: isDark
-                    ? [const Color(0xFF1B2E35), const Color(0xFF0F1C22)]
-                    : [const Color(0xFFF0F5F2), Colors.white],
+                    ? [context.darkSurface, context.darkBackground]
+                    : [context.shimmerHighlight, context.backgroundColor],
               ),
             ),
           ),
@@ -62,7 +63,7 @@ class LanguageSelectionScreen extends StatelessWidget {
               height: 150,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.blue.withValues(alpha: 0.05),
+                color: context.info.withValues(alpha: 0.05),
               ),
             ),
           ),
@@ -76,7 +77,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
                     children: [
-                      const SmartFarmLogo(width: 80, height: 80),
+                      SmartFarmLogo.compact(),
                       const SizedBox(height: 24),
                       Text(
                         localizations.whatIsYourLanguage,
@@ -131,15 +132,13 @@ class LanguageSelectionScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? context.primary
-                                : (isDark
-                                      ? const Color(0xFF2C3E50)
-                                      : Colors.white),
+                                : context.cardBackground,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: isSelected
                                   ? context.primary
-                                  : Colors.transparent,
-                              width: 2,
+                                  : context.border,
+                              width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -168,7 +167,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
 
                                   color: isSelected
-                                      ? Colors.white
+                                      ? context.white
                                       : Theme.of(
                                           context,
                                         ).textTheme.bodyLarge?.color,
@@ -176,9 +175,9 @@ class LanguageSelectionScreen extends StatelessWidget {
                               ),
                               if (isSelected) ...[
                                 const SizedBox(height: 4),
-                                const Icon(
+                                Icon(
                                   Icons.check_circle,
-                                  color: Colors.white,
+                                  color: context.white,
                                   size: 16,
                                 ),
                               ],
@@ -213,16 +212,16 @@ class LanguageSelectionScreen extends StatelessWidget {
                         children: [
                           Text(
                             localizations.next,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: context.white,
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(
+                          Icon(
                             Icons.arrow_forward_rounded,
-                            color: Colors.white,
+                            color: context.white,
                           ),
                         ],
                       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:provider/provider.dart';
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
@@ -23,7 +22,6 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _stardustAnimation;
 
   @override
   void initState() {
@@ -31,22 +29,22 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2500),
+      duration: const Duration(milliseconds: 1500),
     );
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(
           begin: 0.0,
-          end: 1.2,
-        ).chain(CurveTween(curve: Curves.easeOut)),
+          end: 1.1,
+        ).chain(CurveTween(curve: Curves.easeOutQuart)),
         weight: 60,
       ),
       TweenSequenceItem(
         tween: Tween<double>(
-          begin: 1.2,
+          begin: 1.1,
           end: 1.0,
-        ).chain(CurveTween(curve: Curves.elasticIn)),
+        ).chain(CurveTween(curve: Curves.easeOutQuart)),
         weight: 40,
       ),
     ]).animate(_controller);
@@ -54,15 +52,7 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.4, 0.8, curve: Curves.easeIn),
-      ),
-    );
-
-    // Timeline for stardust particles merging
-    _stardustAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
+        curve: const Interval(0.2, 0.8, curve: Curves.easeIn),
       ),
     );
 
@@ -88,9 +78,9 @@ class _SplashScreenState extends State<SplashScreen>
       if (updateInfo.forceUpdate) return;
     }
 
-    // الانتظار حتى اكتمال الأنيميشن (على الأقل 2.5 ثانية إجمالاً)
+    // الانتظار حتى اكتمال الأنيميشن
     final elapsed = _controller.lastElapsedDuration ?? Duration.zero;
-    final remaining = const Duration(milliseconds: 2500) - elapsed;
+    final remaining = const Duration(milliseconds: 1500) - elapsed;
     if (remaining.inMilliseconds > 0) {
       await Future.delayed(remaining);
     }
@@ -127,83 +117,38 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.backgroundColor,
       body: Center(
-        child: Stack(
-          alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Stardust particles merging effect
-            AnimatedBuilder(
-              animation: _stardustAnimation,
-              builder: (context, child) {
-                return Stack(
-                  children: List.generate(30, (index) {
-                    final random = math.Random(index);
-                    final angle = random.nextDouble() * 2 * math.pi;
-                    final distance = 250.0 * _stardustAnimation.value;
-                    final size = random.nextDouble() * 5 + 2;
-
-                    return Transform.translate(
-                      offset: Offset(
-                        math.cos(angle) * distance,
-                        math.sin(angle) * distance,
-                      ),
-                      child: Opacity(
-                        opacity: _stardustAnimation.value > 0.05 ? 0.8 : 0.0,
-                        child: Container(
-                          width: size,
-                          height: size,
-                          decoration: BoxDecoration(
-                            color: context.primary.withValues(alpha: 0.6),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: context.primary.withValues(alpha: 0.4),
-                                blurRadius: 6,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                );
-              },
+            // Animated Logo
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SmartFarmLogo.large(),
+              ),
             ),
-
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Animated Logo (Adjusted dimensions for better fit)
-                ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: const SmartFarmLogo(width: 250, height: 130),
-                  ),
+            const SizedBox(height: 10),
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: Text(
+                AppConstants.appName,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: context.primary,
+                  letterSpacing: 1.2,
                 ),
-                const SizedBox(height: 10), // Reduced spacing
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Text(
-                    AppConstants.appName,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: context.primary,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 50),
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(context.primary),
-                  ),
-                ),
-              ],
+              ),
+            ),
+            const SizedBox(height: 50),
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                valueColor: AlwaysStoppedAnimation<Color>(context.primary),
+              ),
             ),
           ],
         ),

@@ -175,10 +175,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  Semantics(
-                    label: ' شعار مزرعة الذكية',
-                    child: const SmartFarmLogo(width: 150, height: 150),
-                  ),
+                  SmartFarmLogo.large(),
                   const SizedBox(height: 30),
 
                   // Role Selector (User/Merchant)
@@ -391,8 +388,13 @@ class _AuthScreenState extends State<AuthScreen> {
                           color: context.textSecondary,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => setState(() => isLogin = !isLogin),
+                      TextButton(
+                        onPressed: () => setState(() => isLogin = !isLogin),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                         child: Text(
                           isLogin ? 'سجل الآن' : 'تسجيل الدخول',
                           style: TextStyle(
