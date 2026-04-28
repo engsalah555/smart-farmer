@@ -235,47 +235,7 @@ class _AppBarBottom extends StatelessWidget {
           ),
         ),
         SizedBox(width: context.wp(3)),
-        _AddButton(isAdding: isAdding, onAdd: onAdd),
       ],
-    );
-  }
-}
-
-class _AddButton extends StatelessWidget {
-  final bool isAdding;
-  final VoidCallback onAdd;
-  const _AddButton({required this.isAdding, required this.onAdd});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      onPressed: isAdding ? null : onAdd,
-      icon: isAdding
-          ? SizedBox(
-              width: context.wp(4),
-              height: context.wp(4),
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              ),
-            )
-          : const Icon(Icons.add_rounded),
-      label: Text(isAdding ? 'جاري الإضافة...' : 'أضف لمزرعتي'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: context.primary,
-        foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.wp(4),
-          vertical: context.hp(1.2),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(context.wp(4)),
-        ),
-        textStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: context.sp(13),
-        ),
-      ),
     );
   }
 }
