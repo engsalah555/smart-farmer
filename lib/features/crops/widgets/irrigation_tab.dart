@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 import '../../iot/providers/iot_provider.dart';
 import '../../iot/models/irrigation_log_model.dart';
@@ -486,7 +487,9 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             ),
             child: Text(
               isWatering ? 'إيقاف الري' : 'تشغيل الري',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: context.body.bold.copyWith(
+                color: isWatering ? Colors.blue : Colors.white,
+              ),
             ),
           ),
         ],
