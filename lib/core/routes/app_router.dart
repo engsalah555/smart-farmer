@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/onboarding/screens/splash_screen.dart';
-import '../../features/onboarding/screens/language_selection_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
 import '../../features/auth/screens/auth_screen.dart';
 import '../../features/home/screens/main_screen.dart';
@@ -81,7 +80,6 @@ class AppRouter {
       final auth = _authProvider;
       final isSplash = state.matchedLocation == '/';
       final isAuthRoute = state.matchedLocation == '/auth' || 
-                          state.matchedLocation == '/language' || 
                           state.matchedLocation == '/onboarding' || 
                           state.matchedLocation == '/forgot_password' || 
                           state.matchedLocation == '/merchant_verification';
@@ -91,7 +89,7 @@ class AppRouter {
 
       // If user is NOT authenticated, restrict them from protected routes
       if (!auth.isAuthenticated && !isAuthRoute && !isSplash) {
-        return '/language';
+        return '/onboarding';
       }
 
       // If user IS authenticated, prevent them from going to auth routes
@@ -103,10 +101,6 @@ class AppRouter {
     },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
-      GoRoute(
-        path: '/language',
-        builder: (context, state) => const LanguageSelectionScreen(),
-      ),
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),

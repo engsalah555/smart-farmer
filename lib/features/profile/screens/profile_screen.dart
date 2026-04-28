@@ -156,17 +156,6 @@ class ProfileScreen extends StatelessWidget {
                     switchValue: isDark,
                     onToggle: (v) => appProvider.toggleTheme(v),
                   ),
-                  SettingsTile(
-                    icon: Icons.language,
-                    title: 'اللغة',
-                    subtitle: appProvider.locale.languageCode == 'ar'
-                        ? 'العربية'
-                        : 'English',
-                    hasArrow: true,
-                    onTap: () {
-                      // Logic for language selection
-                    },
-                  ),
                 ],
               ),
             ),
