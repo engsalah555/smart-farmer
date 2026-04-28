@@ -88,7 +88,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
       margin: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+        color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isFull
@@ -96,12 +96,11 @@ class _MyCropsTabState extends State<MyCropsTab> {
               : context.primary.withValues(alpha: 0.1),
         ),
         boxShadow: [
-          if (!isDark)
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -145,7 +144,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
             child: LinearProgressIndicator(
               value: percent,
               minHeight: 8,
-              backgroundColor: isDark ? Colors.white10 : Colors.grey[200],
+              backgroundColor: isDark ? Colors.white10 : Colors.black12,
               valueColor: AlwaysStoppedAnimation<Color>(
                 isFull ? Colors.red : context.primary,
               ),
@@ -169,6 +168,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
   }
 
   Widget _buildEmptyState({bool isSearch = false}) {
+    final isDark = widget.isDark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -183,7 +183,11 @@ class _MyCropsTabState extends State<MyCropsTab> {
           const SizedBox(height: 24),
           Text(
             isSearch ? 'لم يتم العثور على نتائج' : 'لا توجد محاصيل في مزرعتك',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
           const SizedBox(height: 12),
           Padding(
@@ -193,7 +197,10 @@ class _MyCropsTabState extends State<MyCropsTab> {
                   ? 'جرب البحث بكلمات أخرى أو ابحث في دليل النبات.'
                   : 'ابدأ بإضافة محاصيلك من دليل النبات لتبدأ في متابعة نموها والعناية بها.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600], height: 1.5),
+              style: TextStyle(
+                color: isDark ? Colors.white54 : Colors.black54,
+                height: 1.5,
+              ),
             ),
           ),
           const SizedBox(height: 32),

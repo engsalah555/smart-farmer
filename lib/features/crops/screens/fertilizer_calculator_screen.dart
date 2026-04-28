@@ -1,9 +1,9 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_decorations.dart';
 import '../../../core/theme/app_typography.dart';
 import '../models/fertilizer_models.dart';
 import '../services/fertilizer_engine.dart';
@@ -145,9 +145,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: isDark
-            ? const Color(0xFF0F1A0F)
-            : const Color(0xFFF1F5F0),
+        backgroundColor: AppColors.getBackground(isDark),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             _buildPremiumAppBar(isDark),
@@ -171,6 +169,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
                           _yieldCtrl.text = crop.avgYield.toString();
                         });
                         Future.delayed(const Duration(milliseconds: 400), () {
+                          if (!mounted) return;
                           _tabController.animateTo(1);
                         });
                       },
@@ -215,7 +214,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
       floating: false,
       pinned: true,
       stretch: true,
-      backgroundColor: context.primary,
+      backgroundColor: Theme.of(context).primaryColor,
       elevation: 0,
       automaticallyImplyLeading: false,
       leadingWidth: 0,
@@ -232,10 +231,10 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
                   context.go('/crops');
                 }
               },
-              size: 40,
-              iconSize: 18,
-              backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.white,
-              color: isDark ? Colors.white : AppColors.deepGreen,
+              size: 44, // Fixed size for touch target
+              iconSize: 20,
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+              color: isDark ? Colors.white : context.primary,
             ),
             const SizedBox(width: 12),
             const Text(
@@ -243,17 +242,13 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
-                fontSize: 26,
+                fontSize: 24,
               ),
             ),
           ],
         ),
       ),
       flexibleSpace: FlexibleSpaceBar(
-        stretchModes: const [
-          StretchMode.zoomBackground,
-          StretchMode.blurBackground,
-        ],
         background: Container(color: context.primary),
       ),
     );
@@ -262,28 +257,18 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
   Widget _buildModernTabBar(bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      color: isDark ? const Color(0xFF131B13) : Colors.white,
+      color: isDark ? AppColors.darkSurface : Colors.white,
       child: TabBar(
         controller: _tabController,
         labelColor: Colors.white,
-        unselectedLabelColor: Colors.grey,
+        unselectedLabelColor: isDark ? Colors.white38 : Colors.grey,
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
         indicator: BoxDecoration(
-          gradient: AppDecorations.primaryGradient,
+          color: context.primary,
           borderRadius: BorderRadius.circular(25),
-          boxShadow: [
-            BoxShadow(
-              color: context.primary.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
-        labelStyle: AppTypography.bodyMedium(
-          isDark: isDark,
-        ).copyWith(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: AppTypography.bodyMedium(isDark: isDark),
+        labelStyle: const TextStyle(fontWeight: FontWeight.bold),
         tabs: const [
           Tab(text: 'المحصول'),
           Tab(text: 'المساحة'),
@@ -302,7 +287,7 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
         math.max(24, MediaQuery.paddingOf(context).bottom),
       ),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF131B13) : Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -321,9 +306,10 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
               Expanded(
                 child: Text(
                   '🌱 اختر محصولاً للبدء',
-                  style: AppTypography.bodyMedium(
-                    isDark: isDark,
-                  ).copyWith(color: Colors.grey, fontSize: 13),
+                  style: TextStyle(
+                    color: isDark ? Colors.white38 : Colors.grey,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             const SizedBox(width: 16),
@@ -355,15 +341,18 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
           children: [
             Text(
               _selectedCrop!.name,
-              style: AppTypography.bodyLarge(
-                isDark: isDark,
-              ).copyWith(fontWeight: FontWeight.bold, fontSize: 14),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
             Text(
               '${_areaCtrl.text} $_areaUnit',
-              style: AppTypography.valueLabel(
-                isDark: isDark,
-              ).copyWith(color: Colors.grey, fontSize: 12),
+              style: TextStyle(
+                color: isDark ? Colors.white54 : Colors.grey,
+                fontSize: 12,
+              ),
             ),
           ],
         ),
@@ -374,11 +363,9 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
   Widget _buildCalculateButton(bool isDark) {
     return ElevatedButton.icon(
       icon: const Icon(Icons.bolt_rounded, size: 22),
-      label: Text(
+      label: const Text(
         'احسب النتائج',
-        style: AppTypography.buttonLabel(
-          isDark: isDark,
-        ).copyWith(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
       onPressed: _selectedCrop != null ? _onCalculate : null,
       style: ElevatedButton.styleFrom(
@@ -386,123 +373,8 @@ class _FertilizerCalculatorScreenState extends State<FertilizerCalculatorScreen>
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 6,
-        shadowColor: AppColors.secondary.withValues(alpha: 0.4),
+        elevation: 4,
       ),
-    );
-  }
-}
-
-class _AnimatedMeshBackground extends StatefulWidget {
-  @override
-  State<_AnimatedMeshBackground> createState() =>
-      _AnimatedMeshBackgroundState();
-}
-
-class _AnimatedMeshBackgroundState extends State<_AnimatedMeshBackground>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 25),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Container(
-          color: const Color(0xFF0F1A0F),
-          child: Stack(
-            children: [
-              _AnimatedBlob(
-                controller: _controller,
-                basePos: const Offset(0.7, -0.3),
-                moveRadius: 0.15,
-                size: constraints.maxHeight * 1.5,
-                color: context.primary.withValues(alpha: 0.4),
-                speedMult: 1.0,
-              ),
-              _AnimatedBlob(
-                controller: _controller,
-                basePos: const Offset(-0.3, 0.6),
-                moveRadius: 0.2,
-                size: constraints.maxHeight * 1.3,
-                color: AppColors.secondary.withValues(alpha: 0.3),
-                speedMult: 0.8,
-              ),
-              _AnimatedBlob(
-                controller: _controller,
-                basePos: const Offset(0.4, 0.5),
-                moveRadius: 0.1,
-                size: constraints.maxHeight * 1.0,
-                color: const Color(0xFFC6FF00).withValues(alpha: 0.2),
-                speedMult: 1.2,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _AnimatedBlob extends StatelessWidget {
-  final AnimationController controller;
-  final Offset basePos;
-  final double moveRadius;
-  final double size;
-  final Color color;
-  final double speedMult;
-
-  const _AnimatedBlob({
-    required this.controller,
-    required this.basePos,
-    required this.moveRadius,
-    required this.size,
-    required this.color,
-    required this.speedMult,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, child) {
-        final t = controller.value * 2 * math.pi * speedMult;
-        final dx = basePos.dx + (moveRadius * 1.2 * math.sin(t));
-        final dy = basePos.dy + (moveRadius * math.cos(t * 0.7));
-
-        return Positioned(
-          left: dx * MediaQuery.of(context).size.width,
-          top: dy * 240,
-          child: Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: color,
-                  blurRadius: size * 0.7,
-                  spreadRadius: size * 0.1,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

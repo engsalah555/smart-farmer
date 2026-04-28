@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants.dart';
-import '../../../core/widgets/molecules/glassmorphic_container.dart';
 
 import '../../iot/providers/iot_provider.dart';
 
@@ -129,11 +128,20 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
   }
 
   Widget _buildMainStatusCard(double soilMoisture, bool isWatering) {
-    return GlassmorphicContainer(
+    return Container(
       padding: const EdgeInsets.all(24),
       width: double.infinity,
-      color: context.primary,
-      opacity: 0.8,
+      decoration: BoxDecoration(
+        color: context.primary,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: context.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           const Text(
@@ -218,23 +226,21 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
   }
 
   Widget _buildEnvCard(String label, String value, IconData icon, Color color) {
+    final isDark = widget.isDark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: widget.isDark ? AppColors.darkCard : Colors.white,
+        color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: widget.isDark
-              ? Colors.white10
-              : Colors.black.withValues(alpha: 0.05),
+          color: isDark ? AppColors.darkBorder : Colors.black.withValues(alpha: 0.05),
         ),
         boxShadow: [
-          if (!widget.isDark)
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -253,7 +259,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: widget.isDark ? Colors.white60 : Colors.grey[600],
+              color: isDark ? Colors.white60 : Colors.black54,
             ),
           ),
           Text(
@@ -261,7 +267,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w900,
-              color: widget.isDark ? Colors.white : AppColors.textPrimary,
+              color: isDark ? Colors.white : AppColors.textPrimary,
             ),
           ),
         ],
@@ -276,11 +282,15 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
     Function(bool) onChanged,
     IconData icon,
   ) {
+    final isDark = widget.isDark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: widget.isDark ? AppColors.darkCard : Colors.white,
+        color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : context.primary.withValues(alpha: 0.05),
+        ),
       ),
       child: SwitchListTile(
         value: value,
@@ -298,12 +308,15 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14,
-            color: widget.isDark ? Colors.white : AppColors.textPrimary,
+            color: isDark ? Colors.white : AppColors.textPrimary,
           ),
         ),
         subtitle: Text(
           sub,
-          style: const TextStyle(fontSize: 11, color: Colors.grey),
+          style: TextStyle(
+            fontSize: 11,
+            color: isDark ? Colors.white38 : Colors.black38,
+          ),
         ),
         activeTrackColor: context.primary.withValues(alpha: 0.5),
         activeThumbColor: context.primary,
@@ -350,7 +363,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
                       : 'ابدأ عملية الري يدوياً بضغطة واحدة',
                   style: TextStyle(
                     fontSize: 11,
-                    color: isWatering ? Colors.white70 : Colors.grey,
+                    color: isWatering ? Colors.white70 : (widget.isDark ? Colors.white38 : Colors.black38),
                   ),
                 ),
               ],
@@ -362,6 +375,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             style: ElevatedButton.styleFrom(
               backgroundColor: isWatering ? Colors.white : context.primary,
               foregroundColor: isWatering ? Colors.blue : Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
