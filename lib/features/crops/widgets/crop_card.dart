@@ -74,21 +74,7 @@ class _CropCardState extends State<CropCard>
             decoration: BoxDecoration(
               color: AppColors.getSurface(isDark),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isDark
-                    ? AppColors.darkBorder.withValues(alpha: 0.5)
-                    : context.primary.withValues(alpha: 0.1),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(
-                    alpha: isDark ? 0.2 : 0.05,
-                  ),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              border: Border.all(color: context.border, width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -194,7 +180,8 @@ class _CropCardState extends State<CropCard>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
-                                      CropConstants.categoryIcons[crop.category] ??
+                                      CropConstants.categoryIcons[crop
+                                              .category] ??
                                           Icons.eco_rounded,
                                       size: 12,
                                       color: context.primary,
