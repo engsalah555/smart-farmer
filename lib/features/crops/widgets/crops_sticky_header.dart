@@ -35,11 +35,7 @@ class CropsStickyHeader extends StatelessWidget {
           color: context.primary,
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.getBackground(isDark),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(32),
-                topRight: Radius.circular(32),
-              ),
+              color: context.backgroundColor,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
