@@ -24,10 +24,22 @@ class Crop {
   final CareGuide? careGuide;
   
   // Getters for UI compatibility
-  String? get temperature {
-    if (careGuide == null) return null;
-    if (careGuide!.minTemp == null && careGuide!.maxTemp == null) return null;
+  String get temperatureRange {
+    if (careGuide == null) return "غير محدد";
+    if (careGuide!.minTemp == null && careGuide!.maxTemp == null) return "غير محدد";
     return "${careGuide!.minTemp ?? '?'}°C - ${careGuide!.maxTemp ?? '?'}°C";
+  }
+
+  String get humidityRange {
+    if (careGuide == null) return "غير محدد";
+    if (careGuide!.minHumidity == null && careGuide!.maxHumidity == null) return "غير محدد";
+    return "${careGuide!.minHumidity ?? '?'}% - ${careGuide!.maxHumidity ?? '?'}%";
+  }
+
+  String get phRange {
+    if (careGuide == null) return "غير محدد";
+    if (careGuide!.minPh == null && careGuide!.maxPh == null) return "غير محدد";
+    return "${careGuide!.minPh ?? '?'} - ${careGuide!.maxPh ?? '?'}";
   }
 
   String? get sunlightRequirement => careGuide?.lightType;
