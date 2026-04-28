@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../../core/utils/responsive.dart';
 
 /// Section header with optional TTS (text-to-speech) speaker button.
 class PlantSectionHeader extends StatelessWidget {
   final String title;
   final IconData icon;
-  final Color color;
+  final Color? color; // unused but kept for api compatibility
   final VoidCallback? onSpeak;
 
   const PlantSectionHeader({
     super.key,
     required this.title,
     required this.icon,
-    required this.color,
+    this.color,
     this.onSpeak,
   });
 
@@ -21,42 +20,33 @@ class PlantSectionHeader extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: context.hp(1.5)),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
-          Container(
-            padding: EdgeInsets.all(context.wp(2)),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(context.wp(3)),
-            ),
-            child: Icon(icon, color: color, size: context.sp(18)),
-          ),
-          SizedBox(width: context.wp(3)),
+          Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 24),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               title,
               style: TextStyle(
-                fontSize: context.sp(16),
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : Colors.black87,
               ),
             ),
           ),
-          // Speaker button for TTS
           if (onSpeak != null)
             IconButton(
               onPressed: onSpeak,
               icon: Icon(
                 Icons.volume_up_rounded,
-                color: color.withValues(alpha: 0.7),
-                size: context.sp(20),
+                color: isDark ? Colors.white54 : Colors.black54,
               ),
               tooltip: 'استمع للقراءة الصوتية',
-              padding: EdgeInsets.zero,
-              constraints: BoxConstraints(
-                minWidth: context.wp(8),
-                minHeight: context.wp(8),
+              iconSize: 24,
+              constraints: const BoxConstraints(
+                minWidth: 48,
+                minHeight: 48,
               ),
             ),
         ],
