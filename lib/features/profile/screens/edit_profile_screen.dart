@@ -171,6 +171,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       bool storeSuccess = true;
       String? storeError;
       if (success && isSeller) {
+        if (!mounted) return;
         final sellerProvider = context.read<SellerProvider>();
         storeSuccess = await sellerProvider.updateStoreInfo(
           {
