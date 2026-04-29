@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/models/user_crop_model.dart';
@@ -218,7 +219,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
             ),
             child: Text(
               isSearch ? 'انتقل للدليل' : 'استكشف الدليل الآن',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: context.font16,
             ),
           ),
         ],
