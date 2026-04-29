@@ -312,9 +312,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           if (!isUser) ...[
             CircleAvatar(
               radius: 14,
-              backgroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? context.darkSurface
-                  : context.white,
+              backgroundColor: context.primary.withValues(alpha: 0.1),
               backgroundImage: const AssetImage('assets/icon/icon.png'),
             ),
             const SizedBox(width: 8),
@@ -351,25 +349,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    gradient: isUser ? AppDecorations.primaryGradient : null,
-                    color: isUser ? null : context.surface,
+                    color: isUser ? context.primary : context.surface,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(20),
                       topRight: const Radius.circular(20),
                       bottomLeft: Radius.circular(isUser ? 20 : 4),
                       bottomRight: Radius.circular(isUser ? 4 : 20),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: isUser
-                            ? context.primary.withValues(alpha: 0.3)
-                            : context.black.withValues(
-                                alpha: context.isDark ? 0.2 : 0.05,
-                              ),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Text(
                     message.text,
@@ -404,10 +390,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         children: [
           FadeInSlide(
             duration: const Duration(milliseconds: 600),
-            child: CircleAvatar(
-              radius: 45,
-              backgroundColor: context.surface,
-              backgroundImage: const AssetImage('assets/icon/icon.png'),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: context.primary.withValues(alpha: 0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset('assets/icon/icon.png', width: 50, height: 50),
             ),
           ),
           const SizedBox(height: 24),
@@ -493,7 +482,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
             child: Row(
               children: [
-                Icon(icon, color: context.primary, size: 20),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: context.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: context.primary, size: 20),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -669,14 +665,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     decoration: BoxDecoration(
                       color: context.primary,
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: context.primary,
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                          spreadRadius: -2,
-                        ),
-                      ],
                     ),
                     child: Icon(Icons.send_rounded, color: context.white),
                   ),
