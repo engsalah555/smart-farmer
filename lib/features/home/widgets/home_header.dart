@@ -26,7 +26,7 @@ class HomeHeader extends StatelessWidget {
     );
     final isLoading = context.select<HomeProvider, bool>((p) => p.isLoading);
 
-    final userName = user?.name ?? 'ضيف';
+    final userName = (user?.name?.split(' ').first) ?? 'ضيف';
 
     String userRole = 'مستخدم';
     if (user != null) {
