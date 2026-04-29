@@ -4,6 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/ai/services/ai_service.dart';
+import '../../features/ai/services/gemini_service.dart';
+import '../../features/ai/services/plant_diagnosis_service.dart';
 import '../../features/community/services/community_service.dart';
 import '../../features/crops/services/crops_service.dart';
 import '../../features/iot/services/iot_service.dart';
@@ -126,6 +128,12 @@ Future<void> setupLocator() async {
 
   // Update Service
   locator.registerLazySingleton<UpdateService>(() => UpdateService());
+
+  // Gemini AI Services
+  locator.registerLazySingleton<GeminiService>(() => GeminiService());
+  locator.registerLazySingleton<PlantDiagnosisService>(
+    () => PlantDiagnosisService(),
+  );
 
   // Admin Service
   locator.registerLazySingleton<AdminService>(() => AdminService(locator<Dio>()));

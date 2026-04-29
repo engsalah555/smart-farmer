@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
+import '../../../core/services/locator.dart';
 import '../services/plant_diagnosis_service.dart';
 
 class DiseaseDetectionScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class DiseaseDetectionScreen extends StatefulWidget {
 
 class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
     with TickerProviderStateMixin {
-  final _service = PlantDiagnosisService();
+  final _service = locator<PlantDiagnosisService>();
   final _picker = ImagePicker();
 
   XFile? _image;
@@ -107,9 +108,9 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = AppColors.getBackground(isDark);
-    final surface = AppColors.getSurface(isDark);
-    final textColor = AppColors.getTextColor(isDark);
+    final bg = context.background;
+    final surface = context.surface;
+    final textColor = context.textColor;
 
     return Scaffold(
       backgroundColor: bg,
@@ -148,7 +149,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
       expandedHeight: 120,
       floating: false,
       pinned: true,
-      backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+      backgroundColor: context.surface,
       elevation: 0,
       leading: IconButton(
         icon: Icon(
@@ -201,7 +202,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
         border: Border.all(
           color: _image != null
               ? context.primary.withValues(alpha: 0.4)
-              : (isDark ? AppColors.darkBorder : Colors.grey.shade200),
+              : context.border,
           width: 1.5,
         ),
       ),
@@ -213,7 +214,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 Image.file(File(_image!.path), fit: BoxFit.cover),
                 if (_isLoading)
                   Container(
-                    color: Colors.black.withValues(alpha: 0.45),
+                    color: context.black.withValues(alpha: 0.45),
                     child: const Center(
                       child: CircularProgressIndicator(
                         color: Colors.white,
@@ -257,7 +258,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.getTextColor(isDark),
+            color: context.textColor,
           ),
         ),
         const SizedBox(height: 8),
@@ -266,9 +267,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13,
-            color: isDark
-                ? AppColors.darkTextSecondary
-                : AppColors.textSecondary,
+            color: context.textSecondary,
             height: 1.5,
           ),
         ),
@@ -304,7 +303,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.getTextColor(isDark),
+                  color: context.textColor,
                 ),
               ),
               const SizedBox(height: 8),
@@ -313,9 +312,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
-                  color: isDark
-                      ? AppColors.darkTextSecondary
-                      : AppColors.textSecondary,
+                  color: context.textSecondary,
                   height: 1.5,
                 ),
               ),
@@ -356,7 +353,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
         if (!r.isHealthy) ...[
           _DiagnosisCard(
             icon: Icons.coronavirus_rounded,
-            iconColor: const Color(0xFFE53935),
+            iconColor: context.error,
             title: 'نوع المرض',
             content: r.diseaseType,
             isDark: isDark,
@@ -365,7 +362,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           const SizedBox(height: 12),
           _DiagnosisCard(
             icon: Icons.warning_amber_rounded,
-            iconColor: const Color(0xFFF59E0B),
+            iconColor: context.warning,
             title: 'أسباب الإصابة',
             content: r.diseaseCauses,
             isDark: isDark,
@@ -374,7 +371,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           const SizedBox(height: 12),
           _DiagnosisCard(
             icon: Icons.medical_services_rounded,
-            iconColor: const Color(0xFF10B981),
+            iconColor: context.success,
             title: 'خطة العلاج',
             content: r.treatmentMethods,
             isDark: isDark,
@@ -421,14 +418,14 @@ class _StatusCard extends StatelessWidget {
     final isHealthy = result.isHealthy;
     final (gradStart, gradEnd, statusText, statusIcon) = isHealthy
         ? (
-            const Color(0xFF10B981),
-            const Color(0xFF059669),
+            context.success,
+            context.success.withValues(alpha: 0.8),
             'النبتة سليمة وصحية 🌿',
             Icons.check_circle_rounded,
           )
         : (
-            const Color(0xFFE53935),
-            const Color(0xFFC62828),
+            context.error,
+            context.error.withValues(alpha: 0.8),
             'تم اكتشاف إصابة مرضية',
             Icons.healing_rounded,
           );
@@ -441,8 +438,8 @@ class _StatusCard extends StatelessWidget {
             gradStart,
             gradEnd,
             isHealthy
-                ? const Color(0xFF047857)
-                : const Color(0xFF8B0000), // Deep rich end color
+                ? context.success.withValues(alpha: 0.6)
+                : context.error.withValues(alpha: 0.6), // Deep rich end color
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -584,7 +581,7 @@ class _DiagnosisCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withValues(alpha: 0.3)
+                ? context.black.withValues(alpha: 0.3)
                 : iconColor.withValues(alpha: 0.08),
             blurRadius: 20,
             spreadRadius: 0,
@@ -636,9 +633,7 @@ class _DiagnosisCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               height: 1.7,
-              color: isDark
-                  ? AppColors.darkTextSecondary
-                  : AppColors.textSecondary,
+              color: context.textSecondary,
             ),
           ),
         ],
