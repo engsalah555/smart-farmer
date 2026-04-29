@@ -564,43 +564,47 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               beginOffset: const Offset(0, 0.5),
               child: Container(
                 margin: const EdgeInsets.only(bottom: 12),
-                height: 80,
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: context.primary.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Image.file(
-                        File(_selectedImage!.path),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
                         width: 80,
                         height: 80,
-                        cacheWidth: 200,
-                        fit: BoxFit.cover,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: context.primary.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Image.file(
+                          File(_selectedImage!.path),
+                          cacheWidth: 200,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      top: 4,
-                      left: 60,
-                      child: GestureDetector(
-                        onTap: _removeSelectedImage,
-                        child: CircleAvatar(
-                          radius: 20, // Increased touch target
-                          backgroundColor: context.error.withValues(alpha: 0.9),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 18,
-                            color: context.white,
+                      PositionedDirectional(
+                        top: -8,
+                        start: -8,
+                        child: GestureDetector(
+                          onTap: _removeSelectedImage,
+                          child: CircleAvatar(
+                            radius: 14,
+                            backgroundColor: context.error.withValues(
+                              alpha: 0.9,
+                            ),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 16,
+                              color: context.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -612,10 +616,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   decoration: BoxDecoration(
                     color: context.surface,
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: context.border,
-                      width: 1,
-                    ),
+                    border: Border.all(color: context.border, width: 1),
                   ),
                   child: Row(
                     children: [
@@ -640,7 +641,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                             ),
                           ),
                           style: TextStyle(color: context.textColor),
-                          maxLines: null,
+                          minLines: 1,
+                          maxLines: 4,
                           onSubmitted: (_) => _handleSendMessage(),
                         ),
                       ),
