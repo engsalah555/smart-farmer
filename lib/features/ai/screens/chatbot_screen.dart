@@ -554,9 +554,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Widget _buildInputArea() {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.transparent),
       child: Column(
         children: [
           if (_selectedImage != null)
@@ -586,19 +585,27 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         ),
                       ),
                       PositionedDirectional(
-                        top: -8,
-                        start: -8,
-                        child: GestureDetector(
-                          onTap: _removeSelectedImage,
-                          child: CircleAvatar(
-                            radius: 14,
-                            backgroundColor: context.error.withValues(
-                              alpha: 0.9,
-                            ),
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 16,
-                              color: context.white,
+                        top: -16,
+                        start: -16,
+                        child: Semantics(
+                          label: 'إزالة الصورة',
+                          button: true,
+                          child: GestureDetector(
+                            onTap: _removeSelectedImage,
+                            behavior: HitTestBehavior.opaque,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircleAvatar(
+                                radius: 14,
+                                backgroundColor: context.error.withValues(
+                                  alpha: 0.9,
+                                ),
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  size: 16,
+                                  color: context.white,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -621,6 +628,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   child: Row(
                     children: [
                       IconButton(
+                        tooltip: 'إرفاق صورة',
                         icon: Icon(
                           Icons.camera_alt_outlined,
                           color: context.isDark
@@ -651,23 +659,27 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              GestureDetector(
-                onTap: _handleSendMessage,
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: context.primary,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: context.primary,
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                        spreadRadius: -2,
-                      ),
-                    ],
+              Semantics(
+                label: 'إرسال الرسالة',
+                button: true,
+                child: GestureDetector(
+                  onTap: _handleSendMessage,
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: context.primary,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.primary,
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                          spreadRadius: -2,
+                        ),
+                      ],
+                    ),
+                    child: Icon(Icons.send_rounded, color: context.white),
                   ),
-                  child: Icon(Icons.send_rounded, color: context.white),
                 ),
               ),
             ],
