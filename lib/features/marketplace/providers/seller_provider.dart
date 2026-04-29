@@ -190,7 +190,7 @@ class SellerProvider extends BaseProvider {
       if (validationError != null) throw Exception(validationError);
 
       final updatedProduct = await _sellerService.updateProduct(
-        product.slug,
+        product.id,
         product.toJson(),
         imagePath: imagePath,
         otherImagePaths: otherImagePaths,
