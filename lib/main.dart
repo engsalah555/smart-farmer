@@ -22,9 +22,30 @@ import 'features/iot/providers/iot_provider.dart';
 import 'core/providers/admin_provider.dart';
 import 'core/routes/app_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey:
+            'AIzaSyCjIK4um6CWjc87vCLwcBZJkebblCanezs', // API Key from google-services.json
+        appId: '1:115936002977:android:0b0457977796fc039ec1e0',
+        messagingSenderId: '115936002977',
+        projectId: 'smart-farmer-app-c56bb',
+        databaseURL:
+            'https://smart-farmer-app-c56bb-default-rtdb.firebaseio.com', // Standard URL for this project
+      ),
+    );
+  } catch (e) {
+    if (e.toString().contains('duplicate-app')) {
+      debugPrint('Firebase already initialized');
+    } else {
+      debugPrint('Firebase initialization error: $e');
+    }
+  }
 
   GoogleFonts.config.allowRuntimeFetching = true;
 
@@ -82,7 +103,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => PostProvider(locator())),
         ChangeNotifierProvider(create: (_) => CommentProvider(locator())),
         ChangeNotifierProvider(create: (_) => CropsProvider(locator())),
-        ChangeNotifierProvider(create: (_) => IotProvider(locator())),
+        ChangeNotifierProvider(
+          create: (_) => IotProvider(locator(), locator()),
+        ),
         ChangeNotifierProvider(create: (_) => AdminProvider(locator())),
       ],
       child: const SmartFarmApp(),

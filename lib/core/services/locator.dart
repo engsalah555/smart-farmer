@@ -9,6 +9,7 @@ import '../../features/ai/services/plant_diagnosis_service.dart';
 import '../../features/community/services/community_service.dart';
 import '../../features/crops/services/crops_service.dart';
 import '../../features/iot/services/iot_service.dart';
+import '../../features/iot/services/firebase_iot_service.dart';
 import '../../features/home/services/home_service.dart';
 import '../../features/marketplace/services/marketplace_service.dart';
 import '../../features/marketplace/services/seller_service.dart';
@@ -114,6 +115,7 @@ Future<void> setupLocator() async {
 
   // IoT Service
   locator.registerLazySingleton<IotService>(() => IotService(locator<Dio>()));
+  locator.registerLazySingleton<FirebaseIotService>(() => FirebaseIotService());
 
   // Home Service
   locator.registerLazySingleton<HomeService>(() => HomeService(locator<Dio>()));

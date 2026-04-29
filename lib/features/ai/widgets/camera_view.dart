@@ -100,8 +100,8 @@ class _CameraViewState extends State<CameraView> {
                                 setState(() => _isTakingPicture = true);
                                 await _initializeControllerFuture;
                                 final image = await _controller.takePicture();
-                                if (mounted) {
-                                  Navigator.pop(context, image);
+                                if (context.mounted) {
+                                  Navigator.of(context).pop(image);
                                 }
                               } catch (e) {
                                 debugPrint('Take picture error: $e');

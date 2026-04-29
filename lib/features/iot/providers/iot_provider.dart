@@ -1,12 +1,19 @@
+import 'dart:async';
+import 'dart:developer';
 import 'package:smart_farm2/core/providers/base_provider.dart';
 import '../models/iot_device_model.dart';
 import '../models/irrigation_log_model.dart';
 import '../services/iot_service.dart';
+import '../services/firebase_iot_service.dart';
 
 class IotProvider extends BaseProvider {
   final IotService _iotService;
+  final FirebaseIotService _firebaseIotService;
+  StreamSubscription? _deviceSubscription;
 
-  IotProvider(this._iotService);
+  IotProvider(this._iotService, this._firebaseIotService) {
+    _initFirebaseListener();
+  }
 
   IotDevice? _device;
   List<IrrigationLog> _logs = [];
@@ -18,79 +25,63 @@ class IotProvider extends BaseProvider {
   bool get hasDevice => _hasDevice;
   String? get message => _message;
 
+  void _initFirebaseListener() {
+    _deviceSubscription?.cancel();
+    _deviceSubscription = _firebaseIotService.getDeviceStream().listen((
+      updatedDevice,
+    ) {
+      _device = updatedDevice;
+      _hasDevice = updatedDevice.id != 0;
+      notifyListeners();
+    });
+  }
+
   Future<void> fetchStatus({bool showLoading = true}) async {
+    // We still use this for logs and other non-realtime data from backend
     await execute(() async {
       final data = await _iotService.getStatus();
-      _hasDevice = data['has_device'] ?? false;
-      
-      if (_hasDevice && data['device'] != null) {
-        _device = IotDevice.fromJson(data['device']);
-        if (data['last_logs'] != null) {
-          _logs = (data['last_logs'] as List)
-              .map((i) => IrrigationLog.fromJson(i))
-              .toList();
-        }
-      } else {
-        _message = data['message'];
+      // Only update logs and hasDevice from here if needed
+      if (data['last_logs'] != null) {
+        _logs = (data['last_logs'] as List)
+            .map((i) => IrrigationLog.fromJson(i))
+            .toList();
       }
     }, showLoading: showLoading);
   }
 
-
   Future<bool> toggleIrrigation(bool status) async {
-    final previousStatus = _device?.isIrrigationOn;
-    if (_device != null && previousStatus != null) {
-      _device = _device!.copyWith(isIrrigationOn: status);
-      notifyListeners();
-    }
-
-    final success = await execute(() async {
-      final result = await _iotService.toggleIrrigation(status);
-      if (!result) throw 'فشل تغيير حالة الري';
+    // Optimistic UI update already handled by Firebase listener usually,
+    // but we can also do it here for instant feedback
+    try {
+      await _firebaseIotService.toggleManualPump(status);
       return true;
-    }, showLoading: false);
-    
-    if (success == true) {
-      // Background fetch to ensure consistency
-      executeSilently(() => fetchStatus());
-      return true;
-    } else {
-      // Revert optimistic update
-      if (_device != null && previousStatus != null) {
-        _device = _device!.copyWith(isIrrigationOn: previousStatus);
-        notifyListeners();
-      }
+    } catch (e) {
+      log('Error toggling irrigation: $e');
       return false;
     }
   }
 
   Future<bool> toggleAutoIrrigation(bool auto) async {
-    final previousAuto = _device?.autoIrrigation;
-    if (_device != null && previousAuto != null) {
-      _device = _device!.copyWith(autoIrrigation: auto);
-      notifyListeners();
-    }
-
-    final success = await execute(() async {
-      final result = await _iotService.updateAutoIrrigation(auto);
-      if (!result) throw 'فشل تغيير حالة الري التلقائي';
+    try {
+      await _firebaseIotService.setMode(auto ? 'AUTO' : 'MANUAL');
       return true;
-    }, showLoading: false);
-    
-    if (success == true) {
-      executeSilently(() => fetchStatus());
-      return true;
-    } else {
-      if (_device != null && previousAuto != null) {
-        _device = _device!.copyWith(autoIrrigation: previousAuto);
-        notifyListeners();
-      }
+    } catch (e) {
+      log('Error toggling auto irrigation: $e');
       return false;
     }
   }
 
+  Future<bool> updateThreshold(int threshold) async {
+    try {
+      await _firebaseIotService.setThreshold(threshold);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Rest of the methods (schedules, etc.) can still use _iotService if they are backend-managed
   Future<bool> addSchedule(String time, List<String> days) async {
-    // Cannot easily be optimistic since we need the generated ID
     final schedule = await execute(() async {
       final result = await _iotService.addSchedule(time, days);
       if (result == null) throw 'فشل إضافة الجدول';
@@ -105,42 +96,32 @@ class IotProvider extends BaseProvider {
   }
 
   Future<bool> deleteSchedule(int id) async {
-    // Optimistic delete
-    final previousSchedules = _device?.schedules;
-    if (_device != null && previousSchedules != null) {
-      final updatedSchedules = previousSchedules.where((s) => s.id != id).toList();
-      _device = _device!.copyWith(schedules: updatedSchedules);
-      notifyListeners();
-    }
-
     final success = await execute(() async {
       final result = await _iotService.deleteSchedule(id);
       if (!result) throw 'فشل حذف الجدول';
       return true;
     }, showLoading: false);
-    
+
     if (success == true) {
       executeSilently(() => fetchStatus());
       return true;
-    } else {
-      if (_device != null && previousSchedules != null) {
-        _device = _device!.copyWith(schedules: previousSchedules);
-        notifyListeners();
-      }
-      return false;
     }
+    return false;
   }
 
   Future<bool> requestService() async {
     final success = await execute(() async {
       final result = await _iotService.requestService();
       if (!result) throw 'فشل إرسال الطلب';
-      
-      // Re-fetch status immediately to update UI to 'pending' state
       await fetchStatus();
-      
       return true;
     });
     return success == true;
+  }
+
+  @override
+  void dispose() {
+    _deviceSubscription?.cancel();
+    super.dispose();
   }
 }
