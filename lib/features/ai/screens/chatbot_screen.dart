@@ -579,9 +579,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               height: 64,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: context.border,
-                                ),
+                                border: Border.all(color: context.border),
                               ),
                               clipBehavior: Clip.antiAlias,
                               child: Image.file(
@@ -643,6 +641,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                           decoration: InputDecoration(
                             hintText: 'اكتب رسالتك هنا...',
                             border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            fillColor: Colors.transparent,
                             hintStyle: TextStyle(
                               color: context.textMuted,
                               fontSize: 14,
@@ -686,17 +687,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     decoration: BoxDecoration(
                       color: isEnabled ? context.primary : context.surface,
                       shape: BoxShape.circle,
-                      border:
-                          isEnabled
-                              ? null
-                              : Border.all(color: context.border),
+                      border: isEnabled
+                          ? null
+                          : Border.all(color: context.border),
                     ),
                     child: Icon(
                       Icons.send_rounded,
-                      color:
-                          isEnabled
-                              ? context.white
-                              : context.textMuted.withValues(alpha: 0.5),
+                      color: isEnabled
+                          ? context.white
+                          : context.textMuted.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
