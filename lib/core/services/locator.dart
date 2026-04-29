@@ -40,7 +40,8 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<Dio>(() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: '${AppConstants.apiBaseUrl.endsWith('/') ? AppConstants.apiBaseUrl : '${AppConstants.apiBaseUrl}/'}api/',
+        baseUrl:
+            '${AppConstants.apiBaseUrl.endsWith('/') ? AppConstants.apiBaseUrl : '${AppConstants.apiBaseUrl}/'}api/',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -112,16 +113,10 @@ Future<void> setupLocator() async {
   );
 
   // IoT Service
-  locator.registerLazySingleton<IotService>(
-    () => IotService(locator<Dio>()),
-  );
+  locator.registerLazySingleton<IotService>(() => IotService(locator<Dio>()));
 
   // Home Service
-  locator.registerLazySingleton<HomeService>(
-    () => HomeService(locator<Dio>()),
-  );
-
-
+  locator.registerLazySingleton<HomeService>(() => HomeService(locator<Dio>()));
 
   // Weather Service
   locator.registerLazySingleton<WeatherService>(() => WeatherService());
@@ -136,5 +131,7 @@ Future<void> setupLocator() async {
   );
 
   // Admin Service
-  locator.registerLazySingleton<AdminService>(() => AdminService(locator<Dio>()));
+  locator.registerLazySingleton<AdminService>(
+    () => AdminService(locator<Dio>()),
+  );
 }

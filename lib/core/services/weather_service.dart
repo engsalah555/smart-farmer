@@ -19,14 +19,16 @@ class WeatherService {
         permission = await Geolocator.requestPermission();
       }
 
-      if (!serviceEnabled || 
-          permission == LocationPermission.denied || 
+      if (!serviceEnabled ||
+          permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         // Fallback to Sana'a, Yemen if location is disabled or denied
         lat = 15.3694;
         lon = 44.1910;
         cityName = 'صنعاء، اليمن';
-        debugPrint('Using fallback location: Sanaa (serviceEnabled: $serviceEnabled, permission: $permission)');
+        debugPrint(
+          'Using fallback location: Sanaa (serviceEnabled: $serviceEnabled, permission: $permission)',
+        );
       } else {
         Position position = await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(
@@ -55,10 +57,10 @@ class WeatherService {
               receiveTimeout: const Duration(seconds: 4),
             ),
           );
-          if (geoResponse.data != null &&
-              geoResponse.data['address'] != null) {
+          if (geoResponse.data != null && geoResponse.data['address'] != null) {
             final address = geoResponse.data['address'];
-            cityName = address['city'] ??
+            cityName =
+                address['city'] ??
                 address['town'] ??
                 address['village'] ??
                 address['suburb'] ??
@@ -102,14 +104,12 @@ class WeatherService {
           (current['temperature_2m'] as num?)?.toDouble() ?? 0.0;
       final int wCode = (current['weather_code'] as int?) ?? 0;
       final int hum = (current['relative_humidity_2m'] as int?) ?? 0;
-      final double? appTemp =
-          (current['apparent_temperature'] as num?)?.toDouble();
-      final double? precip =
-          (current['precipitation'] as num?)?.toDouble();
+      final double? appTemp = (current['apparent_temperature'] as num?)
+          ?.toDouble();
+      final double? precip = (current['precipitation'] as num?)?.toDouble();
       final double? rainCurrent = (current['rain'] as num?)?.toDouble();
       final int? cloud = current['cloud_cover'] as int?;
-      final double? wind =
-          (current['wind_speed_10m'] as num?)?.toDouble();
+      final double? wind = (current['wind_speed_10m'] as num?)?.toDouble();
       final bool isDay = (current['is_day'] as int?) == 1;
 
       // ─── التوقعات اليومية ─────────────────────────────────────────────────
@@ -126,29 +126,31 @@ class WeatherService {
           return val as T?;
         }
 
-        daily.add(DailyForecast(
-          date: DateTime.parse(times[i]),
-          weatherCode: getVal<int>('weather_code') ?? 0,
-          tempMax: getVal<double>('temperature_2m_max') ?? 0.0,
-          sunrise: getVal<String>('sunrise'),
-          sunset: getVal<String>('sunset'),
-          sunshineDuration: getVal<double>('sunshine_duration'),
-          daylightDuration: getVal<double>('daylight_duration'),
-          precipitationProbability:
-              getVal<int>('precipitation_probability_max'),
-          precipitationHours: getVal<double>('precipitation_hours'),
-          precipitationSum: getVal<double>('precipitation_sum'),
-          rainSum: getVal<double>('rain_sum'),
-          uvIndexMax: getVal<double>('uv_index_clear_sky_max'),
-          windSpeedMax: getVal<double>('wind_speed_10m_max'),
-        ));
+        daily.add(
+          DailyForecast(
+            date: DateTime.parse(times[i]),
+            weatherCode: getVal<int>('weather_code') ?? 0,
+            tempMax: getVal<double>('temperature_2m_max') ?? 0.0,
+            sunrise: getVal<String>('sunrise'),
+            sunset: getVal<String>('sunset'),
+            sunshineDuration: getVal<double>('sunshine_duration'),
+            daylightDuration: getVal<double>('daylight_duration'),
+            precipitationProbability: getVal<int>(
+              'precipitation_probability_max',
+            ),
+            precipitationHours: getVal<double>('precipitation_hours'),
+            precipitationSum: getVal<double>('precipitation_sum'),
+            rainSum: getVal<double>('rain_sum'),
+            uvIndexMax: getVal<double>('uv_index_clear_sky_max'),
+            windSpeedMax: getVal<double>('wind_speed_10m_max'),
+          ),
+        );
       }
 
       // ─── البيانات الساعية (24 ساعة فقط) ──────────────────────────────────
       final List<HourlyData> hourly = [];
       final hourlyRaw = data['hourly'] as Map<String, dynamic>? ?? {};
-      final hTimes =
-          (hourlyRaw['time'] as List?)?.cast<String>() ?? [];
+      final hTimes = (hourlyRaw['time'] as List?)?.cast<String>() ?? [];
       final now = DateTime.now();
       int count = 0;
       for (int i = 0; i < hTimes.length && count < 24; i++) {
@@ -164,19 +166,21 @@ class WeatherService {
           return val as T2?;
         }
 
-        hourly.add(HourlyData(
-          time: t,
-          temperature: hget<double>('temperature_2m') ?? 0.0,
-          humidity: hget<int>('relative_humidity_2m') ?? 0,
-          dewPoint: hget<double>('dew_point_2m'),
-          apparentTemperature: hget<double>('apparent_temperature'),
-          precipitationProbability: hget<int>('precipitation_probability'),
-          weatherCode: hget<int>('weather_code') ?? 0,
-          evapotranspiration: hget<double>('evapotranspiration'),
-          soilTemperature: hget<double>('soil_temperature_6cm'),
-          precipitation: hget<double>('precipitation'),
-          rain: hget<double>('rain'),
-        ));
+        hourly.add(
+          HourlyData(
+            time: t,
+            temperature: hget<double>('temperature_2m') ?? 0.0,
+            humidity: hget<int>('relative_humidity_2m') ?? 0,
+            dewPoint: hget<double>('dew_point_2m'),
+            apparentTemperature: hget<double>('apparent_temperature'),
+            precipitationProbability: hget<int>('precipitation_probability'),
+            weatherCode: hget<int>('weather_code') ?? 0,
+            evapotranspiration: hget<double>('evapotranspiration'),
+            soilTemperature: hget<double>('soil_temperature_6cm'),
+            precipitation: hget<double>('precipitation'),
+            rain: hget<double>('rain'),
+          ),
+        );
         count++;
       }
 

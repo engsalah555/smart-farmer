@@ -65,9 +65,9 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
     try {
       final file = await _picker.pickImage(
         source: source,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
+        maxWidth: 640,   // تقليل الحجم لتجنب OOM
+        maxHeight: 640,
+        imageQuality: 70,
       );
       if (file == null) return;
       final bytes = await file.readAsBytes();

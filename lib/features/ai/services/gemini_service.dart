@@ -2,148 +2,159 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart' as http;
 
 class GeminiService {
-  GenerativeModel? _model;
-  ChatSession? _chatSession;
   String? _initError;
-  final String _currentModelName = 'gemini-1.5-flash';
+  String? _systemInstruction;
+  bool _isInitialized = false;
 
-  GeminiService() {
-    // Initializing lazily
-  }
+  // gemini-2.0-flash-lite: 30 RPM مجاني (ضعف gemini-2.0-flash)
+  static const String _primaryModel = 'gemini-2.0-flash-lite';
+  static const String _fallbackModel = 'gemini-2.0-flash';
+
+  String _activeModel = _primaryModel;
+
+  static String _buildUrl(String model) =>
+      'https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent';
+
+  GeminiService();
 
   Future<void> _ensureInitialized() async {
-    if (_model != null) return;
-    await _initModel();
-  }
+    if (_isInitialized) return;
+    _isInitialized = true;
 
-  Future<void> _initModel() async {
-    try {
-      final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-      if (apiKey.isEmpty) {
-        _initError = 'مفتاح Gemini AI غير موجود في ملف .env';
-        return;
-      }
-
-      final promptData = await rootBundle.loadString('assets/ai/chatbot_prompt.json');
-      final Map<String, dynamic> promptJson = jsonDecode(promptData);
-      final systemInstructionText = promptJson['system_instruction'];
-
-      _model = GenerativeModel(
-        model: _currentModelName,
-        apiKey: apiKey,
-        systemInstruction: Content.system(systemInstructionText),
-        generationConfig: GenerationConfig(
-          temperature: 0.7,
-          maxOutputTokens: 1024,
-          responseMimeType: 'application/json',
-        ),
-      );
-      _chatSession = _model!.startChat();
-      _initError = null;
-      debugPrint('GeminiService: initialized with model $_currentModelName');
-    } catch (e) {
-      debugPrint('GeminiService init error: $e');
-      _initError = 'حدث خطأ أثناء إعداد المساعد الذكي.';
-    }
-  }
-
-  /// إعادة تعيين المحادثة أو بدء محادثة مع سجل سابق
-  void resetChat({List<Content>? history}) {
-    if (_model != null) {
-      _chatSession = _model!.startChat(history: history);
-    }
-  }
-
-  /// الحصول على اسم النموذج الحالي
-  String get currentModel => _currentModelName;
-
-  /// التحقق من حالة الخدمة
-  bool get isReady =>
-      _model != null && _chatSession != null && _initError == null;
-
-  /// إرسال رسالة واستقبال الرد كنص مستمر (Stream)
-  Stream<String> sendMessageStream(
-    String message, {
-    Uint8List? imageBytes,
-  }) async* {
-    await _ensureInitialized();
-    if (_initError != null || _chatSession == null) {
-      yield _initError ??
-          'المساعد الذكي غير متوفر حالياً. تحقق من مفتاح GEMINI_API_KEY في ملف .env';
+    final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+    if (apiKey.isEmpty) {
+      _initError = 'مفتاح Gemini AI غير موجود في ملف .env';
       return;
     }
 
     try {
-      final parts = <Part>[TextPart(message)];
-      if (imageBytes != null) {
-        parts.add(DataPart('image/jpeg', imageBytes));
-      }
-
-      final responseStream = _chatSession!.sendMessageStream(
-        Content.multi(parts),
-      );
-
-      String accumulatedBody = '';
-      await for (final chunk in responseStream) {
-        if (chunk.text != null) {
-          accumulatedBody += chunk.text!;
-          
-          // محاولة استخراج الحقل "text" من الـ JSON المتراكم لعرضه أثناء الكتابة
-          final match = RegExp(r'"text":\s*"([^"]*)').firstMatch(accumulatedBody);
-          if (match != null && match.group(1) != null) {
-            yield _unescapeJsonString(match.group(1)!);
-          }
-        }
-      }
+      final promptData =
+          await rootBundle.loadString('assets/ai/chatbot_prompt.json');
+      final Map<String, dynamic> promptJson = jsonDecode(promptData);
+      _systemInstruction = promptJson['system_instruction'] ?? '';
     } catch (e) {
-      debugPrint('GeminiService stream error: $e');
-      final errorStr = e.toString();
+      _systemInstruction = 'أنت مساعد زراعي ذكي لتطبيق مزرعتي.';
+    }
 
-      if (errorStr.contains('API_KEY') || errorStr.contains('403')) {
-        yield 'المفتاح المستخدم لذكاء الاصطناعي غير صالح أو منتهي الصلاحية. يرجى التواصل مع الدعم.';
-      } else if (errorStr.contains('quota') ||
-          errorStr.contains('RESOURCE_EXHAUSTED')) {
-        yield 'تم تجاوز الحد المسموح به مؤقتاً. يرجى الانتظار قليلاً ثم المحاولة مجدداً.';
-      } else if (errorStr.contains('SocketException') ||
-          errorStr.contains('network')) {
-        yield 'تعذّر الاتصال بالإنترنت. تأكد من اتصالك بالشبكة وحاول مرة أخرى.';
-      } else {
-        yield 'حدث خطأ في الاتصال بالمساعد الذكي. يرجى المحاولة لاحقاً.';
+    debugPrint('GeminiService: initialized with model $_activeModel');
+  }
+
+  String get _apiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
+
+  /// إرسال رسالة واستقبال الرد — مع إعادة المحاولة تلقائياً
+  Stream<String> sendMessageStream(
+    String message, {
+    List<int>? imageBytes,
+    bool useHistory = false,
+  }) async* {
+    await _ensureInitialized();
+    if (_initError != null) {
+      yield _initError!;
+      return;
+    }
+
+    // بناء الـ parts في isolate منفصل لتجنب تعطل الخيط الرئيسي
+    final parts = <Map<String, dynamic>>[
+      {'text': message},
+    ];
+
+    if (imageBytes != null) {
+      final encoded = await compute(_encodeBase64, imageBytes);
+      parts.add({
+        'inline_data': {
+          'mime_type': 'image/jpeg',
+          'data': encoded,
+        }
+      });
+    }
+
+    final bodyMap = {
+      'system_instruction': {
+        'parts': [
+          {'text': _systemInstruction ?? ''}
+        ]
+      },
+      'contents': [
+        {'role': 'user', 'parts': parts}
+      ],
+      'generationConfig': {
+        'temperature': 0.7,
+        'maxOutputTokens': 1024,
+      },
+    };
+
+    // محاولة أولى بالموديل الرئيسي، ثم الاحتياطي عند 429
+    for (final model in [_primaryModel, _fallbackModel]) {
+      try {
+        final body = await compute(_encodeJson, bodyMap);
+        final uri = Uri.parse('${_buildUrl(model)}?key=$_apiKey');
+
+        final response = await http
+            .post(
+              uri,
+              headers: {'Content-Type': 'application/json'},
+              body: body,
+            )
+            .timeout(const Duration(seconds: 30));
+
+        if (response.statusCode == 200) {
+          _activeModel = model;
+          final data = jsonDecode(utf8.decode(response.bodyBytes));
+          final text =
+              data['candidates']?[0]?['content']?['parts']?[0]?['text'];
+          if (text != null) yield text.toString();
+          return;
+        } else if (response.statusCode == 429) {
+          debugPrint('GeminiService: quota exceeded for $model, trying next...');
+          if (model == _fallbackModel) {
+            yield '⚠️ الحد اليومي المجاني تجاوز. يرجى المحاولة بعد دقيقة أو استخدام مفتاح API آخر.';
+          }
+          continue; // جرب الموديل الاحتياطي
+        } else {
+          debugPrint('GeminiService error ${response.statusCode}: ${response.body}');
+          yield _getFriendlyError(response.statusCode, response.body);
+          return;
+        }
+      } catch (e) {
+        debugPrint('GeminiService exception ($model): $e');
+        if (model == _fallbackModel) {
+          yield _getFriendlyError(null, e.toString());
+        }
       }
     }
   }
 
   /// إرسال رسالة واستقبال الرد مرة واحدة
-  Future<String> sendMessage(String message) async {
-    await _ensureInitialized();
-    if (_initError != null || _chatSession == null) {
-      return _initError ?? 'المساعد الذكي غير متوفر حالياً.';
+  Future<String> sendMessage(String message, {bool useHistory = false}) async {
+    String result = '';
+    await for (final chunk in sendMessageStream(message)) {
+      result += chunk;
     }
-
-    try {
-      final response = await _chatSession!.sendMessage(Content.text(message));
-      final rawText = response.text ?? '';
-      if (rawText.isEmpty) return 'لم أتمكن من فهم طلبك.';
-      
-      try {
-        final Map<String, dynamic> data = jsonDecode(rawText);
-        return data['text'] ?? 'لم أتمكن من استخراج النص.';
-      } catch (e) {
-        return rawText; // fallback to raw text if json fails
-      }
-    } catch (e) {
-      debugPrint('GeminiService sendMessage error: $e');
-      return 'حدث خطأ في الاتصال بالمساعد الذكي. يرجى المحاولة لاحقاً.';
-    }
+    return result.isEmpty ? 'لم أتمكن من فهم طلبك.' : result;
   }
 
-  String _unescapeJsonString(String input) {
-    return input
-        .replaceAll(r'\n', '\n')
-        .replaceAll(r'\"', '"')
-        .replaceAll(r'\\', r'\');
+  String _getFriendlyError(int? statusCode, String body) {
+    if (statusCode == 403 || body.contains('API_KEY') || body.contains('403')) {
+      return 'المفتاح المستخدم غير صالح. يرجى التحقق من الإعدادات.';
+    } else if (statusCode == 429 ||
+        body.contains('quota') ||
+        body.contains('RESOURCE_EXHAUSTED')) {
+      return '⚠️ تم تجاوز الحد المجاني مؤقتاً. يرجى المحاولة بعد دقيقة.';
+    } else if (body.contains('SocketException') ||
+        body.contains('TimeoutException')) {
+      return 'تأكد من اتصالك بالإنترنت.';
+    }
+    return 'حدث خطأ في الاتصال بالمساعد الذكي.';
+  }
+
+  void resetChat() {
+    debugPrint('GeminiService: chat reset');
   }
 }
+
+// دوال تعمل في isolate منفصل لتجنب تجميد الواجهة
+String _encodeBase64(List<int> bytes) => base64Encode(bytes);
+String _encodeJson(Map<String, dynamic> data) => jsonEncode(data);
