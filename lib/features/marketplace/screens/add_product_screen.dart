@@ -50,6 +50,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
         seller.loadMyCatalogs();
 
+        if (settings.productCategories.isEmpty ||
+            settings.paymentMethods.isEmpty) {
+          settings.loadMetadata();
+        }
+
         // Initialize defaults from dynamic metadata
         if (widget.productToEdit == null) {
           setState(() {
