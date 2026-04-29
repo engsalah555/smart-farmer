@@ -127,7 +127,7 @@ class SellerService extends BaseApiService {
     }
 
     return await post<ProductModel>(
-      '${AppConstants.sellerProductsUrl}/$productId',
+      'marketplace/seller/products-update/$productId',
       data: formData,
       mapper: (data) => ProductModel.fromJson(data),
     );
