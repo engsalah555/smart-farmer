@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants.dart';
 import '../../../core/models/product_model.dart';
 import '../providers/cart_provider.dart';
+import '../providers/marketplace_provider.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final ProductModel product;
@@ -17,6 +18,27 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _currentImageIndex = 0;
   int _quantity = 1;
+  bool _isLoadingReviews = true;
+  List<dynamic> _reviews = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadReviews();
+    });
+  }
+
+  Future<void> _loadReviews() async {
+    final provider = context.read<MarketplaceProvider>();
+    final data = await provider.getProductReviews(widget.product.id);
+    if (mounted) {
+      setState(() {
+        _reviews = data['reviews'];
+        _isLoadingReviews = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +60,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   _buildStoreInfo(context, product),
                   const SizedBox(height: 24),
                   _buildDescription(context, product),
+                  const SizedBox(height: 24),
+                  _buildReviewsSection(context),
                   const SizedBox(height: 100), // Spacer for bottom bar
                 ],
               ),
@@ -231,6 +255,226 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildReviewsSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'التقييمات (${widget.product.reviewsCount})',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: context.textPrimary,
+              ),
+            ),
+            TextButton.icon(
+              onPressed: _showReviewModal,
+              icon: const Icon(Icons.edit, size: 16),
+              label: const Text('أضف تقييم'),
+              style: TextButton.styleFrom(foregroundColor: context.primary),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (_isLoadingReviews)
+          const Center(child: CircularProgressIndicator())
+        else if (_reviews.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                'لا توجد تقييمات حتى الآن. كن أول من يقيّم!',
+                style: TextStyle(color: context.textSecondary),
+              ),
+            ),
+          )
+        else
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _reviews.length,
+            separatorBuilder: (_, __) => const Divider(height: 32),
+            itemBuilder: (context, index) {
+              final review = _reviews[index];
+              final user = review['user'] ?? {};
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: user['profile_image'] != null
+                        ? NetworkImage(user['profile_image'])
+                        : null,
+                    child: user['profile_image'] == null
+                        ? const Icon(Icons.person)
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              user['name'] ?? 'مستخدم',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: context.textPrimary,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                                const SizedBox(width: 4),
+                                Text(
+                                  review['rating'].toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: context.textPrimary,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        if (review['comment'] != null && review['comment'].isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            review['comment'],
+                            style: TextStyle(color: context.textSecondary, fontSize: 14),
+                          ),
+                        ]
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  void _showReviewModal() {
+    double selectedRating = 5.0;
+    final commentController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.isDark ? AppColors.darkSurface : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 24,
+                right: 24,
+                top: 24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'تقييم المنتج',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: context.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          onPressed: () {
+                            setModalState(() {
+                              selectedRating = index + 1.0;
+                            });
+                          },
+                          icon: Icon(
+                            index < selectedRating
+                                ? Icons.star_rounded
+                                : Icons.star_outline_rounded,
+                            color: Colors.amber,
+                            size: 40,
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: commentController,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      hintText: 'اكتب تجربتك مع المنتج (اختياري)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final provider = context.read<MarketplaceProvider>();
+                        context.pop();
+                        final success = await provider.submitReview(
+                          widget.product.id,
+                          selectedRating,
+                          comment: commentController.text,
+                        );
+                        if (success && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('تم إرسال التقييم بنجاح')),
+                          );
+                          _loadReviews();
+                        } else if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('فشل إرسال التقييم، هل هذا منتجك؟ لا يمكنك تقييم منتجك.'),
+                              backgroundColor: context.colorScheme.error,
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text(
+                        'إرسال التقييم',
+                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

@@ -284,6 +284,12 @@ class MarketplaceProvider extends BaseProvider {
     return result ?? false;
   }
 
+  Future<Map<String, dynamic>> getProductReviews(String productId) async {
+    return await execute(() async {
+      return await _marketplaceService.getProductReviews(productId);
+    }) ?? {'reviews': [], 'avg_rating': 0.0, 'reviews_count': 0};
+  }
+
   // --- Filtering & Search ---
 
   List<ProductModel> getProductsByCategory(String category) {
