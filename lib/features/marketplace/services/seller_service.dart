@@ -126,8 +126,6 @@ class SellerService extends BaseApiService {
       }
     }
 
-    formData.fields.add(const MapEntry('_method', 'PUT'));
-
     return await post<ProductModel>(
       '${AppConstants.sellerProductsUrl}/$productId',
       data: formData,
@@ -169,7 +167,6 @@ class SellerService extends BaseApiService {
     if (imagePath != null && imagePath.isNotEmpty && !imagePath.startsWith('http')) {
       formData.files.add(MapEntry('image', await MultipartFile.fromFile(imagePath, filename: imagePath.split('/').last)));
     }
-    formData.fields.add(const MapEntry('_method', 'PUT'));
 
     return await post<CatalogModel>(
       '${AppConstants.catalogsUrl}/$catalogId',
