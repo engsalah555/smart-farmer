@@ -26,17 +26,16 @@ import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   try {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey:
-            'AIzaSyCjIK4um6CWjc87vCLwcBZJkebblCanezs', // API Key from google-services.json
-        appId: '1:115936002977:android:0b0457977796fc039ec1e0',
-        messagingSenderId: '115936002977',
-        projectId: 'smart-farmer-app-c56bb',
-        databaseURL:
-            'https://smart-farmer-app-c56bb-default-rtdb.firebaseio.com', // Standard URL for this project
+      options: FirebaseOptions(
+        apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
+        appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
+        messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
+        projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
+        databaseURL: dotenv.env['FIREBASE_DATABASE_URL'] ?? '',
       ),
     );
   } catch (e) {
@@ -70,8 +69,6 @@ void main() async {
       systemNavigationBarColor: Colors.transparent,
     ),
   );
-
-  await dotenv.load(fileName: ".env");
 
   await Hive.initFlutter();
   await Hive.openBox('offline_cache');
