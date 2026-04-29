@@ -350,12 +350,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: isUser ? context.primary : context.surface,
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(20),
-                      topRight: const Radius.circular(20),
-                      bottomLeft: Radius.circular(isUser ? 20 : 4),
-                      bottomRight: Radius.circular(isUser ? 4 : 20),
-                    ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     message.text,
@@ -570,10 +565,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     FadeInSlide(
                       beginOffset: const Offset(0, 0.5),
                       child: Container(
-                        margin: const EdgeInsets.only(
+                        margin: const EdgeInsetsDirectional.only(
                           top: 16,
-                          right: 16,
-                          left: 16,
+                          start: 16,
+                          end: 16,
                           bottom: 4,
                         ),
                         child: Stack(
@@ -585,7 +580,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: context.primary.withValues(alpha: 0.3),
+                                  color: context.border,
                                 ),
                               ),
                               clipBehavior: Clip.antiAlias,
@@ -608,13 +603,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                     padding: const EdgeInsets.all(6.0),
                                     child: CircleAvatar(
                                       radius: 12,
-                                      backgroundColor: context.error.withValues(
-                                        alpha: 0.9,
+                                      backgroundColor: context.black.withValues(
+                                        alpha: 0.6,
                                       ),
-                                      child: Icon(
+                                      child: const Icon(
                                         Icons.close_rounded,
                                         size: 14,
-                                        color: context.white,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -629,14 +624,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
+                        padding: const EdgeInsetsDirectional.only(
+                          bottom: 2,
+                          start: 4,
+                        ),
                         child: IconButton(
                           tooltip: 'إرفاق صورة',
                           icon: Icon(
                             Icons.camera_alt_outlined,
-                            color: context.isDark
-                                ? context.primary
-                                : context.textMuted,
+                            color: context.textMuted,
                           ),
                           onPressed: _pickImage,
                         ),
@@ -651,17 +647,19 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               color: context.textMuted,
                               fontSize: 14,
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 14,
+                            contentPadding: const EdgeInsetsDirectional.only(
+                              top: 14,
+                              bottom: 14,
+                              end: 16,
                             ),
                           ),
                           style: TextStyle(color: context.textColor),
                           minLines: 1,
                           maxLines: 4,
+                          textInputAction: TextInputAction.send,
                           onSubmitted: (_) => _handleSendMessage(),
                         ),
                       ),
-                      const SizedBox(width: 12),
                     ],
                   ),
                 ],
@@ -669,21 +667,41 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
           ),
           const SizedBox(width: 12),
-          Semantics(
-            label: 'إرسال الرسالة',
-            button: true,
-            child: GestureDetector(
-              onTap: _handleSendMessage,
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                margin: const EdgeInsets.only(bottom: 2),
-                decoration: BoxDecoration(
-                  color: context.primary,
-                  shape: BoxShape.circle,
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _messageController,
+            builder: (context, value, child) {
+              final isEnabled =
+                  value.text.trim().isNotEmpty || _selectedImage != null;
+              return Semantics(
+                label: 'إرسال الرسالة',
+                button: true,
+                enabled: isEnabled,
+                child: GestureDetector(
+                  onTap: isEnabled ? _handleSendMessage : null,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutQuart,
+                    padding: const EdgeInsets.all(14),
+                    margin: const EdgeInsets.only(bottom: 2),
+                    decoration: BoxDecoration(
+                      color: isEnabled ? context.primary : context.surface,
+                      shape: BoxShape.circle,
+                      border:
+                          isEnabled
+                              ? null
+                              : Border.all(color: context.border),
+                    ),
+                    child: Icon(
+                      Icons.send_rounded,
+                      color:
+                          isEnabled
+                              ? context.white
+                              : context.textMuted.withValues(alpha: 0.5),
+                    ),
+                  ),
                 ),
-                child: Icon(Icons.send_rounded, color: context.white),
-              ),
-            ),
+              );
+            },
           ),
         ],
       ),
