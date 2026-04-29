@@ -299,7 +299,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _reviews.length,
-            separatorBuilder: (_, __) => const Divider(height: 32),
+            separatorBuilder: (context, index) => const Divider(height: 32),
             itemBuilder: (context, index) {
               final review = _reviews[index];
               final user = review['user'] ?? {};
@@ -436,22 +436,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         final provider = context.read<MarketplaceProvider>();
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        final errorColor = Theme.of(context).colorScheme.error;
+                        
                         context.pop();
+                        
                         final success = await provider.submitReview(
                           widget.product.id,
                           selectedRating,
                           comment: commentController.text,
                         );
-                        if (success && mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                        
+                        if (!mounted) return;
+                        
+                        if (success) {
+                          scaffoldMessenger.showSnackBar(
                             const SnackBar(content: Text('تم إرسال التقييم بنجاح')),
                           );
                           _loadReviews();
-                        } else if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                        } else {
+                          scaffoldMessenger.showSnackBar(
                             SnackBar(
                               content: const Text('فشل إرسال التقييم، هل هذا منتجك؟ لا يمكنك تقييم منتجك.'),
-                              backgroundColor: context.colorScheme.error,
+                              backgroundColor: errorColor,
                             ),
                           );
                         }
