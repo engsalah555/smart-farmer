@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../core/constants.dart';
 import '../providers/seller_provider.dart';
 import '../../../core/models/product_model.dart';
+import '../../../core/models/store_model.dart';
+import '../../../core/widgets/app_fonts.dart';
 
 /// شاشة تقارير المتجر
 class SellerReportsScreen extends StatefulWidget {
@@ -25,6 +27,7 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final store = context.select<SellerProvider, StoreModel?>((p) => p.myStore);
     final products = context.select<SellerProvider, List<ProductModel>>(
       (p) => p.myProducts,
     );
@@ -35,6 +38,48 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
       (p) => p.myCatalogs.length,
     );
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (store == null) {
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('تقارير المتجر'),
+            centerTitle: true,
+          ),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.analytics_outlined,
+                    size: 80,
+                    color: context.primary.withValues(alpha: 0.5),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'لا توجد بيانات متاحة',
+                    style: context.font20.bold,
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'يجب عليك إكمال إعداد المتجر أولاً لكي نتمكن من عرض التقارير والإحصائيات الخاصة بك.',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('العودة'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     final myProducts = products;
     final lowStockProducts = myProducts.where((p) => p.quantity <= 5).toList();

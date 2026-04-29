@@ -62,6 +62,79 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
               .where((p) => p.catalogId == _selectedCatalogId)
               .toList();
 
+    if (store == null) {
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('لوحة تحكم التاجر'),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+            ),
+          ),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: context.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.storefront_outlined,
+                      size: 80,
+                      color: context.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'لم تقم بإعداد متجرك بعد',
+                    style: context.font20.bold,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'يجب عليك إكمال بيانات متجرك أولاً لكي تتمكن من البدء في إضافة المنتجات واستقبال الطلبات.',
+                    style: context.font14.copyWith(color: context.textSecondary),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton.icon(
+                      onPressed: () => context.push('/edit_profile'),
+                      icon: const Icon(Icons.edit_note, color: Colors.white),
+                      label: const Text(
+                        'إعداد بيانات المتجر الآن',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -141,7 +214,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                     fit: StackFit.expand,
                     children: [
                       // Cover Image
-                      store?.coverImage != null && store!.coverImage.isNotEmpty
+                      store.coverImage.isNotEmpty
                           ? CustomImage(
                               imageUrl: store.coverImage,
                               fit: BoxFit.cover,
@@ -199,8 +272,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(13),
                                 child:
-                                    store?.logo != null &&
-                                        store!.logo.isNotEmpty
+                                    store.logo.isNotEmpty
                                     ? CustomImage(
                                         imageUrl: store.logo,
                                         fit: BoxFit.cover,
@@ -222,7 +294,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                   Row(
                                     children: [
                                       Text(
-                                        store?.name ?? 'متجري',
+                                        store.name,
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 22,
@@ -232,7 +304,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                     ],
                                   ),
                                   Text(
-                                    store?.category ?? 'تاجر زراعي',
+                                    store.category,
                                     style: TextStyle(
                                       color: Colors.white.withValues(
                                         alpha: 0.8,

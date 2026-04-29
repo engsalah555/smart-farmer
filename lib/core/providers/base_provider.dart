@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -47,7 +48,26 @@ abstract class BaseProvider extends ChangeNotifier {
       return result;
     } catch (e) {
       debugPrint('Error in $runtimeType: $e');
-      setError(errorMessage ?? e.toString());
+      
+      String finalMessage = errorMessage ?? 'حدث خطأ غير متوقع.';
+      
+      if (e is DioException) {
+         try {
+           if (e.response?.data != null && 
+               e.response!.data is Map &&
+               e.response!.data['message'] != null) {
+             finalMessage = e.response!.data['message'];
+           } else if (e.message != null) {
+             finalMessage = e.message!;
+           }
+         } catch (_) {
+           finalMessage = e.toString();
+         }
+      } else {
+        finalMessage = errorMessage ?? e.toString();
+      }
+
+      setError(finalMessage);
       return null;
     } finally {
       if (showLoading) setLoading(false);
