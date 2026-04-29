@@ -135,17 +135,17 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'بذور':
-        return Colors.green;
+        return const Color(0xFF2ECC71); // Brand Primary
       case 'اسمدة':
-        return Colors.orange;
+        return const Color(0xFFF1C40F); // Brand Accent
       case 'مبيدات':
-        return Colors.red;
+        return const Color(0xFFE74C3C); // Semantic Error/Danger
       case 'محاصيل':
-        return Colors.teal;
+        return const Color(0xFF27AE60); // Darker Growth
       case 'معدات':
-        return Colors.blue;
+        return const Color(0xFF34495E); // Industrial/Steel
       case 'المشاتل':
-        return Colors.purple;
+        return const Color(0xFF9B59B6); // Amethyst/Nursery
       default:
         return context.primary;
     }
@@ -153,14 +153,11 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: isDark
-            ? const Color(0xFF181E14)
-            : const Color(0xFFF7F8F6),
+        backgroundColor: context.backgroundColor,
         body: Consumer<MarketplaceProvider>(
           builder: (context, provider, _) {
               final filteredStores = _filterStores(provider.stores);
@@ -205,28 +202,32 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                             width: 44,
                             height: 44,
                             point: _userPosition!,
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2196F3).withValues(alpha: 0.2),
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.blue.withValues(alpha: 0.4),
-                                    blurRadius: 12,
-                                    spreadRadius: 2,
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF2196F3),
-                                    shape: BoxShape.circle,
+                            child: Semantics(
+                              label: 'موقعك الحالي',
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: context.primary.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: context.white, width: 2),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: context.primary.withValues(alpha: 0.2),
+                                      blurRadius: 12,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: 14,
+                                    height: 14,
+                                    decoration: BoxDecoration(
+                                      color: context.primary,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: context.white, width: 2),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -240,41 +241,45 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                             width: isSelected ? 56 : 46,
                             height: isSelected ? 66 : 56,
                             point: LatLng(store.latitude!, store.longitude!),
-                            child: GestureDetector(
+                            child: Semantics(
+                              label: 'متجر: ${store.name}, الفئة: ${store.category}',
+                              button: true,
                               onTap: () => setState(() => _selectedStore = store),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: isSelected ? 48 : 38,
-                                    height: isSelected ? 48 : 38,
-                                    decoration: BoxDecoration(
-                                      color: isSelected ? catColor : Colors.white,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: catColor,
-                                        width: isSelected ? 0 : 2.5,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: catColor.withValues(alpha: isSelected ? 0.5 : 0.25),
-                                          blurRadius: isSelected ? 16 : 8,
-                                          spreadRadius: isSelected ? 2 : 0,
-                                          offset: const Offset(0, 3),
+                              child: GestureDetector(
+                                onTap: () => setState(() => _selectedStore = store),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: isSelected ? 48 : 38,
+                                      height: isSelected ? 48 : 38,
+                                      decoration: BoxDecoration(
+                                        color: isSelected ? catColor : context.cardBackground,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: catColor,
+                                          width: isSelected ? 0 : 2,
                                         ),
-                                      ],
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: catColor.withValues(alpha: isSelected ? 0.4 : 0.15),
+                                            blurRadius: isSelected ? 12 : 6,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        _getCategoryIcon(store.category),
+                                        size: isSelected ? 24 : 18,
+                                        color: isSelected ? context.white : catColor,
+                                      ),
                                     ),
-                                    child: Icon(
-                                      _getCategoryIcon(store.category),
-                                      size: isSelected ? 24 : 18,
-                                      color: isSelected ? Colors.white : catColor,
+                                    CustomPaint(
+                                      size: const Size(10, 6),
+                                      painter: _TrianglePainter(catColor),
                                     ),
-                                  ),
-                                  CustomPaint(
-                                    size: const Size(12, 7),
-                                    painter: _TrianglePainter(catColor),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -300,18 +305,17 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                               // Back Button
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: context.cardBackground,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.15,
-                                      ),
+                                      color: context.black.withValues(alpha: 0.1),
                                       blurRadius: 8,
                                     ),
                                   ],
                                 ),
                                 child: IconButton(
+                                  tooltip: 'رجوع',
                                   icon: const Icon(Icons.arrow_back, size: 20),
                                   onPressed: () {
                                     if (context.canPop()) {
@@ -327,15 +331,13 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                               Expanded(
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: context.cardBackground,
                                     borderRadius: BorderRadius.circular(30),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.12,
-                                        ),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 3),
+                                        color: context.black.withValues(alpha: 0.08),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
@@ -345,20 +347,21 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                                     decoration: InputDecoration(
                                       hintText: 'ابحث عن متجر أو موقع...',
                                       hintStyle: TextStyle(
-                                        color: Colors.grey[400],
+                                        color: context.isDark ? context.textMuted : context.textSecondary.withValues(alpha: 0.6),
                                         fontSize: 13,
                                       ),
-                                      prefixIcon: const Icon(
+                                      prefixIcon: Icon(
                                         Icons.search,
-                                        color: Colors.grey,
+                                        color: context.textSecondary,
                                         size: 20,
                                       ),
                                       suffixIcon: _searchQuery.isNotEmpty
                                           ? IconButton(
-                                              icon: const Icon(
+                                              tooltip: 'مسح البحث',
+                                              icon: Icon(
                                                 Icons.close,
                                                 size: 18,
-                                                color: Colors.grey,
+                                                color: context.textSecondary,
                                               ),
                                               onPressed: () {
                                                 _searchController.clear();
@@ -409,14 +412,12 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? _getCategoryColor(cat)
-                                          : Colors.white,
+                                          : context.cardBackground,
                                       borderRadius: BorderRadius.circular(20),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                          blurRadius: 6,
+                                          color: context.black.withValues(alpha: 0.05),
+                                          blurRadius: 4,
                                         ),
                                       ],
                                     ),
@@ -424,8 +425,8 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                                       cat,
                                       style: TextStyle(
                                         color: isSelected
-                                            ? Colors.white
-                                            : Colors.black87,
+                                            ? context.white
+                                            : context.textPrimary,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12,
                                       ),
@@ -446,11 +447,11 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: context.cardBackground,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.08),
+                                  color: context.black.withValues(alpha: 0.05),
                                   blurRadius: 6,
                                 ),
                               ],
@@ -475,16 +476,17 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                   left: 16,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.cardBackground,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
+                          color: context.black.withValues(alpha: 0.12),
                           blurRadius: 8,
                         ),
                       ],
                     ),
                     child: IconButton(
+                      tooltip: 'تحديد موقعي',
                       icon: Icon(Icons.my_location, color: context.primary),
                       onPressed: () async {
                         try {
@@ -522,27 +524,27 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.cardBackground,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 12,
+                              color: context.black.withValues(alpha: 0.08),
+                              blurRadius: 10,
                             ),
                           ],
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
                               Icons.store_mall_directory_outlined,
-                              color: Colors.grey,
+                              color: context.textMuted,
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text(
                               'لا توجد متاجر في هذه المنطقة',
                               style: TextStyle(
-                                color: Colors.grey,
+                                color: context.textMuted,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -578,7 +580,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: context.cardBackground,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Text(
@@ -612,6 +614,9 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
 
   Widget _buildStoresList(List<StoreModel> stores) {
     if (stores.isEmpty) return const SizedBox();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth * 0.55).clamp(200.0, 300.0);
+
     return SizedBox(
       height: 120,
       child: ListView.builder(
@@ -625,21 +630,21 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
           return GestureDetector(
             onTap: () => _moveToStore(store),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 200,
+              duration: const Duration(milliseconds: 250),
+              width: cardWidth,
               margin: const EdgeInsets.only(left: 12),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isSelected ? catColor : Colors.white,
+                color: isSelected ? catColor : context.cardBackground,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? catColor : catColor.withValues(alpha: 0.2),
+                  color: isSelected ? catColor : catColor.withValues(alpha: 0.1),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: catColor.withValues(alpha: isSelected ? 0.35 : 0.12),
-                    blurRadius: isSelected ? 16 : 10,
+                    color: catColor.withValues(alpha: isSelected ? 0.25 : 0.08),
+                    blurRadius: isSelected ? 12 : 8,
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -651,17 +656,17 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                     height: 42,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white.withValues(alpha: 0.25)
-                          : catColor.withValues(alpha: 0.12),
+                          ? context.white.withValues(alpha: 0.2)
+                          : catColor.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       _getCategoryIcon(store.category),
-                      color: isSelected ? Colors.white : catColor,
+                      color: isSelected ? context.white : catColor,
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -672,7 +677,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
-                            color: isSelected ? Colors.white : Colors.black87,
+                            color: isSelected ? context.white : context.textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -683,9 +688,9 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                           style: TextStyle(
                             fontSize: 11,
                             color: isSelected
-                                ? Colors.white.withValues(alpha: 0.8)
+                                ? context.white.withValues(alpha: 0.9)
                                 : catColor,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         if (store.location.isNotEmpty)
@@ -694,8 +699,8 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
                             style: TextStyle(
                               fontSize: 10,
                               color: isSelected
-                                  ? Colors.white.withValues(alpha: 0.7)
-                                  : Colors.grey,
+                                  ? context.white.withValues(alpha: 0.7)
+                                  : context.textMuted,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -717,25 +722,24 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.cardBackground,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+            color: context.black.withValues(alpha: 0.15),
+            blurRadius: 15,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle Bar
           Container(
-            width: 40,
+            width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: context.isDark ? context.darkBorder : Colors.grey[300],
               borderRadius: BorderRadius.circular(2),
             ),
           ),
