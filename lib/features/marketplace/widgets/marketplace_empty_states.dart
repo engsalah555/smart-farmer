@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smart_farm2/core/widgets/app_fonts.dart';
 import '../../../core/constants.dart';
 
@@ -43,7 +44,7 @@ class NoStoreSliver extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () => context.push('/merchant_verification'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.primary,
                   foregroundColor: Colors.white,

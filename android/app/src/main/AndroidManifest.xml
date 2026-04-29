@@ -15,7 +15,8 @@
         android:label="زرعة"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true">
         
         <!-- Image Cropper Activity -->
         <activity

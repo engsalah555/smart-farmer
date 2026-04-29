@@ -450,7 +450,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 32),
 
-              if (isSeller && store != null) ...[
+              if (isSeller) ...[
                 FadeInSlide(
                   duration: const Duration(milliseconds: 650),
                   direction: FadeInSlideDirection.btt,

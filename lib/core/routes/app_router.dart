@@ -82,10 +82,11 @@ class AppRouter {
     redirect: (context, state) {
       final auth = _authProvider;
       final isSplash = state.matchedLocation == '/';
-      final isAuthRoute = state.matchedLocation == '/auth' || 
-                          state.matchedLocation == '/onboarding' || 
-                          state.matchedLocation == '/forgot_password' || 
-                          state.matchedLocation == '/merchant_verification';
+      final isAuthRoute =
+          state.matchedLocation == '/auth' ||
+          state.matchedLocation == '/onboarding' ||
+          state.matchedLocation == '/forgot_password' ||
+          state.matchedLocation == '/merchant_verification';
 
       // Still initializing or navigating away from splash — let it go.
       if (auth == null || auth.isLoading) return null;
@@ -153,7 +154,9 @@ class AppRouter {
           child: const ForumScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
-              opacity: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+              opacity: CurveTween(
+                curve: Curves.easeInOutCirc,
+              ).animate(animation),
               child: ScaleTransition(
                 scale: Tween<double>(begin: 0.9, end: 1.0).animate(
                   CurvedAnimation(parent: animation, curve: Curves.easeOutBack),

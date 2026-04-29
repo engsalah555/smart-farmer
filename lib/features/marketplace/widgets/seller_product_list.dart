@@ -18,7 +18,13 @@ class SellerProductList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthProvider>().currentUser;
-    if (user == null || !user.isSeller) return const NoStoreSliver();
+    final myStore = provider.myStore;
+
+    // [Authorization Fix] Decoupled seller role from store existence
+    // If the user is a seller but has no store record, show the NoStoreSliver
+    if (user == null || !user.isSeller || myStore == null) {
+      return const NoStoreSliver();
+    }
 
     final myProducts = provider.myProducts;
     final myCatalogs = provider.myCatalogs;
