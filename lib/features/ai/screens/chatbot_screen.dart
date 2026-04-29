@@ -552,86 +552,94 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget _buildInputArea() {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (_selectedImage != null)
-            FadeInSlide(
-              beginOffset: const Offset(0, 0.5),
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: context.primary.withValues(alpha: 0.3),
-                          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.surface,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: context.border, width: 1),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_selectedImage != null)
+                    FadeInSlide(
+                      beginOffset: const Offset(0, 0.5),
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          top: 16,
+                          right: 16,
+                          left: 16,
+                          bottom: 4,
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.file(
-                          File(_selectedImage!.path),
-                          cacheWidth: 200,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      PositionedDirectional(
-                        top: -16,
-                        start: -16,
-                        child: Semantics(
-                          label: 'إزالة الصورة',
-                          button: true,
-                          child: GestureDetector(
-                            onTap: _removeSelectedImage,
-                            behavior: HitTestBehavior.opaque,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                radius: 14,
-                                backgroundColor: context.error.withValues(
-                                  alpha: 0.9,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: context.primary.withValues(alpha: 0.3),
                                 ),
-                                child: Icon(
-                                  Icons.close_rounded,
-                                  size: 16,
-                                  color: context.white,
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Image.file(
+                                File(_selectedImage!.path),
+                                cacheWidth: 150,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            PositionedDirectional(
+                              top: -12,
+                              start: -12,
+                              child: Semantics(
+                                label: 'إزالة الصورة',
+                                button: true,
+                                child: GestureDetector(
+                                  onTap: _removeSelectedImage,
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: CircleAvatar(
+                                      radius: 12,
+                                      backgroundColor: context.error.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      child: Icon(
+                                        Icons.close_rounded,
+                                        size: 14,
+                                        color: context.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: context.surface,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: context.border, width: 1),
-                  ),
-                  child: Row(
+                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      IconButton(
-                        tooltip: 'إرفاق صورة',
-                        icon: Icon(
-                          Icons.camera_alt_outlined,
-                          color: context.isDark
-                              ? context.primary
-                              : context.textMuted,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: IconButton(
+                          tooltip: 'إرفاق صورة',
+                          icon: Icon(
+                            Icons.camera_alt_outlined,
+                            color: context.isDark
+                                ? context.primary
+                                : context.textMuted,
+                          ),
+                          onPressed: _pickImage,
                         ),
-                        onPressed: _pickImage,
                       ),
                       Expanded(
                         child: TextField(
@@ -643,6 +651,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               color: context.textMuted,
                               fontSize: 14,
                             ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                            ),
                           ),
                           style: TextStyle(color: context.textColor),
                           minLines: 1,
@@ -650,27 +661,29 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                           onSubmitted: (_) => _handleSendMessage(),
                         ),
                       ),
+                      const SizedBox(width: 12),
                     ],
                   ),
-                ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Semantics(
-                label: 'إرسال الرسالة',
-                button: true,
-                child: GestureDetector(
-                  onTap: _handleSendMessage,
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: context.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.send_rounded, color: context.white),
-                  ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Semantics(
+            label: 'إرسال الرسالة',
+            button: true,
+            child: GestureDetector(
+              onTap: _handleSendMessage,
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.only(bottom: 2),
+                decoration: BoxDecoration(
+                  color: context.primary,
+                  shape: BoxShape.circle,
                 ),
+                child: Icon(Icons.send_rounded, color: context.white),
               ),
-            ],
+            ),
           ),
         ],
       ),
