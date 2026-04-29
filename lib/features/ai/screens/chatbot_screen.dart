@@ -270,13 +270,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'استشاري "مزرعتي"',
+                'استشاري زرعــة',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   color: context.textColor,
                 ),
               ),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   Container(
@@ -290,17 +291,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   const SizedBox(width: 4),
                   Text(
                     'متصل نشط',
-                    style: TextStyle(
-                      color: context.textMuted,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: context.textMuted, fontSize: 12),
                   ),
                 ],
               ),
             ],
           ),
-          const Spacer(),
-          IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
     );
@@ -358,9 +354,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   ),
                   decoration: BoxDecoration(
                     gradient: isUser ? AppDecorations.primaryGradient : null,
-                    color: isUser
-                        ? null
-                        : context.surface,
+                    color: isUser ? null : context.surface,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(20),
                       topRight: const Radius.circular(20),
@@ -474,8 +468,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 'التقويم الزراعي',
                 Icons.calendar_month_outlined,
                 'ماذا تزرع في هذا الوقت؟',
-                () =>
-                    _messageController.text = 'ماذا يمكنني أن أزرع في هذا الشهر؟',
+                () => _messageController.text =
+                    'ماذا يمكنني أن أزرع في هذا الشهر؟',
               ),
             ),
             const SizedBox(width: 16),
@@ -513,9 +507,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           decoration: BoxDecoration(
             color: context.surface,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: context.border,
-            ),
+            border: Border.all(color: context.border),
             boxShadow: [
               BoxShadow(
                 color: context.black.withValues(
@@ -634,7 +626,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       IconButton(
                         icon: Icon(
                           Icons.camera_alt_outlined,
-                          color: context.isDark ? context.primary : context.textMuted,
+                          color: context.isDark
+                              ? context.primary
+                              : context.textMuted,
                         ),
                         onPressed: _pickImage,
                       ),
@@ -649,9 +643,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               fontSize: 14,
                             ),
                           ),
-                          style: TextStyle(
-                            color: context.textColor,
-                          ),
+                          style: TextStyle(color: context.textColor),
                           maxLines: null,
                           onSubmitted: (_) => _handleSendMessage(),
                         ),
