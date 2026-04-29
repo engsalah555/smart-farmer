@@ -43,7 +43,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
         final seller = context.read<SellerProvider>();
         final settings = context.read<SettingsProvider>();
@@ -52,11 +52,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
         if (settings.productCategories.isEmpty ||
             settings.paymentMethods.isEmpty) {
-          settings.loadMetadata();
+          await settings.loadMetadata();
         }
 
         // Initialize defaults from dynamic metadata
-        if (widget.productToEdit == null) {
+        if (widget.productToEdit == null && mounted) {
           setState(() {
             if (settings.productCategories.isNotEmpty) {
               _selectedCategory = settings.productCategories.first['id'];

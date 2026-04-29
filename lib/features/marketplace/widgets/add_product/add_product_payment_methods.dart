@@ -33,6 +33,11 @@ class AddProductPaymentMethods extends StatelessWidget {
           children: availableMethods.map((method) {
             final isSelected = selectedPaymentMethods.contains(method['id']);
             return ChoiceChip(
+              avatar: method['icon'] != null ? Icon(
+                _getIconData(method['icon']),
+                size: 18,
+                color: isSelected ? context.primary : Colors.grey,
+              ) : null,
               label: Text(method['label']),
               selected: isSelected,
               onSelected: (_) => onMethodToggled(method['id']),
@@ -56,5 +61,21 @@ class AddProductPaymentMethods extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'cash':
+        return Icons.payments_outlined;
+      case 'wallet':
+        return Icons.account_balance_wallet_outlined;
+      case 'bank':
+      case 'account_balance':
+        return Icons.account_balance_outlined;
+      case 'credit_card':
+        return Icons.credit_card_outlined;
+      default:
+        return Icons.payment_outlined;
+    }
   }
 }
