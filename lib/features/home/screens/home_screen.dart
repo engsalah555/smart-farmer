@@ -6,6 +6,7 @@ import '../widgets/forum_list.dart';
 import '../widgets/home_alerts.dart';
 import '../widgets/home_header.dart';
 import '../../community/providers/post_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 /// شاشة الصفحة الرئيسية للتطبيق
 /// تعرض معلومات المستخدم، بيانات المستشعرات، وآخر منشورات المنتدى
@@ -51,8 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: 'القائمة الرئيسية قابلة للسحب للتحديث',
                 child: RefreshIndicator(
                   onRefresh: () async {
-                    await context.read<HomeProvider>().init();
+                    await Future.wait([
+                      context.read<HomeProvider>().init(),
+                      context.read<AuthProvider>().refreshProfile(),
+                    ]);
                   },
+
                   child: CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(
                       parent: BouncingScrollPhysics(),

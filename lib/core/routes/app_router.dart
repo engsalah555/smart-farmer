@@ -46,6 +46,7 @@ import '../models/post_model.dart';
 import '../../features/iot/screens/iot_status_screen.dart';
 import '../../features/ai/screens/chatbot_screen.dart';
 import '../../features/home/screens/weather_detail_screen.dart';
+import '../../features/profile/screens/admin_users_screen.dart';
 import '../../core/providers/auth_provider.dart';
 
 class AppRouter {
@@ -264,6 +265,10 @@ class AppRouter {
       GoRoute(
         path: '/weather',
         builder: (context, state) => const WeatherDetailScreen(),
+      ),
+      GoRoute(
+        path: '/admin_users',
+        builder: (context, state) => const AdminUsersScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

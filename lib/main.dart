@@ -19,6 +19,7 @@ import 'features/marketplace/providers/marketplace_provider.dart';
 import 'features/marketplace/providers/seller_provider.dart';
 import 'features/notifications/providers/notifications_provider.dart';
 import 'features/iot/providers/iot_provider.dart';
+import 'core/providers/admin_provider.dart';
 import 'core/routes/app_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -82,6 +83,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CommentProvider(locator())),
         ChangeNotifierProvider(create: (_) => CropsProvider(locator())),
         ChangeNotifierProvider(create: (_) => IotProvider(locator())),
+        ChangeNotifierProvider(create: (_) => AdminProvider(locator())),
       ],
       child: const SmartFarmApp(),
     ),

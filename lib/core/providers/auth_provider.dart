@@ -208,4 +208,22 @@ class AuthProvider extends BaseProvider {
     _rememberMe = value;
     notifyListeners();
   }
+
+  /// تحديث بيانات المستخدم الحالية من الخادم
+  Future<void> refreshProfile() async {
+    await executeSilently(() async {
+      final userData = await _authService.getUserData();
+      if (userData != null) {
+        _currentUser = User.fromJson(userData);
+        notifyListeners();
+      }
+    });
+  }
+
+  /// تحديث بيانات المستخدم محلياً (تُستخدم للمزامنة الفورية)
+  void updateUserLocally(User user) {
+    _currentUser = user;
+    notifyListeners();
+  }
 }
+

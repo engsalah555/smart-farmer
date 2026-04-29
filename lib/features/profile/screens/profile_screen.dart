@@ -106,6 +106,35 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
+            // Admin Group (Only for Admins)
+            Consumer<AuthProvider>(
+              builder: (context, auth, _) {
+                if (auth.currentUser?.role.toLowerCase() == 'admin') {
+                  return FadeInSlide(
+                    duration: const Duration(milliseconds: 550),
+                    direction: FadeInSlideDirection.btt,
+                    child: Column(
+                      children: [
+                        SettingsGroup(
+                          title: 'لوحة التحكم (مدير)',
+                          children: [
+                            SettingsTile(
+                              icon: Icons.admin_panel_settings_outlined,
+                              title: 'إدارة المستخدمين والتوثيق',
+                              hasArrow: true,
+                              onTap: () => context.push('/admin_users'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+
             // Second Group: Orders, Activities
             FadeInSlide(
               duration: const Duration(milliseconds: 600),
