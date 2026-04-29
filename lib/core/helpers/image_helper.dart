@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../features/ai/widgets/camera_view.dart';
 import '../constants.dart';
 
 class ImageHelper {
@@ -23,11 +25,25 @@ class ImageHelper {
   }) async {
     try {
       // 1. Pick Image
-      final XFile? pickedFile = await _picker.pickImage(
-        source: source,
-        maxWidth: 1920, // Initial max width before compression
-        maxHeight: 1920,
-      );
+      XFile? pickedFile;
+      if (source == ImageSource.camera) {
+        final cameras = await availableCameras();
+        if (cameras.isEmpty) return null;
+        if (!context.mounted) return null;
+        
+        pickedFile = await Navigator.push<XFile>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CameraView(cameras: cameras),
+          ),
+        );
+      } else {
+        pickedFile = await _picker.pickImage(
+          source: source,
+          maxWidth: 1920,
+          maxHeight: 1920,
+        );
+      }
 
       if (pickedFile == null) return null;
 

@@ -8,13 +8,96 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// دوال top-level للـ compute isolate (Dart خالص فقط — بلا Platform Channels)
+// Enums & Models
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// ترميز bytes لـ base64 — Dart خالص، آمن في compute
+enum DiagnosisSeverity {
+  low,
+  medium,
+  high,
+  unknown;
+
+  static DiagnosisSeverity fromString(String? value) {
+    if (value == null) return unknown;
+    final val = value.toLowerCase();
+    if (val.contains('خفيف') || val.contains('low')) return low;
+    if (val.contains('متوسط') || val.contains('medium')) return medium;
+    if (val.contains('عال') || val.contains('خطير') || val.contains('high')) {
+      return high;
+    }
+    return unknown;
+  }
+
+  String get label {
+    switch (this) {
+      case low:
+        return 'إصابة خفيفة';
+      case medium:
+        return 'إصابة متوسطة';
+      case high:
+        return 'إصابة خطيرة';
+      case unknown:
+        return 'غير محددة';
+    }
+  }
+}
+
+class PlantDiagnosisResult {
+  final String plantName;
+  final String diseaseType;
+  final String diseaseCauses;
+  final String treatmentMethods;
+  final DiagnosisSeverity severity;
+  final List<String> preventionTips;
+  final bool isHealthy;
+  final String rawResponse;
+
+  const PlantDiagnosisResult({
+    required this.plantName,
+    required this.diseaseType,
+    required this.diseaseCauses,
+    required this.treatmentMethods,
+    required this.severity,
+    required this.preventionTips,
+    required this.isHealthy,
+    required this.rawResponse,
+  });
+
+  factory PlantDiagnosisResult.fromJson(Map<String, dynamic> json, String raw) {
+    return PlantDiagnosisResult(
+      plantName: json['plantName'] ?? 'غير محدد',
+      diseaseType: json['diseaseType'] ?? 'غير محدد',
+      diseaseCauses: json['diseaseCauses'] ?? 'غير محدد',
+      treatmentMethods: json['treatmentMethods'] ?? 'غير محدد',
+      severity: DiagnosisSeverity.fromString(json['severityLevel']),
+      preventionTips: (json['preventionTips'] is List)
+          ? List<String>.from(json['preventionTips'])
+          : [],
+      isHealthy: json['isHealthy'] ?? false,
+      rawResponse: raw,
+    );
+  }
+
+  factory PlantDiagnosisResult.fromError(String message) {
+    return PlantDiagnosisResult(
+      plantName: 'تعذر التحديد',
+      diseaseType: 'خطأ في التشخيص',
+      diseaseCauses: message,
+      treatmentMethods: 'يرجى المحاولة مرة أخرى لاحقاً.',
+      severity: DiagnosisSeverity.unknown,
+      preventionTips: [],
+      isHealthy: false,
+      rawResponse: message,
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Top-level Isolate Functions
+// ─────────────────────────────────────────────────────────────────────────────
+
 String _encodeBase64Isolate(Uint8List bytes) => base64Encode(bytes);
 
-/// بناء JSON body — Dart خالص، آمن في compute
 String _buildJsonIsolate(_JsonBuildParams p) {
   return jsonEncode({
     'system_instruction': {
@@ -26,7 +109,10 @@ String _buildJsonIsolate(_JsonBuildParams p) {
       {
         'role': 'user',
         'parts': [
-          {'text': 'حلل هذه الصورة وأعطني النتائج بتنسيق JSON فقط بدون أي نص إضافي.'},
+          {
+            'text':
+                'حلل هذه الصورة كخبير زراعي محترف. قدم تشخيصاً دقيقاً وخطوات علاجية عملية. يجب أن تكون النتيجة بتنسيق JSON حصرياً.'
+          },
           {
             'inline_data': {
               'mime_type': 'image/jpeg',
@@ -51,61 +137,7 @@ class _JsonBuildParams {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// نموذج النتيجة
-// ─────────────────────────────────────────────────────────────────────────────
-
-class PlantDiagnosisResult {
-  final String plantName;
-  final String diseaseType;
-  final String diseaseCauses;
-  final String treatmentMethods;
-  final String severityLevel;
-  final String preventionTips;
-  final bool isHealthy;
-  final String rawResponse;
-
-  const PlantDiagnosisResult({
-    required this.plantName,
-    required this.diseaseType,
-    required this.diseaseCauses,
-    required this.treatmentMethods,
-    required this.severityLevel,
-    required this.preventionTips,
-    required this.isHealthy,
-    required this.rawResponse,
-  });
-
-  factory PlantDiagnosisResult.fromJson(Map<String, dynamic> json, String raw) {
-    return PlantDiagnosisResult(
-      plantName: json['plantName'] ?? 'غير محدد',
-      diseaseType: json['diseaseType'] ?? 'غير محدد',
-      diseaseCauses: json['diseaseCauses'] ?? 'غير محدد',
-      treatmentMethods: json['treatmentMethods'] ?? 'غير محدد',
-      severityLevel: json['severityLevel'] ?? 'غير محدد',
-      preventionTips: (json['preventionTips'] is List)
-          ? (json['preventionTips'] as List).join('\n')
-          : (json['preventionTips'] ?? ''),
-      isHealthy: json['isHealthy'] ?? false,
-      rawResponse: raw,
-    );
-  }
-
-  factory PlantDiagnosisResult.fromError(String message) {
-    return PlantDiagnosisResult(
-      plantName: 'تعذر التحديد',
-      diseaseType: 'خطأ في التشخيص',
-      diseaseCauses: message,
-      treatmentMethods: 'يرجى المحاولة مرة أخرى لاحقاً.',
-      severityLevel: 'غير معروفة',
-      preventionTips: '',
-      isHealthy: false,
-      rawResponse: message,
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// الخدمة الرئيسية
+// Service
 // ─────────────────────────────────────────────────────────────────────────────
 
 class PlantDiagnosisService {
@@ -129,10 +161,22 @@ class PlantDiagnosisService {
       final Map<String, dynamic> json = jsonDecode(data);
       _systemPrompt = json['system_instruction'];
     } catch (e) {
-      _systemPrompt =
-          'أنت خبير زراعي. حلل الصورة وأعد JSON فقط: {"plantName":"...","diseaseType":"...","diseaseCauses":"...","treatmentMethods":"...","severityLevel":"خفيفة","preventionTips":"...","isHealthy":false}';
+      _systemPrompt = '''
+أنت خبير وقاية نباتات عالمي. مهمتك تحليل صور النباتات وتقديم تقرير علمي دقيق.
+يجب أن تلتزم بتنسيق JSON التالي حصراً:
+{
+  "plantName": "اسم النبتة الشائع بالعربية",
+  "isHealthy": true/false,
+  "diseaseType": "اسم المرض بالعربية (أو 'سليمة')",
+  "diseaseCauses": "شرح موجز للأسباب",
+  "severityLevel": "Low/Medium/High",
+  "treatmentMethods": "خطوات علاجية مفصلة وعملية",
+  "preventionTips": ["نصيحة 1", "نصيحة 2", "نصيحة 3"]
+}
+استخدم لغة احترافية ومباشرة.
+''';
     }
-    debugPrint('PlantDiagnosisService: ready');
+    debugPrint('PlantDiagnosisService: ready with hardened prompt');
   }
 
   String get _apiKey =>
@@ -140,41 +184,31 @@ class PlantDiagnosisService {
       dotenv.env['GEMINI_API_KEY'] ??
       '';
 
-  // ─── ضغط الصورة على الخيط الرئيسي (Platform Plugin — لا يعمل في compute) ───
   Future<Uint8List?> _compressImageToFile(Uint8List imageBytes) async {
     try {
       final tempDir = await getTemporaryDirectory();
       final targetPath =
           '${tempDir.path}/diag_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      // compressAndGetFile: يكتب الملف مباشرة — أقل استهلاكاً للذاكرة من compressWithList
       final result = await FlutterImageCompress.compressAndGetFile(
-        // نحتاج مسار الملف الأصلي — نكتب الـ bytes لملف مؤقت أولاً إذا لزم
         await _writeTempFile(imageBytes, tempDir),
         targetPath,
-        minWidth: 480,
-        minHeight: 480,
-        quality: 50,
+        minWidth: 640,
+        minHeight: 640,
+        quality: 70,
         format: CompressFormat.jpeg,
       );
 
-      if (result == null) {
-        debugPrint('PlantDiagnosisService: compression returned null, using original');
-        return imageBytes;
-      }
-
+      if (result == null) return imageBytes;
       final compressed = await result.readAsBytes();
-      debugPrint(
-          'Compressed: ${(imageBytes.length / 1024).toStringAsFixed(0)}KB → ${(compressed.length / 1024).toStringAsFixed(0)}KB');
 
-      // حذف الملفات المؤقتة
       try {
         await File(targetPath).delete();
       } catch (_) {}
 
       return compressed;
     } catch (e) {
-      debugPrint('PlantDiagnosisService: compress error $e, using original');
+      debugPrint('PlantDiagnosisService: compress error $e');
       return imageBytes;
     }
   }
@@ -185,7 +219,6 @@ class PlantDiagnosisService {
     return path;
   }
 
-  /// تحليل صورة نبتة — Pipeline آمن بدون crash
   Future<PlantDiagnosisResult> diagnose(Uint8List imageBytes) async {
     await _ensureInitialized();
 
@@ -194,22 +227,14 @@ class PlantDiagnosisService {
     }
 
     try {
-      // ─── Step 1: ضغط على الخيط الرئيسي (Platform Plugin) ───
-      debugPrint(
-          'Step1: compressing ${(imageBytes.lengthInBytes / 1024).toStringAsFixed(0)}KB...');
       final compressed = await _compressImageToFile(imageBytes);
       if (compressed == null) {
         return PlantDiagnosisResult.fromError('فشل في معالجة الصورة.');
       }
 
-      // ─── Step 2: base64 encoding في compute (Dart خالص — آمن) ───
-      debugPrint(
-          'Step2: encoding ${(compressed.length / 1024).toStringAsFixed(0)}KB to base64...');
       final base64Image =
           await compute<Uint8List, String>(_encodeBase64Isolate, compressed);
 
-      // ─── Step 3: بناء JSON في compute (Dart خالص — آمن) ───
-      debugPrint('Step3: building JSON body...');
       final bodyStr = await compute<_JsonBuildParams, String>(
         _buildJsonIsolate,
         _JsonBuildParams(
@@ -218,9 +243,6 @@ class PlantDiagnosisService {
         ),
       );
 
-      // ─── Step 4: إرسال الطلب مع fallback عند 429 ───
-      debugPrint(
-          'Step4: sending ${(bodyStr.length / 1024).toStringAsFixed(0)}KB request...');
       for (final model in [_primaryModel, _fallbackModel]) {
         final uri = Uri.parse('${_buildUrl(model)}?key=$_apiKey');
         final response = await http
@@ -232,24 +254,19 @@ class PlantDiagnosisService {
             .timeout(const Duration(seconds: 60));
 
         if (response.statusCode == 200) {
-          debugPrint('Step4: got 200 from $model');
           return _parseResponse(response.bodyBytes);
         } else if (response.statusCode == 429) {
-          debugPrint('PlantDiagnosisService: quota exceeded for $model');
           if (model == _fallbackModel) {
             return PlantDiagnosisResult.fromError(
                 'تم تجاوز الحد المجاني. يرجى المحاولة بعد دقيقة.');
           }
           continue;
         } else {
-          debugPrint(
-              'PlantDiagnosisService HTTP ${response.statusCode}: ${response.body}');
           return PlantDiagnosisResult.fromError(
               'خطأ في الاتصال بالخادم (${response.statusCode}).');
         }
       }
     } catch (e) {
-      debugPrint('PlantDiagnosisService FATAL: $e');
       if (e.toString().contains('TimeoutException')) {
         return PlantDiagnosisResult.fromError('انتهت مهلة الاتصال.');
       }
@@ -280,7 +297,6 @@ class PlantDiagnosisService {
       final Map<String, dynamic> jsonData = jsonDecode(cleanJson);
       return PlantDiagnosisResult.fromJson(jsonData, rawText);
     } catch (e) {
-      debugPrint('PlantDiagnosisService parse error: $e');
       return PlantDiagnosisResult.fromError('فشل في تحليل استجابة الخادم.');
     }
   }

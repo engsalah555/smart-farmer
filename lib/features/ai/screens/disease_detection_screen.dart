@@ -2,11 +2,14 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/services/locator.dart';
 import '../services/plant_diagnosis_service.dart';
+import '../widgets/camera_view.dart';
 
 class DiseaseDetectionScreen extends StatefulWidget {
   const DiseaseDetectionScreen({super.key});
@@ -63,12 +66,34 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
 
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final file = await _picker.pickImage(
-        source: source,
-        maxWidth: 640,   // تقليل الحجم لتجنب OOM
-        maxHeight: 640,
-        imageQuality: 70,
-      );
+      XFile? file;
+      if (source == ImageSource.camera) {
+        // Use custom camera view for better stability
+        final cameras = await availableCameras();
+        if (cameras.isEmpty) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('لم يتم العثور على كاميرا')),
+            );
+          }
+          return;
+        }
+        if (!mounted) return;
+        file = await Navigator.push<XFile>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CameraView(cameras: cameras),
+          ),
+        );
+      } else {
+        file = await _picker.pickImage(
+          source: source,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 80,
+        );
+      }
+
       if (file == null) return;
       final bytes = await file.readAsBytes();
       setState(() {
@@ -80,6 +105,11 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
       await _analyze();
     } catch (e) {
       debugPrint('Pick image error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('حدث خطأ أثناء التقاط الصورة: $e')),
+        );
+      }
     }
   }
 
@@ -124,7 +154,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 children: [
                   _buildImageArea(isDark, surface),
                   const SizedBox(height: 24),
-                  if (_isLoading) _buildLoadingState(isDark),
+                  if (_isLoading) _buildShimmerResults(isDark, surface),
                   if (!_isLoading && _result == null) _buildPickButtons(),
                   if (!_isLoading && _result != null)
                     FadeTransition(
@@ -275,51 +305,37 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
     );
   }
 
-  Widget _buildLoadingState(bool isDark) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-          decoration: BoxDecoration(
-            color: AppColors.getSurface(isDark),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: context.primary.withValues(alpha: 0.2)),
+  Widget _buildShimmerResults(bool isDark, Color surface) {
+    return Shimmer.fromColors(
+      baseColor: surface,
+      highlightColor: surface.withValues(alpha: 0.5),
+      child: Column(
+        children: [
+          Container(
+            height: 160,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(32),
+            ),
           ),
-          child: Column(
-            children: [
-              SizedBox(
-                width: 56,
-                height: 56,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(context.primary),
-                  strokeWidth: 4,
-                  backgroundColor: context.primary.withValues(alpha: 0.15),
+          const SizedBox(height: 16),
+          ...List.generate(
+            3,
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Container(
+                height: 100,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
                 ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                '🔬 جارٍ تحليل النبتة...',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: context.textColor,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'يقوم الذكاء الاصطناعي بفحص الصورة\nوإعداد التقرير الزراعي الشامل',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: context.textSecondary,
-                  height: 1.5,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -382,7 +398,9 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
             icon: Icons.shield_rounded,
             iconColor: context.primary,
             title: 'نصائح الوقاية',
-            content: r.preventionTips,
+            content: r.preventionTips.isEmpty
+                ? 'لا توجد نصائح إضافية.'
+                : r.preventionTips.map((e) => '• $e').join('\n'),
             isDark: isDark,
             surface: surface,
           ),
@@ -439,13 +457,14 @@ class _StatusCard extends StatelessWidget {
             gradEnd,
             isHealthy
                 ? context.success.withValues(alpha: 0.6)
-                : context.error.withValues(alpha: 0.6), // Deep rich end color
+                : _getSeverityColor(context, result.severity)
+                    .withValues(alpha: 0.6),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           stops: const [0.0, 0.5, 1.0],
         ),
-        borderRadius: BorderRadius.circular(32), // More rounded corners
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
             color: gradStart.withValues(alpha: 0.5),
@@ -496,9 +515,9 @@ class _StatusCard extends StatelessWidget {
                       result.plantName,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 24, // Larger font
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.2,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -522,14 +541,14 @@ class _StatusCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.warning_rounded,
+                Icon(
+                  _getSeverityIcon(result.severity),
                   color: Colors.white70,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'مستوى الخطورة: ${result.severityLevel}',
+                  'مستوى الخطورة: ${result.severity.label}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -542,6 +561,32 @@ class _StatusCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _getSeverityColor(BuildContext context, DiagnosisSeverity severity) {
+    switch (severity) {
+      case DiagnosisSeverity.low:
+        return context.primary;
+      case DiagnosisSeverity.medium:
+        return context.warning;
+      case DiagnosisSeverity.high:
+        return context.error;
+      case DiagnosisSeverity.unknown:
+        return context.textSecondary;
+    }
+  }
+
+  IconData _getSeverityIcon(DiagnosisSeverity severity) {
+    switch (severity) {
+      case DiagnosisSeverity.low:
+        return Icons.info_outline_rounded;
+      case DiagnosisSeverity.medium:
+        return Icons.warning_amber_rounded;
+      case DiagnosisSeverity.high:
+        return Icons.report_problem_rounded;
+      case DiagnosisSeverity.unknown:
+        return Icons.help_outline_rounded;
+    }
   }
 }
 
@@ -618,9 +663,9 @@ class _DiagnosisCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 18,
-                    letterSpacing: 0.3,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                    letterSpacing: -0.1,
                     color: iconColor,
                   ),
                 ),
