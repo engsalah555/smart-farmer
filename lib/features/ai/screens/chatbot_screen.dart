@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
-import '../../../core/widgets/molecules/glassmorphic_container.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/services/locator.dart';
 import '../services/gemini_service.dart';
@@ -240,9 +239,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         color: context.surface,
         boxShadow: [
           BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.3)
-                : Colors.black.withValues(alpha: 0.05),
+            color: context.black.withValues(alpha: isDark ? 0.3 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -335,7 +332,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: context.black.withValues(alpha: 0.1),
                           blurRadius: 8,
                         ),
                       ],
@@ -344,6 +341,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     child: Image.memory(
                       message.images!.first,
                       width: 200,
+                      cacheWidth: 400,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -417,17 +415,17 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             duration: const Duration(milliseconds: 600),
             delay: const Duration(milliseconds: 200),
             child: Text(
-              'كيف يمكنني مساعدتك\nفي مزرعتك اليوم؟',
+              'الاستشاري الزراعي الذكي\nجاهز للتحليل',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 26,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: context.primary.withValues(alpha: 0.9),
+                color: context.textColor,
                 height: 1.3,
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           _buildStarterGrid(),
         ],
       ),
@@ -437,106 +435,98 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget _buildStarterGrid() {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildStarterCard(
-                'تشخيص الأمراض',
-                Icons.bug_report_outlined,
-                'افحص نباتاتك واعرف ما يؤلمها',
-                () => _messageController.text =
-                    'كيف يمكنني تشخيص مرض في نبات الطماطم؟',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStarterCard(
-                'نصائح الري',
-                Icons.water_drop_outlined,
-                'أفضل الممارسات لري محاصيلك',
-                () => _messageController.text =
-                    'ما هو أفضل وقت لري المحاصيل في الصيف؟',
-              ),
-            ),
-          ],
+        _buildStarterCommand(
+          'تشخيص الأمراض',
+          Icons.bug_report_outlined,
+          'كيف يمكنني تشخيص مرض في نبات الطماطم؟',
+          delay: 0,
         ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStarterCard(
-                'التقويم الزراعي',
-                Icons.calendar_month_outlined,
-                'ماذا تزرع في هذا الوقت؟',
-                () => _messageController.text =
-                    'ماذا يمكنني أن أزرع في هذا الشهر؟',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStarterCard(
-                'حاسبة الأسمدة',
-                Icons.calculate_outlined,
-                'احسب احتياج نباتك بدقة',
-                () => _messageController.text =
-                    'كيف أحسب كمية السماد اللازمة لمحصول القمح؟',
-              ),
-            ),
-          ],
+        const SizedBox(height: 8),
+        _buildStarterCommand(
+          'نصائح الري',
+          Icons.water_drop_outlined,
+          'ما هو أفضل وقت لري المحاصيل في الصيف؟',
+          delay: 100,
+        ),
+        const SizedBox(height: 8),
+        _buildStarterCommand(
+          'التقويم الزراعي',
+          Icons.calendar_month_outlined,
+          'ماذا يمكنني أن أزرع في هذا الشهر؟',
+          delay: 200,
+        ),
+        const SizedBox(height: 8),
+        _buildStarterCommand(
+          'حاسبة الأسمدة',
+          Icons.calculate_outlined,
+          'كيف أحسب كمية السماد اللازمة لمحصول القمح؟',
+          delay: 300,
         ),
       ],
     );
   }
 
-  Widget _buildStarterCard(
+  Widget _buildStarterCommand(
     String title,
     IconData icon,
-    String subtitle,
-    VoidCallback onTap,
-  ) {
+    String query, {
+    required int delay,
+  }) {
     return FadeInSlide(
-      duration: const Duration(milliseconds: 600),
-      beginOffset: const Offset(0.2, 0),
-      child: GestureDetector(
-        onTap: () {
-          onTap();
-          _handleSendMessage();
-        },
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: context.surface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: context.border),
-            boxShadow: [
-              BoxShadow(
-                color: context.black.withValues(
-                  alpha: context.isDark ? 0.2 : 0.03,
+      duration: const Duration(milliseconds: 500),
+      delay: Duration(milliseconds: delay),
+      beginOffset: const Offset(0, 0.2),
+      child: Material(
+        color: context.surface,
+        borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () {
+            _messageController.text = query;
+            _handleSendMessage();
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: context.border.withValues(alpha: 0.5)),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: context.primary, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: context.textColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        query,
+                        style: TextStyle(
+                          color: context.textMuted,
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: context.primary, size: 28),
-              const SizedBox(height: 12),
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  color: context.textMuted,
-                  fontSize: 10,
-                  height: 1.4,
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: context.textMuted.withValues(alpha: 0.5),
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -590,6 +580,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         File(_selectedImage!.path),
                         width: 80,
                         height: 80,
+                        cacheWidth: 200,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -601,10 +592,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                         child: CircleAvatar(
                           radius: 20, // Increased touch target
                           backgroundColor: context.error.withValues(alpha: 0.9),
-                          child: const Icon(
+                          child: Icon(
                             Icons.close_rounded,
                             size: 18,
-                            color: Colors.white,
+                            color: context.white,
                           ),
                         ),
                       ),
@@ -616,11 +607,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           Row(
             children: [
               Expanded(
-                child: GlassmorphicContainer(
-                  borderRadius: BorderRadius.circular(30),
+                child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  opacity: context.isDark ? 0.7 : 0.9,
-                  color: context.surface,
+                  decoration: BoxDecoration(
+                    color: context.surface,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: context.border,
+                      width: 1,
+                    ),
+                  ),
                   child: Row(
                     children: [
                       IconButton(
@@ -669,7 +665,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.send_rounded, color: Colors.white),
+                  child: Icon(Icons.send_rounded, color: context.white),
                 ),
               ),
             ],
