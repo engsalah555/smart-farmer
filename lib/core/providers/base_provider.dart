@@ -63,6 +63,8 @@ abstract class BaseProvider extends ChangeNotifier {
          } catch (_) {
            finalMessage = e.toString();
          }
+      } else if (e is Exception) {
+        finalMessage = e.toString().replaceFirst('Exception: ', '');
       } else {
         finalMessage = errorMessage ?? e.toString();
       }
