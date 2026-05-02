@@ -5,6 +5,7 @@ import '../../../../core/constants.dart';
 import '../../../../core/models/post_model.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/providers/auth_provider.dart';
+import '../../../../core/widgets/atoms/unified_profile_avatar.dart';
 import 'post_dialogs.dart';
 
 class PostHeader extends StatelessWidget {
@@ -72,37 +73,11 @@ class PostHeader extends StatelessWidget {
 
   Widget _buildAvatar(BuildContext context) {
     final avatarSize = context.wp(12);
-    return Container(
-      width: avatarSize,
-      height: avatarSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.2),
-          width: 2,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(avatarSize / 2),
-        child: (post.image != null && post.image!.isNotEmpty)
-            ? Image.network(
-                post.image!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildErrorAvatar(avatarSize),
-              )
-            : _buildErrorAvatar(avatarSize),
-      ),
-    );
-  }
-
-  Widget _buildErrorAvatar(double avatarSize) {
-    return Container(
-      color: AppColors.primary.withValues(alpha: 0.1),
-      child: Icon(
-        Icons.person,
-        color: AppColors.primary,
-        size: avatarSize * 0.6,
-      ),
+    return UnifiedProfileAvatar(
+      imageUrl: post.image,
+      radius: avatarSize / 2,
+      borderWidth: 2,
+      borderColor: AppColors.primary.withValues(alpha: 0.2),
     );
   }
 

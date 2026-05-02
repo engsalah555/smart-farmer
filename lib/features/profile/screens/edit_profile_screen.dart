@@ -12,6 +12,7 @@ import '../../marketplace/providers/seller_provider.dart';
 import '../../../core/models/store_model.dart';
 import '../../../core/helpers/image_helper.dart';
 import '../../../core/widgets/fade_in_slide.dart';
+import '../../../core/widgets/atoms/unified_profile_avatar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -264,39 +265,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   onTap: _pickImage,
                   child: Stack(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: context.primary.withValues(alpha: 0.2),
-                            width: 2,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          radius: 55,
-                          backgroundColor: context.primary.withValues(
-                            alpha: 0.1,
-                          ),
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(_selectedImage!) as ImageProvider
-                              : (user?.profileImage != null &&
-                                        user!.profileImage!.isNotEmpty
-                                    ? CachedNetworkImageProvider(
-                                        user.profileImage!,
-                                      )
-                                    : null),
-                          child:
-                              _selectedImage == null &&
-                                  (user?.profileImage == null ||
-                                      user!.profileImage!.isEmpty)
-                              ? Icon(
-                                  Icons.person,
-                                  size: 55,
-                                  color: context.primary,
-                                )
-                              : null,
-                        ),
+                      UnifiedProfileAvatar(
+                        imageUrl: user?.profileImage,
+                        localImage: _selectedImage,
+                        radius: 55,
+                        borderWidth: 2,
+                        hasShadow: false,
                       ),
                       Positioned(
                         bottom: 0,

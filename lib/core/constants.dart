@@ -10,8 +10,10 @@ class AppConstants {
   static final String ipAddress = dotenv.env['IP_ADDRESS'] ?? '[IP_ADDRESS]';
 
   /// يقرأ عنوان الـ API من ملف .env تلقائياً.
-  static String get apiBaseUrl =>
-      dotenv.env['API_BASE_URL'] ?? 'http://$ipAddress:8000';
+  static String get apiBaseUrl {
+    final url = dotenv.env['API_BASE_URL'] ?? 'http://$ipAddress:8000';
+    return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+  }
 
   // --- API Endpoints ---
   static const String loginUrl = 'auth/login';

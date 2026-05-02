@@ -316,10 +316,11 @@ class MarketplaceProvider extends BaseProvider {
     } else {
       result.addAll([
         {'id': 'seeds', 'label': 'بذور', 'icon': 'eco'},
-        {'id': 'fertilizers', 'label': 'اسمدة', 'icon': 'opacity'},
+        {'id': 'fertilizers', 'label': 'أسمدة', 'icon': 'opacity'},
         {'id': 'pesticides', 'label': 'مبيدات', 'icon': 'bug_report'},
         {'id': 'crops', 'label': 'محاصيل', 'icon': 'grass'},
         {'id': 'tools', 'label': 'معدات', 'icon': 'construction'},
+        {'id': 'nurseries', 'label': 'مشاتل', 'icon': 'yard'},
       ]);
     }
 

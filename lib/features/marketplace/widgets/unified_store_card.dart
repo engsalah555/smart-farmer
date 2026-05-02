@@ -5,6 +5,7 @@ import '../../../core/models/store_model.dart';
 import '../../../core/widgets/app_fonts.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/widgets/atoms/custom_image.dart';
+import '../../../core/widgets/atoms/unified_profile_avatar.dart';
 import '../../../core/widgets/molecules/pro_max_card.dart';
 
 enum StoreCardLayout { grid, list }
@@ -99,30 +100,12 @@ class UnifiedStoreCard extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: Center(
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isDark ? AppColors.darkCard : Colors.white,
-                        border: Border.all(
-                          color: isDark ? Colors.white10 : Colors.white,
-                          width: 3,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: CustomImage(
-                          imageUrl: store.logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    child: UnifiedProfileAvatar(
+                      imageUrl: store.logo,
+                      radius: 27,
+                      borderWidth: 3,
+                      borderColor: isDark ? Colors.white10 : Colors.white,
+                      hasShadow: true,
                     ),
                   ),
                 ),
@@ -137,14 +120,25 @@ class UnifiedStoreCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    store.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: context.font16.bold.copyWith(
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          store.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: context.font16.bold.copyWith(
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ),
+                      if (store.status == 'verified') ...[
+                        const SizedBox(width: 4),
+                        const Icon(Icons.verified, color: Colors.green, size: 16),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -217,29 +211,32 @@ class UnifiedStoreCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border(isDark)),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: CustomImage(
-                imageUrl: store.logo,
-                fit: BoxFit.cover,
-              ),
-            ),
+          UnifiedProfileAvatar(
+            imageUrl: store.logo,
+            radius: 40, // 80x80 total size previously
+            borderWidth: 1,
+            borderColor: AppColors.border(isDark),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  store.name,
-                  style: context.font16.bold,
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        store.name,
+                        style: context.font16.bold,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (store.status == 'verified') ...[
+                      const SizedBox(width: 4),
+                      const Icon(Icons.verified, color: Colors.green, size: 16),
+                    ],
+                  ],
                 ),
                 Text(
                   store.location,

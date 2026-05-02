@@ -30,7 +30,9 @@ class HomeHeader extends StatelessWidget {
 
     String userRole = 'مستخدم';
     if (user != null) {
-      if (user.isSeller) {
+      if (user.customTitle != null && user.customTitle!.isNotEmpty) {
+        userRole = user.customTitle!;
+      } else if (user.isSeller) {
         userRole = 'بائع';
       }
     }

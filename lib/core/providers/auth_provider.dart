@@ -60,7 +60,7 @@ class AuthProvider extends BaseProvider {
 
       // ✅ التحقق من نوع الحساب: إذا حاول الدخول كبائع وهو مستخدم عادي
       if (userType == 'seller' && !user.isSeller) {
-        throw Exception('هذا الحساب لمستخدم عادي');
+        throw Exception('هذا الحساب غير مسجل كبائع. يرجى تسجيل الدخول كمشتري.');
       }
 
       _currentUser = user;

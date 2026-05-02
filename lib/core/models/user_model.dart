@@ -7,6 +7,7 @@ class User {
   final String userType; // 'farmer', 'merchant', or 'user'
   final String? phone;
   final String? profileImage;
+  final String? customTitle; // اللقب المخصص (مثل مزارع منتج، وكيل معتمد)
   final bool isVerified;
   final DateTime? createdAt;
 
@@ -17,6 +18,7 @@ class User {
     required this.userType,
     this.phone,
     this.profileImage,
+    this.customTitle,
     this.isVerified = false,
     this.createdAt,
   });
@@ -28,6 +30,8 @@ class User {
   /// هل المستخدم تاجر أو مزارع (بائع)
   bool get isSeller =>
       userType.toLowerCase() == 'seller' ||
+      userType.toLowerCase() == 'admin' ||
+      // التوافق مع البيانات القديمة
       userType.toLowerCase() == 'merchant' ||
       userType.toLowerCase() == 'farmer';
 
@@ -67,9 +71,10 @@ class User {
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       userType:
-          json['user_type'] ?? json['userType'] ?? json['role'] ?? 'farmer',
+          json['user_type'] ?? json['userType'] ?? json['role'] ?? 'user',
       phone: json['phone'],
       profileImage: AppConstants.buildUrl(rawPhoto),
+      customTitle: json['custom_title'] ?? json['customTitle'],
       isVerified:
           json['is_verified'] == 1 ||
           json['is_verified'] == true ||
@@ -90,6 +95,7 @@ class User {
       'userType': userType,
       'phone': phone,
       'profileImage': profileImage,
+      'customTitle': customTitle,
       'isVerified': isVerified,
       'createdAt': createdAt?.toIso8601String(),
     };
@@ -102,6 +108,7 @@ class User {
     String? userType,
     String? phone,
     String? profileImage,
+    String? customTitle,
     bool? isVerified,
     DateTime? createdAt,
   }) {
@@ -112,6 +119,7 @@ class User {
       userType: userType ?? this.userType,
       phone: phone ?? this.phone,
       profileImage: profileImage ?? this.profileImage,
+      customTitle: customTitle ?? this.customTitle,
       isVerified: isVerified ?? this.isVerified,
       createdAt: createdAt ?? this.createdAt,
     );

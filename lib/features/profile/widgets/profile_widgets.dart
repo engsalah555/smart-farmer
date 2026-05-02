@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/atoms/unified_profile_avatar.dart';
 
 class ProfileHeader extends StatelessWidget {
   final String name;
@@ -22,31 +23,11 @@ class ProfileHeader extends StatelessWidget {
 
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: 110,
-              height: 110,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: context.primary.withValues(alpha: 0.2),
-                  width: 4,
-                ),
-              ),
-            ),
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: (context.primary).withValues(alpha: 0.1),
-              backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
-                  ? NetworkImage(imageUrl!)
-                  : null,
-              child: (imageUrl == null || imageUrl!.isEmpty)
-                  ? Icon(Icons.person, size: 50, color: context.primary)
-                  : null,
-            ),
-          ],
+        UnifiedProfileAvatar(
+          imageUrl: imageUrl,
+          radius: 50,
+          borderWidth: 4,
+          borderColor: context.primary.withValues(alpha: 0.2),
         ),
         const SizedBox(height: 16),
         Row(
