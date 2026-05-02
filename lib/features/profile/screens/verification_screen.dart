@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/widgets/fade_in_slide.dart';
-import '../../../core/widgets/atoms/pro_max_icon_button.dart';
 import '../../../core/widgets/dashed_border.dart';
 
 class VerificationScreen extends StatefulWidget {
@@ -213,7 +212,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     color: context.border,
                     strokeWidth: 2,
                     gap: 6,
-                    radius: 20,
+                    borderRadius: 20,
                   ),
                   child: _selectedImage != null
                       ? ClipRRect(
@@ -243,12 +242,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: auth.isBusy ? null : _submit,
+                  onPressed: auth.isLoading ? null : _submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.primary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: auth.isBusy
+                  child: auth.isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text('إرسال لطلب التوثيق', style: AppTypography.buttonLabel(isDark: isDark)),
                 ),

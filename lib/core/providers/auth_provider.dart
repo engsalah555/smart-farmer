@@ -4,7 +4,7 @@ import 'base_provider.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/verification_service.dart';
-import 'locator.dart';
+import '../services/locator.dart';
 
 /// مزود حالة المصادقة - يدير حالة تسجيل الدخول والمستخدم الحالي
 class AuthProvider extends BaseProvider {
@@ -252,7 +252,7 @@ class AuthProvider extends BaseProvider {
     required String imagePath,
   }) async {
     final success = await execute(() async {
-      final result = await _verificationService.submitVerification(
+      await _verificationService.submitVerification(
         documentType: documentType,
         imagePath: imagePath,
       );

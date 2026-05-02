@@ -69,46 +69,45 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            // First Group: Account, Shop, Notifications
+            // First Group: Account, Notifications, Verification
             FadeInSlide(
               duration: const Duration(milliseconds: 500),
               direction: FadeInSlideDirection.btt,
-              child: SettingsGroup(
-                title: 'الحساب والمتجر',
-                children: [
-                  SettingsTile(
-                    icon: Icons.person_outline,
-                    title: 'تعديل الملف الشخصي',
-                    hasArrow: true,
-                    onTap: () => context.push('/edit_profile'),
-                  ),
-                  Consumer<AuthProvider>(
-                    builder: (context, authProvider, child) {
-                      final user = authProvider.currentUser;
-                      if (user != null && user.isSeller) {
-                        return SettingsTile(
+              child: Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  final user = auth.currentUser;
+                  return SettingsGroup(
+                    title: 'إدارة الحساب',
+                    children: [
+                      SettingsTile(
+                        icon: Icons.person_outline,
+                        title: 'تعديل الملف الشخصي',
+                        hasArrow: true,
+                        onTap: () => context.push('/edit_profile'),
+                      ),
+                      if (user != null && user.isSeller)
+                        SettingsTile(
                           icon: Icons.storefront_outlined,
                           title: 'إدارة متجري',
                           hasArrow: true,
                           onTap: () => context.push('/seller_dashboard'),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                  SettingsTile(
-                    icon: Icons.notifications_none,
-                    title: 'الإشعارات',
-                    hasArrow: true,
-                    onTap: () => context.push('/notifications'),
-                  ),
-                  SettingsTile(
-                    icon: Icons.verified_user_outlined,
-                    title: 'توثيق الحساب',
-                    hasArrow: true,
-                    onTap: () => context.push('/verification'),
-                  ),
-                ],
+                        ),
+                      SettingsTile(
+                        icon: Icons.notifications_none,
+                        title: 'الإشعارات',
+                        hasArrow: true,
+                        onTap: () => context.push('/notifications'),
+                      ),
+                      SettingsTile(
+                        icon: Icons.verified_user_outlined,
+                        title: 'توثيق الحساب',
+                        subtitle: user?.isVerified == true ? 'حسابك موثق بالفعل' : null,
+                        hasArrow: true,
+                        onTap: () => context.push('/verification'),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             const SizedBox(height: 24),
