@@ -7,6 +7,7 @@ class ProfileHeader extends StatelessWidget {
   final String name;
   final String? phone;
   final String? imageUrl;
+  final String? customTitle;
   final bool isVerified;
 
   const ProfileHeader({
@@ -14,6 +15,7 @@ class ProfileHeader extends StatelessWidget {
     required this.name,
     this.phone,
     this.imageUrl,
+    this.customTitle,
     this.isVerified = false,
   });
 
@@ -34,6 +36,23 @@ class ProfileHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(name, style: AppTypography.h2(isDark: isDark)),
+            if (customTitle != null && customTitle!.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: context.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  customTitle!,
+                  style: AppTypography.bodySmall(isDark: isDark).copyWith(
+                    color: context.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
             if (isVerified) ...[
               const SizedBox(width: 8),
               Icon(Icons.verified, color: context.primary, size: 20),

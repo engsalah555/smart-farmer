@@ -3,10 +3,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'base_provider.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
+import '../services/verification_service.dart';
+import 'locator.dart';
 
 /// مزود حالة المصادقة - يدير حالة تسجيل الدخول والمستخدم الحالي
 class AuthProvider extends BaseProvider {
   final AuthService _authService;
+  final VerificationService _verificationService = locator<VerificationService>();
 
   AuthProvider(this._authService);
 
@@ -21,6 +24,14 @@ class AuthProvider extends BaseProvider {
   User? get currentUser => _currentUser;
   bool get rememberMe => _rememberMe;
   String get savedEmail => _savedEmail;
+
+  // Verification state
+  Map<String, dynamic>? _verificationRequest;
+  Map<String, dynamic>? get verificationRequest => _verificationRequest;
+
+  bool get isVerificationPending => _verificationRequest?['status'] == 'pending';
+  bool get isVerificationRejected => _verificationRequest?['status'] == 'rejected';
+  String? get verificationRejectionReason => _verificationRequest?['admin_notes'];
 
   /// تهيئة المزود - التحقق من حالة تسجيل الدخول وتحميل بيانات "تذكرني"
   Future<void> init() async {
@@ -37,6 +48,8 @@ class AuthProvider extends BaseProvider {
         if (userData != null) {
           _currentUser = User.fromJson(userData);
           _isAuthenticated = true;
+          // التحقق من حالة التوثيق عند التشغيل
+          checkVerificationStatus();
         }
       }
     }, errorMessage: 'فشل التحقق من حالة تسجيل الدخول');
@@ -231,6 +244,37 @@ class AuthProvider extends BaseProvider {
   void updateUserLocally(User user) {
     _currentUser = user;
     notifyListeners();
+  }
+
+  /// رفع طلب توثيق
+  Future<bool> submitVerification({
+    required String documentType,
+    required String imagePath,
+  }) async {
+    final success = await execute(() async {
+      final result = await _verificationService.submitVerification(
+        documentType: documentType,
+        imagePath: imagePath,
+      );
+      await checkVerificationStatus();
+      return true;
+    });
+    return success ?? false;
+  }
+
+  /// التحقق من حالة التوثيق
+  Future<void> checkVerificationStatus() async {
+    await executeSilently(() async {
+      final status = await _verificationService.getVerificationStatus();
+      _verificationRequest = status;
+      
+      // إذا أصبح المستخدم موثقاً في السيرفر، حدث البيانات المحلية
+      if (status != null && status['status'] == 'approved' && _currentUser != null) {
+         await refreshProfile();
+      }
+      
+      notifyListeners();
+    });
   }
 }
 

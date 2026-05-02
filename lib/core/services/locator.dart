@@ -24,6 +24,7 @@ import 'hive_persistence_service.dart';
 import 'weather_service.dart';
 import 'update_service.dart';
 import 'admin_service.dart';
+import 'verification_service.dart';
 
 final locator = GetIt.instance;
 
@@ -135,5 +136,10 @@ Future<void> setupLocator() async {
   // Admin Service
   locator.registerLazySingleton<AdminService>(
     () => AdminService(locator<Dio>()),
+  );
+
+  // Verification Service
+  locator.registerLazySingleton<VerificationService>(
+    () => VerificationService(locator<Dio>()),
   );
 }

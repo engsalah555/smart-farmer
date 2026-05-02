@@ -61,6 +61,7 @@ class ProfileScreen extends StatelessWidget {
                     name: user?.name ?? 'مستخدم',
                     phone: user?.phone,
                     imageUrl: user?.profileImage,
+                    customTitle: user?.customTitle,
                     isVerified: user?.isVerified ?? false,
                   );
                 },
@@ -100,6 +101,12 @@ class ProfileScreen extends StatelessWidget {
                     title: 'الإشعارات',
                     hasArrow: true,
                     onTap: () => context.push('/notifications'),
+                  ),
+                  SettingsTile(
+                    icon: Icons.verified_user_outlined,
+                    title: 'توثيق الحساب',
+                    hasArrow: true,
+                    onTap: () => context.push('/verification'),
                   ),
                 ],
               ),
