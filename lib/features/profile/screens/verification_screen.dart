@@ -19,12 +19,40 @@ class VerificationScreen extends StatefulWidget {
 class _VerificationScreenState extends State<VerificationScreen> {
   File? _selectedImage;
   String _documentType = 'هوية وطنية'; // Default type
-  final List<String> _documentTypes = [
-    'هوية وطنية',
-    'رخصة قيادة',
-    'جواز سفر',
-    'سجل تجاري',
-  ];
+  
+  // Mapping for Arabic to English keys for backend consistency
+  static const Map<String, String> _typeMapping = {
+    'هوية وطنية': 'national_id',
+    'رخصة قيادة': 'driver_license',
+    'جواز سفر': 'passport',
+    'سجل تجاري': 'commercial_register',
+  };
+
+  late List<String> _documentTypes;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDocumentTypes();
+  }
+
+  void _initDocumentTypes() {
+    final user = context.read<AuthProvider>().currentUser;
+    _documentTypes = [
+      'هوية وطنية',
+      'رخصة قيادة',
+      'جواز سفر',
+    ];
+
+    // Only add commercial register if the user is a seller
+    if (user?.isSeller == true) {
+      _documentTypes.add('سجل تجاري');
+    }
+
+    if (!_documentTypes.contains(_documentType)) {
+      _documentType = _documentTypes.first;
+    }
+  }
 
   final ImagePicker _picker = ImagePicker();
 
@@ -130,7 +158,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
     final auth = context.read<AuthProvider>();
     final success = await auth.submitVerification(
-      documentType: _documentType,
+      documentType: _typeMapping[_documentType] ?? _documentType,
       imagePath: _selectedImage!.path,
     );
 
