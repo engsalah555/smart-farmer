@@ -57,7 +57,9 @@ class StoreModel {
       logo: AppConstants.buildUrl(rawLogo) ?? '',
       coverImage: AppConstants.buildUrl(rawCover) ?? '',
       rating: double.tryParse((json['rating'] ?? 0).toString()) ?? 0.0,
-      reviewsCount: json['reviewsCount'] ?? 0,
+      reviewsCount: (json['reviews_count'] as num?)?.toInt() ??
+          (json['reviewsCount'] as num?)?.toInt() ??
+          0,
       location: json['address'] ?? json['location'] ?? 'غير محدد',
       category: json['store_type'] ?? json['category'] ?? 'شامل',
       status: json['status'] ?? 'pending',
