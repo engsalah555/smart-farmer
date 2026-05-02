@@ -71,10 +71,8 @@ class AuthProvider extends BaseProvider {
 
       final user = User.fromJson(data['user']);
 
-      // ✅ التحقق من نوع الحساب: إذا حاول الدخول كبائع وهو مستخدم عادي
-      if (userType == 'seller' && !user.isSeller) {
-        throw Exception('هذا الحساب غير مسجل كبائع. يرجى تسجيل الدخول كمشتري.');
-      }
+      // ✅ الباكند يتحقق من نوع الحساب ويرمي ValidationException إذا كان هناك تعارض.
+      // لا نحتاج للتحقق هنا مجدداً — هذا يضمن مصدر واحد للحقيقة (Single Source of Truth).
 
       _currentUser = user;
       _isAuthenticated = true;

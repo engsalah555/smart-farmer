@@ -27,10 +27,12 @@ class User {
   /// Alias for role
   String get role => userType;
 
-  /// هل المستخدم تاجر أو مزارع (بائع)
+  /// هل المستخدم مسؤول نظام
+  bool get isAdmin => userType.toLowerCase() == 'admin';
+
+  /// هل المستخدم تاجر أو مزارع (بائع) — لا يشمل الـ admin
   bool get isSeller =>
       userType.toLowerCase() == 'seller' ||
-      userType.toLowerCase() == 'admin' ||
       // التوافق مع البيانات القديمة
       userType.toLowerCase() == 'merchant' ||
       userType.toLowerCase() == 'farmer';
@@ -38,17 +40,18 @@ class User {
   /// هل المستخدم العادي (مشتري فقط)؟
   bool get isRegularUser => userType.toLowerCase() == 'user';
 
-  /// هل يستطيع فتح متجر والبيع؟ (البائعون)
-  bool get canSell => isSeller;
+  /// هل يستطيع فتح متجر والبيع؟ (البائعون والمسؤولون)
+  bool get canSell => isSeller || isAdmin;
 
   /// هل يستطيع الشراء من السوق؟ (الجميع)
   bool get canBuy => true;
 
-  /// هل يستطيع إضافة منتجات؟ (البائعون الموثقون)
+  /// هل يستطيع إضافة منتجات؟ (البائعون)
   bool get canAddProducts => canSell;
 
   /// رسالة توضيحية للصلاحيات
   String get permissionMessage {
+    if (isAdmin) return 'مسؤول النظام — صلاحيات كاملة';
     if (isSeller && !isVerified) {
       return 'حسابك قيد المراجعة. سيتم تفعيل البيع بعد التحقق.';
     } else if (isSeller && isVerified) {

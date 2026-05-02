@@ -63,28 +63,39 @@ class MarketplaceProvider extends BaseProvider {
   bool hasNextStoreProductsPage(String storeId) => _storeProductsHasNext[storeId] ?? true;
 
   MarketplaceProvider() {
-    _initFromCache();
+    // Delay init to avoid calling notifyListeners during widget tree build
+    Future.microtask(_initFromCache);
   }
 
   Future<void> _initFromCache() async {
     try {
-      final cachedProducts = await _persistence.get(_boxName, 'products');
-      final cachedStores = await _persistence.get(_boxName, 'stores');
-      final cachedCats = await _persistence.get(_boxName, 'categories');
+      final results = await Future.wait([
+        _persistence.get(_boxName, 'products'),
+        _persistence.get(_boxName, 'stores'),
+        _persistence.get(_boxName, 'categories'),
+      ]);
 
-      if (cachedProducts is Iterable) {
+      bool hasData = false;
+      final cachedProducts = results[0];
+      final cachedStores = results[1];
+      final cachedCats = results[2];
+
+      if (cachedProducts is Iterable && cachedProducts.isNotEmpty) {
         _products.clear();
         _products.addAll(cachedProducts.map((e) => ProductModel.fromJson(Map<String, dynamic>.from(e as Map))));
+        hasData = true;
       }
-      if (cachedStores is Iterable) {
+      if (cachedStores is Iterable && cachedStores.isNotEmpty) {
         _stores.clear();
         _stores.addAll(cachedStores.map((e) => StoreModel.fromJson(Map<String, dynamic>.from(e as Map))));
+        hasData = true;
       }
-      if (cachedCats is Iterable) {
+      if (cachedCats is Iterable && cachedCats.isNotEmpty) {
         _categories.clear();
         _categories.addAll(cachedCats.map((e) => Map<String, dynamic>.from(e as Map)));
       }
-      notifyListeners();
+      // Only notify once after all cache is loaded, and only if there's data worth showing
+      if (hasData) notifyListeners();
     } catch (e) {
       debugPrint('Error initializing marketplace cache: $e');
     }
@@ -93,12 +104,12 @@ class MarketplaceProvider extends BaseProvider {
   Future<void> refreshMarketplace() async {
     if (_isRefreshing) return;
     _isRefreshing = true;
+    notifyListeners();
     try {
-      await Future.wait([
-        loadMetadata(),
-        loadStores(),
-        loadProducts(),
-      ]);
+      // Run sequentially to avoid race conditions and excess rebuilds
+      await loadMetadata();
+      await loadStores();
+      await loadProducts();
     } finally {
       _isRefreshing = false;
       notifyListeners();
@@ -117,22 +128,27 @@ class MarketplaceProvider extends BaseProvider {
       _hasNextProductsPage = true;
     }
 
+    // ✅ Fix: capture current page BEFORE async call to avoid race condition
+    final nextPage = loadMore ? _currentProductsPage + 1 : 1;
+
     await execute(() async {
-      final result = await _marketplaceService.getProducts(
-        page: loadMore ? _currentProductsPage + 1 : 1,
-      );
+      final result = await _marketplaceService.getProducts(page: nextPage);
       
       if (!loadMore) {
         _products.clear();
-        // Save first page to cache
-        await _persistence.save(_boxName, 'products', result.data.map((e) => e.toCacheJson()).toList());
+        // Save first page to cache only — not all pages
+        await _persistence.save(
+          _boxName,
+          'products',
+          result.data.map((e) => e.toCacheJson()).toList(),
+        );
       }
       _products.addAll(result.data);
       _currentProductsPage = result.currentPage;
       _hasNextProductsPage = result.hasNextPage;
 
-      // Extract fallback stores if list is empty
-      if (_stores.isEmpty) {
+      // Fallback: build store list from products if stores haven't loaded yet
+      if (_stores.isEmpty && result.data.isNotEmpty) {
         for (var product in result.data) {
           if (!_stores.any((s) => s.id == product.storeId)) {
             _stores.add(_createFallbackStore(product));
@@ -157,9 +173,12 @@ class MarketplaceProvider extends BaseProvider {
       _hasNextStoresPage = true;
     }
 
+    // ✅ Fix: capture page number before async gap
+    final nextPage = loadMore ? _currentStoresPage + 1 : 1;
+
     await execute(() async {
       final result = await _marketplaceService.getStores(
-        page: loadMore ? _currentStoresPage + 1 : 1,
+        page: nextPage,
         latitude: latitude,
         longitude: longitude,
       );
