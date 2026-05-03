@@ -52,9 +52,9 @@ class WeatherService {
               'accept-language': 'ar',
             },
             options: Options(
-              headers: {'User-Agent': 'SmartFarm2App'},
-              sendTimeout: const Duration(seconds: 4),
-              receiveTimeout: const Duration(seconds: 4),
+              headers: {'User-Agent': 'Zarea-Agricultural-Assistant-App '},
+              sendTimeout: const Duration(seconds: 10),
+              receiveTimeout: const Duration(seconds: 10),
             ),
           );
           if (geoResponse.data != null && geoResponse.data['address'] != null) {

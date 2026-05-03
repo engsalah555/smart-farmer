@@ -40,10 +40,21 @@ Future<void> setupLocator() async {
 
   // Dio instance with Interceptor
   locator.registerLazySingleton<Dio>(() {
+    String baseUrl = AppConstants.apiBaseUrl;
+    
+    // Ensure we don't have double /api/ or double //
+    if (baseUrl.endsWith('/api')) {
+      baseUrl = '$baseUrl/';
+    } else if (baseUrl.endsWith('/api/')) {
+      // already perfect
+    } else {
+      // Append /api/ correctly
+      baseUrl = baseUrl.endsWith('/') ? '${baseUrl}api/' : '$baseUrl/api/';
+    }
+
     final dio = Dio(
       BaseOptions(
-        baseUrl:
-            '${AppConstants.apiBaseUrl.endsWith('/') ? AppConstants.apiBaseUrl : '${AppConstants.apiBaseUrl}/'}api/',
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {

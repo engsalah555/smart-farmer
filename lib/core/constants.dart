@@ -6,13 +6,14 @@ export 'theme/app_typography.dart';
 export 'theme/app_decorations.dart';
 
 class AppConstants {
-  static const String appName = 'Smart Farm';
+  static const String appName = 'زرعة';
   static final String ipAddress = dotenv.env['IP_ADDRESS'] ?? '[IP_ADDRESS]';
 
   /// يقرأ عنوان الـ API من ملف .env تلقائياً.
   static String get apiBaseUrl {
     final url = dotenv.env['API_BASE_URL'] ?? 'http://$ipAddress:8000';
-    return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+    // Remove all trailing slashes to be safe
+    return url.replaceAll(RegExp(r'/+$'), '');
   }
 
   // --- API Endpoints ---
@@ -80,4 +81,3 @@ class AppConstants {
     return '$apiBaseUrl/storage/$cleanPath';
   }
 }
-

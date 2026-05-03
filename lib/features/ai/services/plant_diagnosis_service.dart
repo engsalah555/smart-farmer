@@ -94,12 +94,6 @@ class PlantDiagnosisResult {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Top-level Isolate Functions
-// ─────────────────────────────────────────────────────────────────────────────
-
-String _encodeBase64Isolate(Uint8List bytes) => base64Encode(bytes);
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Service — يستخدم Grok Vision API
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -114,8 +108,8 @@ class PlantDiagnosisService {
 
   final Dio _dio = Dio(
     BaseOptions(
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 60),
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 90),
       headers: {'Content-Type': 'application/json'},
     ),
   );
@@ -123,11 +117,11 @@ class PlantDiagnosisService {
   PlantDiagnosisService();
 
   String get _apiKey {
-    // الأولوية للمفتاح "smart_farmar2" مع تنظيف أي مسافات
-    final key = (dotenv.env['smart_farmar2'] ??
+    // الأولوية للمفتاح الخاص بالكاميرا "zarea" لتجنب قيود الاستخدام المشترك مع البوت
+    final key = (dotenv.env['zarea'] ??
+                 dotenv.env['smart_farmar2'] ??
                  dotenv.env['GROK_API_KEY'] ??
                  dotenv.env['XAI_API_KEY'] ??
-                 dotenv.env['PLANT_DIAGNOSIS_API_KEY'] ??
                  '').trim();
     return key;
   }
@@ -140,7 +134,8 @@ class PlantDiagnosisService {
     // اكتشاف المزود: Groq يحتوي على gsk
     if (key.startsWith('gsk_') || key.contains('gsk')) {
       _currentBaseUrl = 'https://api.groq.com/openai/v1/chat/completions';
-      _currentPrimaryModel = 'llama-3.2-11b-vision-preview';
+      // تحديث الموديل إلى الإصدار الجديد الموصى به
+      _currentPrimaryModel = 'meta-llama/llama-4-scout-17b-16e-instruct';
       _currentFallbackModel = 'llama-3.2-90b-vision-preview';
       debugPrint('PlantDiagnosisService: Identified Groq Provider');
     } else {
@@ -152,23 +147,12 @@ class PlantDiagnosisService {
 
     try {
       final data = await rootBundle.loadString('assets/ai/diagnosis_prompt.json');
-      final Map<String, dynamic> json = jsonDecode(data);
-      _systemPrompt = json['system_instruction'];
+      final Map<String, dynamic> jsonData = jsonDecode(data);
+      _systemPrompt = jsonData['system_instruction'];
     } catch (e) {
       debugPrint('PlantDiagnosisService: Error loading prompt, using default. $e');
       _systemPrompt = '''
-أنت خبير وقاية نباتات عالمي. مهمتك تحليل صور النباتات وتقديم تقرير علمي دقيق.
-يجب أن تلتزم بتنسيق JSON التالي حصراً:
-{
-  "plantName": "اسم النبتة الشائع بالعربية",
-  "isHealthy": true/false,
-  "diseaseType": "اسم المرض بالعربية (أو 'سليمة')",
-  "diseaseCauses": "شرح موجز للأسباب",
-  "severityLevel": "Low/Medium/High",
-  "treatmentMethods": "خطوات علاجية مفصلة وعملية",
-  "preventionTips": ["نصيحة 1", "نصيحة 2", "نصيحة 3"]
-}
-أجب بـ JSON فقط بدون أي نص إضافي.
+أنت المهندس زرعة، خبير وقاية نباتات. حلل الصورة وارجع بالنتيجة بتنسيق JSON حصراً.
 ''';
     }
     debugPrint('PlantDiagnosisService: Ready (Model: $_currentPrimaryModel)');
@@ -185,9 +169,9 @@ class PlantDiagnosisService {
       final result = await FlutterImageCompress.compressAndGetFile(
         srcPath,
         targetPath,
-        minWidth: 640,
-        minHeight: 640,
-        quality: 70,
+        minWidth: 800,
+        minHeight: 800,
+        quality: 80,
         format: CompressFormat.jpeg,
       );
 
@@ -218,12 +202,15 @@ class PlantDiagnosisService {
 
       final base64Image = base64Encode(compressed);
 
+      // دمج تعليمات النظام مع رسالة المستخدم لتجنب أخطاء بعض موديلات الرؤية (Vision Models)
+      // التي ترفض وجود رسالة System مع وجود صور.
+      final fullInstruction = '${_systemPrompt ?? ""}\n\nحلل هذه الصورة وقدم النتيجة بتنسيق JSON فقط.';
+
       final messages = [
-        if (_systemPrompt != null) {'role': 'system', 'content': _systemPrompt!},
         {
           'role': 'user',
           'content': [
-            {'type': 'text', 'text': 'حلل هذه الصورة كخبير زراعي وقدم النتيجة بتنسيق JSON فقط.'},
+            {'type': 'text', 'text': fullInstruction},
             {
               'type': 'image_url',
               'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}
@@ -234,6 +221,7 @@ class PlantDiagnosisService {
 
       for (final model in [_currentPrimaryModel, _currentFallbackModel]) {
         try {
+          debugPrint('PlantDiagnosisService: Attempting with model $model');
           final response = await _dio.post<Map<String, dynamic>>(
             _currentBaseUrl,
             data: {
@@ -250,7 +238,7 @@ class PlantDiagnosisService {
           if (response.statusCode == 200 && response.data != null) {
             final rawText = response.data!['choices']?[0]?['message']?['content'] as String?;
             if (rawText == null || rawText.isEmpty) {
-              return PlantDiagnosisResult.fromError('رد فارغ من الخادم.');
+              continue; // Try fallback if empty
             }
             return _parseResponse(rawText);
           }
@@ -263,13 +251,13 @@ class PlantDiagnosisService {
           }
           
           if (model == _currentFallbackModel) {
-            return PlantDiagnosisResult.fromError('فشل الاتصال بالخادم (${e.response?.statusCode}).');
+            return PlantDiagnosisResult.fromError('تعذر الحصول على تشخيص حالياً. تفاصيل: $errorBody');
           }
         }
       }
     } catch (e) {
       debugPrint('PlantDiagnosisService Unexpected error: $e');
-      return PlantDiagnosisResult.fromError('حدث خطأ غير متوقع.');
+      return PlantDiagnosisResult.fromError('حدث خطأ غير متوقع: $e');
     }
 
     return PlantDiagnosisResult.fromError('تعذر الحصول على تشخيص حالياً.');
@@ -296,4 +284,5 @@ class PlantDiagnosisService {
     }
   }
 }
+
 

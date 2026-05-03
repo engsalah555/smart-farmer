@@ -22,10 +22,10 @@ class SettingsProvider with ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    debugPrint('📡 Fetching Metadata from: ${_dio.options.baseUrl}/metadata');
+    debugPrint('📡 Fetching Metadata from: ${_dio.options.baseUrl}metadata');
 
     try {
-      final response = await _dio.get('/metadata');
+      final response = await _dio.get('metadata');
       debugPrint('✅ Metadata Response Received: ${response.statusCode}');
 
       if (response.data != null && response.data['success'] == true) {

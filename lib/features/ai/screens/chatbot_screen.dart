@@ -175,55 +175,94 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     }
   }
 
+  void _clearChat() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('بدء محادثة جديدة'),
+        content: const Text('هل أنت متأكد من رغبتك في مسح المحادثة الحالية؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _messages.clear();
+                _messageController.clear();
+                _selectedImage = null;
+                _messages.add(
+                  ChatMessage(
+                    text: 'أهلاً بك في مساعدك الزراعي الذكي! كيف يمكنني مساعدتك اليوم؟',
+                    isUser: false,
+                    timestamp: DateTime.now(),
+                  ),
+                );
+                _botMessageIndex = -1;
+                _botAccumulated = '';
+              });
+            },
+            child: const Text('نعم، امسح', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.background,
-      body: Column(
-        children: [
-          _ChatAppBar(
-            onBack: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go('/home');
-              }
-            },
-          ),
-          Expanded(
-            child: _messages.length <= 1
-                ? _buildWelcomeState()
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 20,
-                    ),
-                    itemCount: _messages.length,
-                    // addAutomaticKeepAlives = false يحسن الأداء مع قوائم طويلة
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: true,
-                    itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      // FadeIn فقط على آخر رسالة
-                      final isLatest = index == _messages.length - 1;
-                      final bubble = _MessageBubble(
-                        message: message,
-                        key: ValueKey('msg_$index'),
-                      );
-                      if (isLatest && index > 0) {
-                        return FadeInSlide(
-                          duration: const Duration(milliseconds: 300),
-                          child: bubble,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _ChatAppBar(
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/home');
+                }
+              },
+              onClear: _clearChat,
+            ),
+            Expanded(
+              child: _messages.length <= 1
+                  ? _buildWelcomeState()
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 20,
+                      ),
+                      itemCount: _messages.length,
+                      // addAutomaticKeepAlives = false يحسن الأداء مع قوائم طويلة
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: true,
+                      itemBuilder: (context, index) {
+                        final message = _messages[index];
+                        // FadeIn فقط على آخر رسالة
+                        final isLatest = index == _messages.length - 1;
+                        final bubble = _MessageBubble(
+                          message: message,
+                          key: ValueKey('msg_$index'),
                         );
-                      }
-                      return bubble;
-                    },
-                  ),
-          ),
-          if (_isTyping) const _TypingIndicator(),
-          _buildInputArea(),
-        ],
+                        if (isLatest && index > 0) {
+                          return FadeInSlide(
+                            duration: const Duration(milliseconds: 300),
+                            child: bubble,
+                          );
+                        }
+                        return bubble;
+                      },
+                    ),
+            ),
+            if (_isTyping) const _TypingIndicator(),
+            _buildInputArea(),
+          ],
+        ),
       ),
     );
   }
@@ -407,17 +446,15 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
 class _ChatAppBar extends StatelessWidget {
   final VoidCallback onBack;
-  const _ChatAppBar({required this.onBack});
+  final VoidCallback onClear;
+  const _ChatAppBar({required this.onBack, required this.onClear});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return RepaintBoundary(
       child: Container(
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top,
-          bottom: 12,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: context.surface,
           boxShadow: [
@@ -440,37 +477,45 @@ class _ChatAppBar extends StatelessWidget {
               backgroundImage: const AssetImage('assets/icon/icon.png'),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'استشاري زرعة',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: context.textColor,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'استشاري زرعة',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: context.textColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: context.success,
-                        shape: BoxShape.circle,
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: context.success,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'متصل نشط',
-                      style: TextStyle(color: context.textMuted, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 4),
+                      Text(
+                        'متصل نشط',
+                        style: TextStyle(color: context.textMuted, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
+            IconButton(
+              tooltip: 'بدء محادثة جديدة',
+              icon: Icon(Icons.delete_sweep_outlined, color: context.error),
+              onPressed: onClear,
+            ),
+            const SizedBox(width: 8),
           ],
         ),
       ),

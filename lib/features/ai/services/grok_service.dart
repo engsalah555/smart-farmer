@@ -17,8 +17,8 @@ class GrokService {
 
   final Dio _dio = Dio(
     BaseOptions(
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 60),
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 90),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -28,8 +28,9 @@ class GrokService {
   GrokService();
 
   String get _apiKey {
-    // الأولوية للمفتاح "smart_farmar2" مع تنظيف أي مسافات
-    final key = (dotenv.env['smart_farmar2'] ??
+    // الأولوية للمفتاح "zarea" كما طلب المستخدم، ثم المفاتيح الأخرى
+    final key = (dotenv.env['zarea'] ??
+                 dotenv.env['smart_farmar2'] ??
                  dotenv.env['GROK_API_KEY'] ??
                  dotenv.env['XAI_API_KEY'] ??
                  '').trim();
@@ -61,7 +62,7 @@ class GrokService {
       _systemInstruction = promptJson['system_instruction'];
     } catch (e) {
       debugPrint('GrokService: Error loading prompt, using default. $e');
-      _systemInstruction = 'أنت المهندس زرعة، مستشار زراعي خبير.';
+      _systemInstruction = 'أنت المهندس زرعة، مستشار زراعي خبير في تطبيق زرعة. ردودك صارمة، مختصرة، ومنظمة جداً. إذا سُئلت عن شيء غير زراعي أو خارج التطبيق، اعتذر بوضوح.';
     }
 
     debugPrint('GrokService: Ready (Model: $_currentPrimaryModel)');
@@ -86,21 +87,22 @@ class GrokService {
     // بناء محتوى الرسالة (دعم النص والصورة)
     if (imageBytes != null && imageBytes.isNotEmpty) {
       final base64Image = base64Encode(imageBytes);
-      final List<Map<String, dynamic>> userContent = [
-        {'type': 'text', 'text': message},
+      String visionModel = _apiKey.contains('gsk') 
+          ? 'llama-3.2-11b-vision-preview' // موديل الرؤية الأفضل في Groq حالياً
+          : 'grok-2-vision-1212';
+          
+      // دمج تعليمات النظام مع المحتوى للموديلات التي ترفض System مع الصور
+      final fullText = '${_systemInstruction ?? ""}\n\n$message';
+      final List<Map<String, dynamic>> combinedUserContent = [
+        {'type': 'text', 'text': fullText},
         {
           'type': 'image_url',
           'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}
         }
       ];
-      
-      String visionModel = _apiKey.contains('gsk') 
-          ? 'llama-3.2-11b-vision-preview' 
-          : 'grok-2-vision-1212';
-          
+
       yield* _makeRequest(_currentBaseUrl, visionModel, [
-        if (_systemInstruction != null) {'role': 'system', 'content': _systemInstruction!},
-        {'role': 'user', 'content': userContent}
+        {'role': 'user', 'content': combinedUserContent}
       ]);
     } else {
       messages.add({'role': 'user', 'content': message});
@@ -114,7 +116,7 @@ class GrokService {
             if (chunk.startsWith('ERROR:')) {
               lastError = chunk.replaceFirst('ERROR:', '');
               if (lastError.contains('400') || lastError.contains('404')) break;
-              yield 'عذراً، $lastError';
+              yield 'عذراً، حدث خطأ فني.';
               return;
             } else {
               yield chunk;
@@ -129,9 +131,9 @@ class GrokService {
       
       if (!success) {
         if (lastError.contains('429')) {
-          yield 'تم تجاوز حد الطلبات المسموح به للمستوى المجاني حالياً. يرجى المحاولة بعد قليل.';
+          yield 'تم تجاوز حد الطلبات المسموح به حالياً. يرجى المحاولة بعد قليل.';
         } else {
-          yield 'عذراً، الخدمة غير متاحة حالياً. تأكد من اتصالك بالإنترنت أو حاول لاحقاً.';
+          yield 'عذراً، الخدمة غير متاحة حالياً. تأكد من اتصالك بالإنترنت.';
         }
       }
     }
@@ -144,7 +146,7 @@ class GrokService {
         data: {
           'model': model,
           'messages': messages,
-          'temperature': 0.7,
+          'temperature': 0.1, // تقليل درجة الحرارة ليكون أكثر صرامة ودقة
           'stream': true,
         },
         options: Options(
@@ -184,7 +186,7 @@ class GrokService {
       } else if (e.response?.statusCode == 400) {
         yield 'ERROR:400 - $errorBody';
       } else {
-        yield 'ERROR:حدث خطأ في الاتصال بالخادم';
+        yield 'ERROR:حدث خطأ في الاتصال';
       }
     } catch (e) {
       debugPrint('GrokService: Unexpected Error: $e');
@@ -206,9 +208,3 @@ class GrokService {
     debugPrint('GrokService: Chat Reset');
   }
 }
-
-
-
-// دالة تعمل في isolate منفصل
-String _encodeBase64(List<int> bytes) => base64Encode(bytes);
-
