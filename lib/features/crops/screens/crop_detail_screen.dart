@@ -103,7 +103,7 @@ class _CropDetailScreenState extends State<CropDetailScreen> {
                       children: [
                         _GrowthTimelineSection(crop: c),
                         const SizedBox(height: 40),
-                        VisualTroubleshootingSection(crop: c),
+                        PestsSection(crop: c),
                       ],
                     ),
                     const SizedBox(height: 56),
@@ -672,7 +672,7 @@ class _MarketplaceCtaSection extends StatelessWidget {
                 subtitle: 'أجود الأنواع',
                 icon: Icons.spa_rounded,
                 color: context.primary,
-                onTap: () => context.push('/marketplace'),
+                onTap: () => context.go('/marketplace'),
               ),
             ),
             const SizedBox(width: 12),
@@ -695,7 +695,7 @@ class _MarketplaceCtaSection extends StatelessWidget {
           icon: Icons.shopping_basket_rounded,
           color: Colors.orange,
           isFullWidth: true,
-          onTap: () => context.push('/marketplace'),
+          onTap: () => context.go('/marketplace'),
         ),
       ],
     );

@@ -19,7 +19,6 @@ class Crop {
   final String plantingSeason;
   final String waterNeeds;
   final String? fertilizerNeeds;
-  final String? difficultyLevel;
   final String harvestTime;
   final CareGuide? careGuide;
   
@@ -62,7 +61,6 @@ class Crop {
     required this.plantingSeason,
     required this.waterNeeds,
     this.fertilizerNeeds,
-    this.difficultyLevel,
     required this.harvestTime,
     this.careGuide,
   });
@@ -95,7 +93,6 @@ class Crop {
       plantingSeason: json['planting_season'] ?? 'غير محدد',
       waterNeeds: json['water_needs'] ?? 'غير محدد',
       fertilizerNeeds: json['fertilizer_needs'],
-      difficultyLevel: json['difficulty_level'] ?? json['difficultyLevel'],
       harvestTime: json['harvest_time'] ?? 'غير محدد',
       careGuide: json['care_guide'] != null ? CareGuide.fromJson(json['care_guide']) : null,
     );
@@ -120,7 +117,6 @@ class Crop {
         'planting_season': plantingSeason,
         'water_needs': waterNeeds,
         'fertilizer_needs': fertilizerNeeds,
-        'difficulty_level': difficultyLevel,
         'harvest_time': harvestTime,
         'care_guide': careGuide != null ? _careGuideToJson(careGuide!) : null,
       };
