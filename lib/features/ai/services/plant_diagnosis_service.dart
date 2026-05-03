@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -63,7 +63,8 @@ class PlantDiagnosisResult {
     required this.rawResponse,
   });
 
-  factory PlantDiagnosisResult.fromJson(Map<String, dynamic> json, String raw) {
+  factory PlantDiagnosisResult.fromJson(
+      Map<String, dynamic> json, String raw) {
     return PlantDiagnosisResult(
       plantName: json['plantName'] ?? 'غير محدد',
       diseaseType: json['diseaseType'] ?? 'غير محدد',
@@ -98,59 +99,34 @@ class PlantDiagnosisResult {
 
 String _encodeBase64Isolate(Uint8List bytes) => base64Encode(bytes);
 
-String _buildJsonIsolate(_JsonBuildParams p) {
-  return jsonEncode({
-    'system_instruction': {
-      'parts': [
-        {'text': p.systemPrompt}
-      ]
-    },
-    'contents': [
-      {
-        'role': 'user',
-        'parts': [
-          {
-            'text':
-                'حلل هذه الصورة كخبير زراعي محترف. قدم تشخيصاً دقيقاً وخطوات علاجية عملية. يجب أن تكون النتيجة بتنسيق JSON حصرياً.'
-          },
-          {
-            'inline_data': {
-              'mime_type': 'image/jpeg',
-              'data': p.base64Image,
-            }
-          }
-        ]
-      }
-    ],
-    'generationConfig': {
-      'temperature': 0.1,
-      'maxOutputTokens': 1024,
-      'responseMimeType': 'application/json',
-    },
-  });
-}
-
-class _JsonBuildParams {
-  final String systemPrompt;
-  final String base64Image;
-  _JsonBuildParams({required this.systemPrompt, required this.base64Image});
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
-// Service
+// Service — يستخدم Grok Vision API
 // ─────────────────────────────────────────────────────────────────────────────
 
 class PlantDiagnosisService {
-  static const String _primaryModel = 'gemini-2.0-flash-lite';
-  static const String _fallbackModel = 'gemini-2.0-flash';
-
-  static String _buildUrl(String model) =>
-      'https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent';
+  static const String _baseUrl = 'https://api.x.ai/v1/chat/completions';
+  static const String _primaryModel = 'grok-3-mini';
+  static const String _fallbackModel = 'grok-3';
 
   bool _isInitialized = false;
   String? _systemPrompt;
 
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: _baseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 60),
+      headers: {'Content-Type': 'application/json'},
+    ),
+  );
+
   PlantDiagnosisService();
+
+  String get _apiKey =>
+      dotenv.env['GROK_API_KEY'] ??
+      dotenv.env['XAI_API_KEY'] ??
+      dotenv.env['PLANT_DIAGNOSIS_API_KEY'] ??
+      '';
 
   Future<void> _ensureInitialized() async {
     if (_isInitialized) return;
@@ -173,25 +149,24 @@ class PlantDiagnosisService {
   "treatmentMethods": "خطوات علاجية مفصلة وعملية",
   "preventionTips": ["نصيحة 1", "نصيحة 2", "نصيحة 3"]
 }
-استخدم لغة احترافية ومباشرة.
+استخدم لغة احترافية ومباشرة. أجب بـ JSON فقط بدون أي نص إضافي.
 ''';
     }
-    debugPrint('PlantDiagnosisService: ready with hardened prompt');
+    debugPrint('PlantDiagnosisService: ready (Grok)');
   }
-
-  String get _apiKey =>
-      dotenv.env['PLANT_DIAGNOSIS_API_KEY'] ??
-      dotenv.env['GEMINI_API_KEY'] ??
-      '';
 
   Future<Uint8List?> _compressImageToFile(Uint8List imageBytes) async {
     try {
       final tempDir = await getTemporaryDirectory();
+      final srcPath =
+          '${tempDir.path}/src_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final targetPath =
           '${tempDir.path}/diag_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
+      await File(srcPath).writeAsBytes(imageBytes);
+
       final result = await FlutterImageCompress.compressAndGetFile(
-        await _writeTempFile(imageBytes, tempDir),
+        srcPath,
         targetPath,
         minWidth: 640,
         minHeight: 640,
@@ -199,9 +174,13 @@ class PlantDiagnosisService {
         format: CompressFormat.jpeg,
       );
 
+      // تنظيف الملفات المؤقتة
+      try {
+        await File(srcPath).delete();
+      } catch (_) {}
+
       if (result == null) return imageBytes;
       final compressed = await result.readAsBytes();
-
       try {
         await File(targetPath).delete();
       } catch (_) {}
@@ -213,17 +192,12 @@ class PlantDiagnosisService {
     }
   }
 
-  Future<String> _writeTempFile(Uint8List bytes, Directory dir) async {
-    final path = '${dir.path}/src_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    await File(path).writeAsBytes(bytes);
-    return path;
-  }
-
   Future<PlantDiagnosisResult> diagnose(Uint8List imageBytes) async {
     await _ensureInitialized();
 
     if (_apiKey.isEmpty) {
-      return PlantDiagnosisResult.fromError('مفتاح API غير موجود.');
+      return PlantDiagnosisResult.fromError(
+          'مفتاح Grok API غير موجود في ملف .env');
     }
 
     try {
@@ -232,45 +206,71 @@ class PlantDiagnosisService {
         return PlantDiagnosisResult.fromError('فشل في معالجة الصورة.');
       }
 
-      final base64Image =
-          await compute<Uint8List, String>(_encodeBase64Isolate, compressed);
+      final base64Image = await compute<Uint8List, String>(
+          _encodeBase64Isolate, compressed);
 
-      final bodyStr = await compute<_JsonBuildParams, String>(
-        _buildJsonIsolate,
-        _JsonBuildParams(
-          systemPrompt: _systemPrompt ?? '',
-          base64Image: base64Image,
-        ),
-      );
+      final messages = [
+        {'role': 'system', 'content': _systemPrompt ?? ''},
+        {
+          'role': 'user',
+          'content': [
+            {
+              'type': 'text',
+              'text':
+                  'حلل هذه الصورة كخبير زراعي محترف. قدم تشخيصاً دقيقاً وخطوات علاجية عملية. يجب أن تكون النتيجة بتنسيق JSON حصراً بدون أي نص إضافي.',
+            },
+            {
+              'type': 'image_url',
+              'image_url': {
+                'url': 'data:image/jpeg;base64,$base64Image',
+              },
+            },
+          ],
+        },
+      ];
 
       for (final model in [_primaryModel, _fallbackModel]) {
-        final uri = Uri.parse('${_buildUrl(model)}?key=$_apiKey');
-        final response = await http
-            .post(
-              uri,
-              headers: {'Content-Type': 'application/json'},
-              body: bodyStr,
-            )
-            .timeout(const Duration(seconds: 60));
+        try {
+          final response = await _dio.post<Map<String, dynamic>>(
+            '',
+            data: {
+              'model': model,
+              'messages': messages,
+              'temperature': 0.1,
+              'max_tokens': 1024,
+            },
+            options: Options(
+              headers: {'Authorization': 'Bearer $_apiKey'},
+            ),
+          );
 
-        if (response.statusCode == 200) {
-          return _parseResponse(response.bodyBytes);
-        } else if (response.statusCode == 429) {
+          if (response.statusCode == 200 && response.data != null) {
+            final rawText = response.data!['choices']?[0]?['message']
+                ?['content'] as String?;
+            if (rawText == null || rawText.isEmpty) {
+              return PlantDiagnosisResult.fromError(
+                  'لم تُستقبل بيانات من الخادم.');
+            }
+            return _parseResponse(rawText);
+          }
+        } on DioException catch (e) {
+          if (e.response?.statusCode == 429) {
+            if (model == _fallbackModel) {
+              return PlantDiagnosisResult.fromError(
+                  'تم تجاوز الحد المجاني. يرجى المحاولة بعد دقيقة.');
+            }
+            continue;
+          }
+          debugPrint('PlantDiagnosisService DioException ($model): $e');
           if (model == _fallbackModel) {
             return PlantDiagnosisResult.fromError(
-                'تم تجاوز الحد المجاني. يرجى المحاولة بعد دقيقة.');
+                'خطأ في الاتصال بالخادم (${e.response?.statusCode ?? 'timeout'}).');
           }
-          continue;
-        } else {
-          return PlantDiagnosisResult.fromError(
-              'خطأ في الاتصال بالخادم (${response.statusCode}).');
         }
       }
     } catch (e) {
-      if (e.toString().contains('TimeoutException')) {
-        return PlantDiagnosisResult.fromError('انتهت مهلة الاتصال.');
-      }
-      if (e.toString().contains('SocketException')) {
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('connection')) {
         return PlantDiagnosisResult.fromError('فشل الاتصال بالإنترنت.');
       }
       return PlantDiagnosisResult.fromError('حدث خطأ غير متوقع.');
@@ -279,22 +279,22 @@ class PlantDiagnosisService {
     return PlantDiagnosisResult.fromError('تعذر الاتصال بالخادم.');
   }
 
-  PlantDiagnosisResult _parseResponse(List<int> bodyBytes) {
+  PlantDiagnosisResult _parseResponse(String rawText) {
     try {
-      final data = jsonDecode(utf8.decode(bodyBytes));
-      final rawText =
-          data['candidates']?[0]?['content']?['parts']?[0]?['text'] ?? '';
-
-      if (rawText.isEmpty) {
-        return PlantDiagnosisResult.fromError('لم تُستقبل بيانات من الخادم.');
-      }
-
       final cleanJson = rawText
           .replaceAll(RegExp(r'```json\s*'), '')
           .replaceAll(RegExp(r'```\s*'), '')
           .trim();
 
-      final Map<String, dynamic> jsonData = jsonDecode(cleanJson);
+      // استخراج أول {} block إن وُجد نص إضافي
+      final start = cleanJson.indexOf('{');
+      final end = cleanJson.lastIndexOf('}');
+      if (start == -1 || end == -1) {
+        return PlantDiagnosisResult.fromError('فشل في تحليل استجابة الخادم.');
+      }
+
+      final jsonStr = cleanJson.substring(start, end + 1);
+      final Map<String, dynamic> jsonData = jsonDecode(jsonStr);
       return PlantDiagnosisResult.fromJson(jsonData, rawText);
     } catch (e) {
       return PlantDiagnosisResult.fromError('فشل في تحليل استجابة الخادم.');

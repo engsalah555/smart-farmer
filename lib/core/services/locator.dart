@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/ai/services/ai_service.dart';
-import '../../features/ai/services/gemini_service.dart';
+import '../../features/ai/services/grok_service.dart';
 import '../../features/ai/services/plant_diagnosis_service.dart';
 import '../../features/community/services/community_service.dart';
 import '../../features/crops/services/crops_service.dart';
@@ -127,8 +127,8 @@ Future<void> setupLocator() async {
   // Update Service
   locator.registerLazySingleton<UpdateService>(() => UpdateService());
 
-  // Gemini AI Services
-  locator.registerLazySingleton<GeminiService>(() => GeminiService());
+  // Grok AI Services (يستبدل Gemini)
+  locator.registerLazySingleton<GrokService>(() => GrokService());
   locator.registerLazySingleton<PlantDiagnosisService>(
     () => PlantDiagnosisService(),
   );

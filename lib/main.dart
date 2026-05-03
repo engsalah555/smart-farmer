@@ -46,6 +46,7 @@ void main() async {
     }
   }
 
+  // الخطوط غير مضمّنة محلياً — يجب إبقاء Runtime Fetching مفعلاً
   GoogleFonts.config.allowRuntimeFetching = true;
 
   FlutterError.onError = (FlutterErrorDetails details) {
