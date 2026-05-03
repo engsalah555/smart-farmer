@@ -104,16 +104,16 @@ String _encodeBase64Isolate(Uint8List bytes) => base64Encode(bytes);
 // ─────────────────────────────────────────────────────────────────────────────
 
 class PlantDiagnosisService {
-  static const String _baseUrl = 'https://api.x.ai/v1/chat/completions';
-  static const String _primaryModel = 'grok-3-mini';
-  static const String _fallbackModel = 'grok-3';
-
   bool _isInitialized = false;
   String? _systemPrompt;
 
+  // الإعدادات الافتراضية
+  String _currentBaseUrl = 'https://api.x.ai/v1/chat/completions';
+  String _currentPrimaryModel = 'grok-2-vision-1212';
+  String _currentFallbackModel = 'grok-2';
+
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: _baseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 60),
       headers: {'Content-Type': 'application/json'},
@@ -122,21 +122,40 @@ class PlantDiagnosisService {
 
   PlantDiagnosisService();
 
-  String get _apiKey =>
-      dotenv.env['GROK_API_KEY'] ??
-      dotenv.env['XAI_API_KEY'] ??
-      dotenv.env['PLANT_DIAGNOSIS_API_KEY'] ??
-      '';
+  String get _apiKey {
+    // الأولوية للمفتاح "smart_farmar2" مع تنظيف أي مسافات
+    final key = (dotenv.env['smart_farmar2'] ??
+                 dotenv.env['GROK_API_KEY'] ??
+                 dotenv.env['XAI_API_KEY'] ??
+                 dotenv.env['PLANT_DIAGNOSIS_API_KEY'] ??
+                 '').trim();
+    return key;
+  }
 
   Future<void> _ensureInitialized() async {
     if (_isInitialized) return;
     _isInitialized = true;
+
+    final key = _apiKey;
+    // اكتشاف المزود: Groq يحتوي على gsk
+    if (key.startsWith('gsk_') || key.contains('gsk')) {
+      _currentBaseUrl = 'https://api.groq.com/openai/v1/chat/completions';
+      _currentPrimaryModel = 'llama-3.2-11b-vision-preview';
+      _currentFallbackModel = 'llama-3.2-90b-vision-preview';
+      debugPrint('PlantDiagnosisService: Identified Groq Provider');
+    } else {
+      _currentBaseUrl = 'https://api.x.ai/v1/chat/completions';
+      _currentPrimaryModel = 'grok-2-vision-1212';
+      _currentFallbackModel = 'grok-2';
+      debugPrint('PlantDiagnosisService: Identified xAI Provider');
+    }
+
     try {
-      final data =
-          await rootBundle.loadString('assets/ai/diagnosis_prompt.json');
+      final data = await rootBundle.loadString('assets/ai/diagnosis_prompt.json');
       final Map<String, dynamic> json = jsonDecode(data);
       _systemPrompt = json['system_instruction'];
     } catch (e) {
+      debugPrint('PlantDiagnosisService: Error loading prompt, using default. $e');
       _systemPrompt = '''
 أنت خبير وقاية نباتات عالمي. مهمتك تحليل صور النباتات وتقديم تقرير علمي دقيق.
 يجب أن تلتزم بتنسيق JSON التالي حصراً:
@@ -149,19 +168,17 @@ class PlantDiagnosisService {
   "treatmentMethods": "خطوات علاجية مفصلة وعملية",
   "preventionTips": ["نصيحة 1", "نصيحة 2", "نصيحة 3"]
 }
-استخدم لغة احترافية ومباشرة. أجب بـ JSON فقط بدون أي نص إضافي.
+أجب بـ JSON فقط بدون أي نص إضافي.
 ''';
     }
-    debugPrint('PlantDiagnosisService: ready (Grok)');
+    debugPrint('PlantDiagnosisService: Ready (Model: $_currentPrimaryModel)');
   }
 
   Future<Uint8List?> _compressImageToFile(Uint8List imageBytes) async {
     try {
       final tempDir = await getTemporaryDirectory();
-      final srcPath =
-          '${tempDir.path}/src_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final targetPath =
-          '${tempDir.path}/diag_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final srcPath = '${tempDir.path}/src_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final targetPath = '${tempDir.path}/diag_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
       await File(srcPath).writeAsBytes(imageBytes);
 
@@ -174,20 +191,16 @@ class PlantDiagnosisService {
         format: CompressFormat.jpeg,
       );
 
-      // تنظيف الملفات المؤقتة
-      try {
-        await File(srcPath).delete();
-      } catch (_) {}
+      // تنظيف
+      try { await File(srcPath).delete(); } catch (_) {}
 
       if (result == null) return imageBytes;
       final compressed = await result.readAsBytes();
-      try {
-        await File(targetPath).delete();
-      } catch (_) {}
+      try { await File(targetPath).delete(); } catch (_) {}
 
       return compressed;
     } catch (e) {
-      debugPrint('PlantDiagnosisService: compress error $e');
+      debugPrint('PlantDiagnosisService: Compress error $e');
       return imageBytes;
     }
   }
@@ -196,48 +209,38 @@ class PlantDiagnosisService {
     await _ensureInitialized();
 
     if (_apiKey.isEmpty) {
-      return PlantDiagnosisResult.fromError(
-          'مفتاح Grok API غير موجود في ملف .env');
+      return PlantDiagnosisResult.fromError('مفتاح API غير موجود.');
     }
 
     try {
       final compressed = await _compressImageToFile(imageBytes);
-      if (compressed == null) {
-        return PlantDiagnosisResult.fromError('فشل في معالجة الصورة.');
-      }
+      if (compressed == null) return PlantDiagnosisResult.fromError('فشل معالجة الصورة.');
 
-      final base64Image = await compute<Uint8List, String>(
-          _encodeBase64Isolate, compressed);
+      final base64Image = base64Encode(compressed);
 
       final messages = [
-        {'role': 'system', 'content': _systemPrompt ?? ''},
+        if (_systemPrompt != null) {'role': 'system', 'content': _systemPrompt!},
         {
           'role': 'user',
           'content': [
-            {
-              'type': 'text',
-              'text':
-                  'حلل هذه الصورة كخبير زراعي محترف. قدم تشخيصاً دقيقاً وخطوات علاجية عملية. يجب أن تكون النتيجة بتنسيق JSON حصراً بدون أي نص إضافي.',
-            },
+            {'type': 'text', 'text': 'حلل هذه الصورة كخبير زراعي وقدم النتيجة بتنسيق JSON فقط.'},
             {
               'type': 'image_url',
-              'image_url': {
-                'url': 'data:image/jpeg;base64,$base64Image',
-              },
-            },
-          ],
-        },
+              'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}
+            }
+          ]
+        }
       ];
 
-      for (final model in [_primaryModel, _fallbackModel]) {
+      for (final model in [_currentPrimaryModel, _currentFallbackModel]) {
         try {
           final response = await _dio.post<Map<String, dynamic>>(
-            '',
+            _currentBaseUrl,
             data: {
               'model': model,
               'messages': messages,
               'temperature': 0.1,
-              'max_tokens': 1024,
+              'response_format': {'type': 'json_object'},
             },
             options: Options(
               headers: {'Authorization': 'Bearer $_apiKey'},
@@ -245,59 +248,52 @@ class PlantDiagnosisService {
           );
 
           if (response.statusCode == 200 && response.data != null) {
-            final rawText = response.data!['choices']?[0]?['message']
-                ?['content'] as String?;
+            final rawText = response.data!['choices']?[0]?['message']?['content'] as String?;
             if (rawText == null || rawText.isEmpty) {
-              return PlantDiagnosisResult.fromError(
-                  'لم تُستقبل بيانات من الخادم.');
+              return PlantDiagnosisResult.fromError('رد فارغ من الخادم.');
             }
             return _parseResponse(rawText);
           }
         } on DioException catch (e) {
+          final errorBody = e.response?.data?.toString() ?? e.message;
+          debugPrint('PlantDiagnosisService Error ($model): $errorBody');
+          
           if (e.response?.statusCode == 429) {
-            if (model == _fallbackModel) {
-              return PlantDiagnosisResult.fromError(
-                  'تم تجاوز الحد المجاني. يرجى المحاولة بعد دقيقة.');
-            }
-            continue;
+            return PlantDiagnosisResult.fromError('تم تجاوز حد الطلبات للمستوى المجاني حالياً.');
           }
-          debugPrint('PlantDiagnosisService DioException ($model): $e');
-          if (model == _fallbackModel) {
-            return PlantDiagnosisResult.fromError(
-                'خطأ في الاتصال بالخادم (${e.response?.statusCode ?? 'timeout'}).');
+          
+          if (model == _currentFallbackModel) {
+            return PlantDiagnosisResult.fromError('فشل الاتصال بالخادم (${e.response?.statusCode}).');
           }
         }
       }
     } catch (e) {
-      if (e.toString().contains('SocketException') ||
-          e.toString().contains('connection')) {
-        return PlantDiagnosisResult.fromError('فشل الاتصال بالإنترنت.');
-      }
+      debugPrint('PlantDiagnosisService Unexpected error: $e');
       return PlantDiagnosisResult.fromError('حدث خطأ غير متوقع.');
     }
 
-    return PlantDiagnosisResult.fromError('تعذر الاتصال بالخادم.');
+    return PlantDiagnosisResult.fromError('تعذر الحصول على تشخيص حالياً.');
   }
 
   PlantDiagnosisResult _parseResponse(String rawText) {
     try {
       final cleanJson = rawText
-          .replaceAll(RegExp(r'```json\s*'), '')
-          .replaceAll(RegExp(r'```\s*'), '')
+          .replaceAll('```json', '')
+          .replaceAll('```', '')
           .trim();
 
-      // استخراج أول {} block إن وُجد نص إضافي
       final start = cleanJson.indexOf('{');
       final end = cleanJson.lastIndexOf('}');
       if (start == -1 || end == -1) {
-        return PlantDiagnosisResult.fromError('فشل في تحليل استجابة الخادم.');
+        return PlantDiagnosisResult.fromError('تنسيق الرد غير صالح.');
       }
 
       final jsonStr = cleanJson.substring(start, end + 1);
       final Map<String, dynamic> jsonData = jsonDecode(jsonStr);
       return PlantDiagnosisResult.fromJson(jsonData, rawText);
     } catch (e) {
-      return PlantDiagnosisResult.fromError('فشل في تحليل استجابة الخادم.');
+      return PlantDiagnosisResult.fromError('فشل في تحليل البيانات المستلمة.');
     }
   }
 }
+
