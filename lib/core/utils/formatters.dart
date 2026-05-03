@@ -58,10 +58,14 @@ class DateFormatter {
   }
 
   /// تنسيق مخصص لتوقعات الطقس الساعية
-  static String formatHourlyLabel(DateTime time, bool isFirst, {bool isNextDayCross = false}) {
+  static String formatHourlyLabel(
+    DateTime time,
+    bool isFirst, {
+    bool isNextDayCross = false,
+  }) {
     if (isFirst) return 'الآن';
     if (isNextDayCross) return 'غداً';
-    
+
     // تنسيق 12 ساعة بالعربية (10 ص، 02 م)
     final h = time.hour;
     if (h == 0) return '12 ص';
@@ -104,7 +108,7 @@ class PriceFormatter {
   static String format(double price, {bool showCurrency = true}) {
     final formatter = NumberFormat('#,##0.00', 'ar');
     final formatted = formatter.format(price);
-    return showCurrency ? '$formatted ر.س' : formatted;
+    return showCurrency ? '$formatted ر.ي' : formatted;
   }
 
   /// تنسيق السعر من String

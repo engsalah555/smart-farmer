@@ -4,6 +4,8 @@ import '../../../core/widgets/atoms/custom_image.dart';
 import '../../../core/widgets/molecules/glassmorphic_container.dart';
 import '../../../core/models/user_crop_model.dart';
 import '../screens/crop_detail_screen.dart';
+import '../providers/crops_provider.dart';
+import 'package:provider/provider.dart';
 
 class UserCropCard extends StatelessWidget {
   final UserCropData userCrop;
@@ -86,6 +88,14 @@ class UserCropCard extends StatelessWidget {
                       children: [
                         _buildStatusBadge(context, userCrop.growthStage),
                         const Spacer(),
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.red.withValues(alpha: 0.7),
+                            size: 20,
+                          ),
+                          onPressed: () => _showDeleteConfirmation(context),
+                        ),
                         Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 14,
@@ -99,6 +109,37 @@ class UserCropCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('إزالة المحصول'),
+        content: Text('هل أنت متأكد من رغبتك في إزالة ${userCrop.plant.name} من مزرعتي؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final success = await context.read<CropsProvider>().removeCropFromFarm(userCrop.id);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(success ? 'تمت الإزالة بنجاح' : 'فشلت الإزالة'),
+                    backgroundColor: success ? context.primary : Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text('إزالة', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

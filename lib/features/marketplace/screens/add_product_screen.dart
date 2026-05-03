@@ -270,7 +270,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             AddProductTextField(
               controller: _locationController,
               label: 'الموقع/المدينة',
-              hint: 'مثال: الرياض',
+              hint: 'مثال: صنعاء',
               icon: Icons.location_on_outlined,
               validator: (v) =>
                   (v == null || v.isEmpty) ? 'يرجى إدخال الموقع' : null,

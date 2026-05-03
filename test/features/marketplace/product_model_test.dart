@@ -18,7 +18,7 @@ void main() {
         'image_url': 'images/tomato.jpg',
         'store': {
           'store_name': 'متجر المزارع',
-          'address': 'الرياض',
+          'address': 'صنعاء',
           'user_id': 12,
         },
       };
@@ -33,7 +33,7 @@ void main() {
       expect(product.storeId, '10');
       expect(product.catalogId, '5'); // أهم نقطة تم إصلاحها للارتباط الديناميكي
       expect(product.storeName, 'متجر المزارع');
-      expect(product.location, 'الرياض');
+      expect(product.location, 'صنعاء');
       expect(product.sellerId, '12');
       expect(
         product.images.first,

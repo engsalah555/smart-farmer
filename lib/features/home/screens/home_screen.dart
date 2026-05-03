@@ -9,7 +9,7 @@ import '../../community/providers/post_provider.dart';
 import '../../../core/providers/auth_provider.dart';
 
 /// شاشة الصفحة الرئيسية للتطبيق
-/// تعرض معلومات المستخدم، بيانات المستشعرات، وآخر منشورات المنتدى
+/// تعرض معلومات المستخدم، معلومات الطقس، وآخر منشورات المنتدى
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -24,11 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final homeProvider = context.read<HomeProvider>();
       final postProvider = context.read<PostProvider>();
-      
+
       if (homeProvider.posts.isEmpty && !homeProvider.isLoading) {
         homeProvider.init();
       }
-      
+
       if (postProvider.postIds.isEmpty && !postProvider.isLoading) {
         postProvider.fetchPosts();
       }

@@ -198,7 +198,13 @@ class _FertilizerCalculatorScreenState
         children: [
           ProMaxIconButton(
             icon: Icons.arrow_back_ios_new_rounded,
-            onTap: () => context.pop(),
+            onTap: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/');
+              }
+            },
             size: 40,
             iconSize: 18,
             backgroundColor: Colors.white.withValues(alpha: 0.15),

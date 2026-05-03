@@ -260,7 +260,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     ),
             ),
             if (_isTyping) const _TypingIndicator(),
-            _buildInputArea(),
+            _buildInputArea(context),
           ],
         ),
       ),
@@ -269,6 +269,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   Widget _buildWelcomeState() {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
       child: Column(
         children: [
@@ -300,6 +301,25 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
           const SizedBox(height: 32),
           _buildStarterGrid(),
+          const SizedBox(height: 40),
+          
+          // New: Prominent Clear/New Chat button in welcome state
+          if (_messages.length > 1)
+            FadeInSlide(
+              duration: const Duration(milliseconds: 500),
+              delay: const Duration(milliseconds: 400),
+              child: OutlinedButton.icon(
+                onPressed: _clearChat,
+                icon: const Icon(Icons.delete_sweep_rounded, size: 20),
+                label: const Text('بدء محادثة جديدة'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: context.error,
+                  side: BorderSide(color: context.error.withValues(alpha: 0.3)),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -352,9 +372,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     );
   }
 
-  Widget _buildInputArea() {
+  Widget _buildInputArea(BuildContext context) {
+    // نستخدم MediaQuery للتأكد من عدم تداخل الأزرار مع شريط التنقل
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding > 0 ? bottomPadding : 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -363,7 +386,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               decoration: BoxDecoration(
                 color: context.surface,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: context.border, width: 1),
+                border: Border.all(color: context.border, width: 1.2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -389,7 +419,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                           tooltip: 'إرفاق صورة',
                           icon: Icon(
                             Icons.camera_alt_outlined,
-                            color: context.textMuted,
+                            color: context.primary,
                           ),
                           onPressed: _isTyping ? null : _pickImage,
                         ),
@@ -399,7 +429,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                           controller: _messageController,
                           enabled: !_isTyping,
                           decoration: InputDecoration(
-                            hintText: 'اكتب رسالتك هنا...',
+                            hintText: 'اكتب سؤالك الزراعي هنا...',
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -414,9 +444,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               end: 16,
                             ),
                           ),
-                          style: TextStyle(color: context.textColor),
+                          style: TextStyle(color: context.textColor, fontSize: 15),
                           minLines: 1,
-                          maxLines: 4,
+                          maxLines: 5,
                           textInputAction: TextInputAction.send,
                           onSubmitted: (_) => _handleSendMessage(),
                         ),
