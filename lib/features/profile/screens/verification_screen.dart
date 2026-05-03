@@ -203,27 +203,28 @@ class _VerificationScreenState extends State<VerificationScreen> {
             const SizedBox(height: 24),
             
             // Document Type Selector
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: context.cardBackground,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: context.border),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _documentType,
-                  isExpanded: true,
-                  items: _documentTypes.map((type) => DropdownMenuItem(
-                    value: type,
-                    child: Text(type, style: AppTypography.bodyLarge(isDark: isDark)),
-                  )).toList(),
-                  onChanged: auth.isVerificationPending ? null : (v) => setState(() => _documentType = v!),
+            if (auth.currentUser?.isSeller == true) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: context.cardBackground,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: context.border),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _documentType,
+                    isExpanded: true,
+                    items: _documentTypes.map((type) => DropdownMenuItem(
+                      value: type,
+                      child: Text(type, style: AppTypography.bodyLarge(isDark: isDark)),
+                    )).toList(),
+                    onChanged: auth.isVerificationPending ? null : (v) => setState(() => _documentType = v!),
+                  ),
                 ),
               ),
-            ),
-            
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
+            ],
             
             // Image Upload Area
             GestureDetector(
