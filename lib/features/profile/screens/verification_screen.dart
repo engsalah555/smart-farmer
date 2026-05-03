@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
+import '../../../core/helpers/image_helper.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/widgets/dashed_border.dart';
@@ -54,17 +55,16 @@ class _VerificationScreenState extends State<VerificationScreen> {
     }
   }
 
-  final ImagePicker _picker = ImagePicker();
-
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
+      final File? pickedFile = await ImageHelper.pickImage(
+        context: context,
         source: source,
-        imageQuality: 70,
+        compressQuality: 60, // Aggressive compression for documents
       );
       if (pickedFile != null) {
         setState(() {
-          _selectedImage = File(pickedFile.path);
+          _selectedImage = pickedFile;
         });
       }
     } catch (e) {
