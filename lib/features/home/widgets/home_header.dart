@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/utils/responsive.dart';
-import '../../../core/widgets/fade_in_slide.dart';
 import '../../../core/widgets/atoms/pro_max_icon_button.dart';
 import '../../../core/models/weather_model.dart';
 import '../../../core/widgets/digital_clock.dart';
@@ -18,13 +17,58 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.select<AuthProvider, dynamic>((p) => p.currentUser);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Fine-grained selection for HomeProvider data
     final weather = context.select<HomeProvider, WeatherModel?>(
       (p) => p.weatherData,
     );
     final isLoading = context.select<HomeProvider, bool>((p) => p.isLoading);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+    final double minHeight = statusBarHeight + context.hp(11).clamp(85, 105);
+    final double maxHeight = statusBarHeight + context.hp(38).clamp(300, 450);
+
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _HomeHeaderDelegate(
+        minHeight: minHeight,
+        maxHeight: maxHeight,
+        user: user,
+        weather: weather,
+        isLoading: isLoading,
+        isDark: isDark,
+      ),
+    );
+  }
+}
+
+class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double minHeight;
+  final double maxHeight;
+  final dynamic user;
+  final WeatherModel? weather;
+  final bool isLoading;
+  final bool isDark;
+
+  _HomeHeaderDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.user,
+    required this.weather,
+    required this.isLoading,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final double progress = (shrinkOffset / (maxHeight - minHeight)).clamp(
+      0.0,
+      1.0,
+    );
+    final double opacity = (1.0 - progress * 1.5).clamp(0.0, 1.0);
 
     final userName = (user?.name?.split(' ').first) ?? 'ضيف';
 
@@ -38,21 +82,24 @@ class HomeHeader extends StatelessWidget {
     }
 
     return Container(
+      height: (maxHeight - shrinkOffset).clamp(minHeight, maxHeight),
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + context.hp(1),
+        top: MediaQuery.of(context).padding.top,
         left: context.wp(6),
         right: context.wp(6),
-        bottom: context.hp(2),
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [context.primary, context.primary.withValues(alpha: 0.8)],
+          colors: [
+            context.primary,
+            context.primary.withValues(alpha: 0.8 + (0.2 * progress)),
+          ],
         ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(40 * (1 - progress)),
+          bottomRight: Radius.circular(40 * (1 - borderProgress(progress))),
         ),
         border: isDark
             ? Border(
@@ -64,7 +111,7 @@ class HomeHeader extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: (isDark ? AppColors.black : context.primary).withValues(
-              alpha: 0.25,
+              alpha: 0.25 * (1 - progress),
             ),
             blurRadius: 25,
             offset: const Offset(0, 12),
@@ -72,17 +119,19 @@ class HomeHeader extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FadeInSlide(
-            duration: const Duration(milliseconds: 600),
-            child: Row(
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            SizedBox(height: context.hp(1)),
+            // Top Part (Pinned)
+            Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
                         children: [
@@ -156,34 +205,43 @@ class HomeHeader extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          SizedBox(height: context.hp(2)),
-          FadeInSlide(
-            delay: const Duration(milliseconds: 200),
-            duration: const Duration(milliseconds: 600),
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: context.wp(90).clamp(300, 600),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: context.wp(2)),
-              child: isLoading
-                  ? SizedBox(
-                      height: context.hp(12),
-                      child: const Center(
-                        child: RepaintBoundary(
-                          child: CircularProgressIndicator(
-                            color: AppColors.white,
-                          ),
-                        ),
+
+            // Weather Section (Fading out)
+            if (opacity > 0.01)
+              Opacity(
+                opacity: opacity,
+                child: Column(
+                  children: [
+                    SizedBox(height: context.hp(2)),
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: context.wp(90).clamp(300, 600),
                       ),
-                    )
-                  : _buildWeatherInfo(context, weather),
-            ),
-          ),
-        ],
+                      padding: EdgeInsets.symmetric(horizontal: context.wp(2)),
+                      child: isLoading
+                          ? SizedBox(
+                              height: context.hp(12),
+                              child: const Center(
+                                child: RepaintBoundary(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : _buildWeatherInfo(context, weather),
+                    ),
+                    SizedBox(height: context.hp(2)),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
+
+  double borderProgress(double progress) => (progress * 1.2).clamp(0.0, 1.0);
 
   Widget _buildWeatherInfo(BuildContext context, WeatherModel? weather) {
     final String cityName = weather?.cityName ?? 'غير متوفر';
@@ -366,5 +424,21 @@ class HomeHeader extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
+    return oldDelegate.maxHeight != maxHeight ||
+        oldDelegate.minHeight != minHeight ||
+        oldDelegate.user != user ||
+        oldDelegate.weather != weather ||
+        oldDelegate.isLoading != isLoading ||
+        oldDelegate.isDark != isDark;
   }
 }

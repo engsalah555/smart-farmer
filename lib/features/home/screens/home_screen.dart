@@ -43,49 +43,34 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
-        child: Column(
-          children: [
-            const HomeHeader(),
-
-            Expanded(
-              child: Semantics(
-                label: 'القائمة الرئيسية قابلة للسحب للتحديث',
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    await Future.wait([
-                      context.read<HomeProvider>().init(),
-                      context.read<AuthProvider>().refreshProfile(),
-                    ]);
-                  },
-
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
-                    ),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: SizedBox(height: context.hp(2)),
-                      ),
-
-                      const SliverToBoxAdapter(child: HomeAlerts()),
-
-                      SliverToBoxAdapter(
-                        child: SizedBox(height: context.hp(2)),
-                      ),
-
-                      const ForumList(),
-
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: context.hp(12).clamp(80.0, 120.0),
-                        ),
-                      ),
-                    ],
-                  ),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await Future.wait([
+              context.read<HomeProvider>().init(),
+              context.read<AuthProvider>().refreshProfile(),
+            ]);
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            slivers: [
+              const HomeHeader(),
+              SliverToBoxAdapter(
+                child: SizedBox(height: context.hp(2)),
+              ),
+              const SliverToBoxAdapter(child: HomeAlerts()),
+              SliverToBoxAdapter(
+                child: SizedBox(height: context.hp(2)),
+              ),
+              const ForumList(),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: context.hp(12).clamp(80.0, 120.0),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
