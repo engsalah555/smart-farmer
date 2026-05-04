@@ -96,9 +96,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(
       source: ImageSource.gallery,
-      maxWidth: 1024,
-      maxHeight: 1024,
-      imageQuality: 85,
     );
     if (image != null && mounted) {
       setState(() => _selectedImage = image);

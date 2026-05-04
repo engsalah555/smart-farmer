@@ -33,7 +33,6 @@ void main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
 
-
   // الخطوط غير مضمّنة محلياً — يجب إبقاء Runtime Fetching مفعلاً
   GoogleFonts.config.allowRuntimeFetching = true;
 
