@@ -57,8 +57,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   _buildHeader(context, product),
                   const SizedBox(height: 24),
-                  _buildStoreInfo(context, product),
-                  const SizedBox(height: 24),
                   _buildDescription(context, product),
                   const SizedBox(height: 24),
                   _buildReviewsSection(context),
@@ -84,7 +82,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         child: CircleAvatar(
           backgroundColor: Colors.black.withValues(alpha: 0.3),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             onPressed: () => context.pop(),
           ),
         ),
@@ -95,14 +97,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             // Image Carousel
             Positioned.fill(
               child: PageView.builder(
-                onPageChanged: (index) => setState(() => _currentImageIndex = index),
+                onPageChanged: (index) =>
+                    setState(() => _currentImageIndex = index),
                 itemCount: product.images.length,
                 itemBuilder: (context, index) => Image.network(
                   product.images[index],
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: context.primary.withValues(alpha: 0.1),
-                    child: Icon(Icons.image_not_supported_rounded, size: 50, color: context.primary),
+                    child: Icon(
+                      Icons.image_not_supported_rounded,
+                      size: 50,
+                      color: context.primary,
+                    ),
                   ),
                 ),
               ),
@@ -122,7 +129,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       height: 8,
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
-                        color: _currentImageIndex == index ? context.primary : Colors.white70,
+                        color: _currentImageIndex == index
+                            ? context.primary
+                            : Colors.white70,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -150,7 +159,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
               child: Text(
                 product.category,
-                style: TextStyle(color: context.primary, fontWeight: FontWeight.bold, fontSize: 12),
+                style: TextStyle(
+                  color: context.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
               ),
             ),
             Row(
@@ -159,7 +172,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 const SizedBox(width: 4),
                 Text(
                   product.rating.toStringAsFixed(1),
-                  style: TextStyle(fontWeight: FontWeight.bold, color: context.textPrimary),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: context.textPrimary,
+                  ),
                 ),
                 Text(
                   ' (${product.reviewsCount}+)',
@@ -191,49 +207,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _buildStoreInfo(BuildContext context, ProductModel product) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.isDark ? AppColors.darkCard : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: context.isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
-        ),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 25,
-            backgroundImage: NetworkImage(product.storeLogo),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.storeName,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: context.textPrimary),
-                ),
-                Text(
-                  product.location,
-                  style: TextStyle(color: context.textSecondary, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              // Navigation to store logic would go here
-            },
-            child: Text('زيارة المتجر', style: TextStyle(color: context.primary)),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildDescription(BuildContext context, ProductModel product) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,10 +222,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         const SizedBox(height: 12),
         Text(
           product.description,
-          style: TextStyle(
-            color: context.textSecondary,
-            height: 1.6,
-          ),
+          style: TextStyle(color: context.textSecondary, height: 1.6),
         ),
       ],
     );
@@ -331,7 +301,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                             Row(
                               children: [
-                                const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                                const Icon(
+                                  Icons.star_rounded,
+                                  color: Colors.amber,
+                                  size: 16,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   review['rating'].toString(),
@@ -345,13 +319,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                           ],
                         ),
-                        if (review['comment'] != null && review['comment'].isNotEmpty) ...[
+                        if (review['comment'] != null &&
+                            review['comment'].isNotEmpty) ...[
                           const SizedBox(height: 8),
                           Text(
                             review['comment'],
-                            style: TextStyle(color: context.textSecondary, fontSize: 14),
+                            style: TextStyle(
+                              color: context.textSecondary,
+                              fontSize: 14,
+                            ),
                           ),
-                        ]
+                        ],
                       ],
                     ),
                   ),
@@ -438,26 +416,30 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         final provider = context.read<MarketplaceProvider>();
                         final scaffoldMessenger = ScaffoldMessenger.of(context);
                         final errorColor = Theme.of(context).colorScheme.error;
-                        
+
                         context.pop();
-                        
+
                         final success = await provider.submitReview(
                           widget.product.id,
                           selectedRating,
                           comment: commentController.text,
                         );
-                        
+
                         if (!mounted) return;
-                        
+
                         if (success) {
                           scaffoldMessenger.showSnackBar(
-                            const SnackBar(content: Text('تم إرسال التقييم بنجاح')),
+                            const SnackBar(
+                              content: Text('تم إرسال التقييم بنجاح'),
+                            ),
                           );
                           _loadReviews();
                         } else {
                           scaffoldMessenger.showSnackBar(
                             SnackBar(
-                              content: const Text('فشل إرسال التقييم، هل هذا منتجك؟ لا يمكنك تقييم منتجك.'),
+                              content: const Text(
+                                'فشل إرسال التقييم، هل هذا منتجك؟ لا يمكنك تقييم منتجك.',
+                              ),
                               backgroundColor: errorColor,
                             ),
                           );
@@ -471,7 +453,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       child: const Text(
                         'إرسال التقييم',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -513,11 +499,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.remove),
-                    onPressed: () => setState(() => _quantity = _quantity > 1 ? _quantity - 1 : 1),
+                    onPressed: () => setState(
+                      () => _quantity = _quantity > 1 ? _quantity - 1 : 1,
+                    ),
                   ),
                   Text(
                     _quantity.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.add),
@@ -533,7 +524,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 height: 55,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.read<CartProvider>().addItem(product, quantity: _quantity);
+                    context.read<CartProvider>().addItem(
+                      product,
+                      quantity: _quantity,
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('تمت الإضافة للسلة')),
                     );
@@ -546,7 +540,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   ),
                   child: const Text(
                     'إضافة للسلة',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),

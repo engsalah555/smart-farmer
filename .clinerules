@@ -1,0 +1,7 @@
+# Caveman Commit Rules
+STRICT: All commit messages must follow the `caveman-commit` skill rules.
+
+- Format: `<type>(<scope>): <subject>`
+- Style: ULTRA-TERSE. No articles. No filler.
+- Focus: WHY over WHAT.
+- Length: Max 40 chars.
