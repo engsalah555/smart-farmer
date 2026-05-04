@@ -66,14 +66,15 @@ class IotDashboard extends StatelessWidget {
                   const SizedBox(height: 16),
                   Selector<
                     IotProvider,
-                    (double?, double?, double?, double?, double?)
+                    (double?, double?, double?, double?, String?, bool?)
                   >(
                     selector: (_, p) => (
                       p.device?.temperature,
                       p.device?.humidity,
                       p.device?.soilMoisture,
+                      p.device?.soilTemperature,
                       p.device?.waterLevel,
-                      p.device?.rainLevel,
+                      p.device?.rainDetected,
                     ),
                     builder: (context, sensors, _) => _buildSensorReadings(
                       sensors.$1,
@@ -81,6 +82,7 @@ class IotDashboard extends StatelessWidget {
                       sensors.$3,
                       sensors.$4,
                       sensors.$5,
+                      sensors.$6,
                       isDark,
                     ),
                   ),
@@ -337,8 +339,9 @@ class IotDashboard extends StatelessWidget {
     double? temp,
     double? humidity,
     double? soil,
-    double? water,
-    double? rain,
+    double? soilTemp,
+    String? water,
+    bool? rain,
     bool isDark,
   ) {
     return Column(
@@ -347,7 +350,7 @@ class IotDashboard extends StatelessWidget {
           children: [
             Expanded(
               child: _buildSensorItem(
-                'الحرارة',
+                'حرارة الجو',
                 '${temp?.toStringAsFixed(1) ?? "--"}°C',
                 Icons.thermostat_rounded,
                 const Color(0xFFFF8008),
@@ -358,7 +361,7 @@ class IotDashboard extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: _buildSensorItem(
-                'الرطوبة',
+                'رطوبة الجو',
                 '${humidity?.round() ?? "--"}%',
                 Icons.water_drop_rounded,
                 const Color(0xFF2193b0),
@@ -366,14 +369,29 @@ class IotDashboard extends StatelessWidget {
                 isDark,
               ),
             ),
-            const SizedBox(width: 16),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
             Expanded(
               child: _buildSensorItem(
-                'التربة',
+                'رطوبة التربة',
                 '${soil?.round() ?? "--"}%',
                 Icons.grass_rounded,
                 const Color(0xFF11998e),
                 const Color(0xFF38ef7d),
+                isDark,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildSensorItem(
+                'حرارة التربة',
+                '${soilTemp?.toStringAsFixed(1) ?? "--"}°C',
+                Icons.device_thermostat_rounded,
+                const Color(0xFFeb3349),
+                const Color(0xFFf45c43),
                 isDark,
               ),
             ),
@@ -385,7 +403,7 @@ class IotDashboard extends StatelessWidget {
             Expanded(
               child: _buildSensorItem(
                 'خزان المياه',
-                '${water?.round() ?? "--"}%',
+                water ?? "--",
                 Icons.waves_rounded,
                 const Color(0xFF4facfe),
                 const Color(0xFF00f2fe),
@@ -395,9 +413,9 @@ class IotDashboard extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: _buildSensorItem(
-                'مستوى المطر',
-                '${rain?.round() ?? "--"}%',
-                Icons.umbrella_rounded,
+                'حالة المطر',
+                rain == true ? 'ممطر' : 'صافي',
+                rain == true ? Icons.umbrella_rounded : Icons.wb_sunny_rounded,
                 const Color(0xFF6a11cb),
                 const Color(0xFF2575fc),
                 isDark,
@@ -480,7 +498,79 @@ class IotDashboard extends StatelessWidget {
           isDark: isDark,
           onChanged: provider.toggleAutoIrrigation,
         ),
+        if (autoIrrigation) ...[
+          const SizedBox(height: 16),
+          _buildThresholdControl(context, provider.device?.autoThreshold ?? 30, isDark),
+        ],
       ],
+    );
+  }
+
+  Widget _buildThresholdControl(BuildContext context, int threshold, bool isDark) {
+    return _PremiumCard(
+      isDark: isDark,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'عتبة رطوبة التربة',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: context.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$threshold%',
+                  style: TextStyle(
+                    color: context.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: context.primary,
+              inactiveTrackColor: context.primary.withValues(alpha: 0.1),
+              thumbColor: context.primary,
+              overlayColor: context.primary.withValues(alpha: 0.1),
+            ),
+            child: Slider(
+              value: threshold.toDouble(),
+              min: 0,
+              max: 100,
+              divisions: 20,
+              label: '$threshold%',
+              onChanged: (val) {
+                // We could update locally first for responsiveness, 
+                // but for now we'll just wait for the provider update
+              },
+              onChangeEnd: (val) {
+                context.read<IotProvider>().updateThreshold(val.toInt());
+              },
+            ),
+          ),
+          const Text(
+            'سيتم تشغيل الري تلقائياً إذا انخفضت الرطوبة عن هذه القيمة',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

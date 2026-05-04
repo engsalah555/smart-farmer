@@ -13,8 +13,9 @@ class IotDevice {
   final double? temperature;
   final double? humidity;
   final double? soilMoisture;
-  final double? waterLevel;
-  final double? rainLevel;
+  final double? soilTemperature;
+  final String? waterLevel;
+  final bool? rainDetected;
   final int? autoThreshold;
 
   IotDevice({
@@ -30,8 +31,9 @@ class IotDevice {
     this.temperature,
     this.humidity,
     this.soilMoisture,
+    this.soilTemperature,
     this.waterLevel,
-    this.rainLevel,
+    this.rainDetected,
     this.autoThreshold,
   });
 
@@ -48,8 +50,9 @@ class IotDevice {
     double? temperature,
     double? humidity,
     double? soilMoisture,
-    double? waterLevel,
-    double? rainLevel,
+    double? soilTemperature,
+    String? waterLevel,
+    bool? rainDetected,
     int? autoThreshold,
   }) {
     return IotDevice(
@@ -65,8 +68,9 @@ class IotDevice {
       temperature: temperature ?? this.temperature,
       humidity: humidity ?? this.humidity,
       soilMoisture: soilMoisture ?? this.soilMoisture,
+      soilTemperature: soilTemperature ?? this.soilTemperature,
       waterLevel: waterLevel ?? this.waterLevel,
-      rainLevel: rainLevel ?? this.rainLevel,
+      rainDetected: rainDetected ?? this.rainDetected,
       autoThreshold: autoThreshold ?? this.autoThreshold,
     );
   }
@@ -88,8 +92,9 @@ class IotDevice {
       temperature: (json['temperature'] as num?)?.toDouble(),
       humidity: (json['humidity'] as num?)?.toDouble(),
       soilMoisture: (json['soil_moisture'] as num?)?.toDouble(),
-      waterLevel: (json['water_level'] as num?)?.toDouble(),
-      rainLevel: (json['rain_level'] as num?)?.toDouble(),
+      soilTemperature: (json['soil_temperature'] as num?)?.toDouble(),
+      waterLevel: json['water_level']?.toString(),
+      rainDetected: json['rain_detected'] == true || json['rain_detected'] == 1,
       autoThreshold: (json['auto_threshold'] as num?)?.toInt(),
     );
   }
@@ -108,8 +113,9 @@ class IotDevice {
       'temperature': temperature,
       'humidity': humidity,
       'soil_moisture': soilMoisture,
+      'soil_temperature': soilTemperature,
       'water_level': waterLevel,
-      'rain_level': rainLevel,
+      'rain_detected': rainDetected,
       'auto_threshold': autoThreshold,
     };
   }

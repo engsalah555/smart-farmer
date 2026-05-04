@@ -4,30 +4,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
-  test('Inspect Supabase Table', () async {
-    // Load .env
+  test('List Columns of iot_devices', () async {
     await dotenv.load(fileName: ".env");
-
     final url = dotenv.env['SUPABASE_URL'] ?? '';
     final key = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-
-    debugPrint('Supabase URL: $url');
 
     final supabase = SupabaseClient(url, key);
 
     try {
+      // Select all rows with a limit to inspect column names
+      debugPrint('Attempting to get column names...');
       final response = await supabase.from('iot_devices').select().limit(1);
-      if (response.isEmpty) {
-        debugPrint('Table iot_devices is empty.');
+      if (response.isNotEmpty) {
+        debugPrint('Columns: ${response.first.keys.toList()}');
       } else {
-        debugPrint('Fields in iot_devices:');
-        for (var k in response.first.keys) {
-          debugPrint('- $k');
-        }
-        debugPrint('First row data sample: ${response.first}');
+        debugPrint('Table is empty, no columns to show.');
       }
     } catch (e) {
-      debugPrint('Error querying Supabase: $e');
+      debugPrint('Caught error: $e');
     }
   });
 }

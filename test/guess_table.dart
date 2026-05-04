@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -26,28 +27,24 @@ void main() {
     bool found = false;
     for (var table in tablesToTry) {
       try {
-        print('Trying table: $table...');
+        debugPrint('Trying table: $table...');
         final response = await supabase.from(table).select().limit(1);
-        print('✅ SUCCESS! Table "$table" exists.');
-        if (response.isNotEmpty) {
-          print('Fields: ${response.first.keys.toList()}');
-          print('Data: ${response.first}');
-        } else {
-          print('Table is empty but exists.');
-        }
+        debugPrint('✅ Table "$table" exists. Content: ${response.isNotEmpty ? "Data found" : "Empty"}');
         found = true;
-        break;
+        if (response.isNotEmpty) {
+          debugPrint('Fields in "$table": ${response.first.keys.toList()}');
+        }
       } catch (e) {
         if (e.toString().contains('PGRST205')) {
-          print('❌ Table "$table" not found.');
+          debugPrint('❌ Table "$table" not found.');
         } else {
-          print('⚠️ Error for "$table": $e');
+          debugPrint('⚠️ Error for "$table": $e');
         }
       }
     }
     
     if (!found) {
-      print('❌ None of the guessed tables were found.');
+      debugPrint('❌ None of the guessed tables were found.');
     }
     
     expect(true, true); // Just to pass the test

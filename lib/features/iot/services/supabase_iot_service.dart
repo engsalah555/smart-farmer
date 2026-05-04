@@ -23,6 +23,41 @@ class SupabaseIotService {
         });
   }
 
+  /// جلب بيانات الجهاز لمرة واحدة
+  Future<IotDevice?> getDevice(String deviceId) async {
+    try {
+      final data = await _supabase
+          .from('iot_devices')
+          .select()
+          .eq('device_id', deviceId)
+          .maybeSingle();
+
+      if (data == null) return null;
+      return IotDevice.fromJson(data);
+    } catch (e) {
+      log('❌ Error fetching device from Supabase: $e');
+      return null;
+    }
+  }
+
+  /// جلب سجلات الري من Supabase
+  Future<List<Map<String, dynamic>>> getRelayLogs(String deviceId) async {
+    try {
+      // نستخدم الـ device_id من خلال ربطه بسجلات الحساسات إذا لزم الأمر، 
+      // لكن حالياً سنفترض أننا نريد آخر سجلات من جدول relay-log
+      final data = await _supabase
+          .from('relay-log')
+          .select()
+          .order('created_at', ascending: false)
+          .limit(10);
+      
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      log('❌ Error fetching relay logs: $e');
+      return [];
+    }
+  }
+
 
   /// التحكم اليدوي بالمضخة
   Future<void> toggleManualPump(String deviceId, bool on) async {

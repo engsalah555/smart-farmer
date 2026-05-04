@@ -32,9 +32,9 @@ class IotProvider extends BaseProvider {
       _deviceSubscription = _supabaseIotService.getDeviceStream(deviceId).listen((
         updatedDevice,
       ) {
-        log('🔄 Received data from Supabase: ${updatedDevice.id}');
+        log('🔄 Received data from Supabase: ID=${updatedDevice.id}, Temp=${updatedDevice.temperature}, Hum=${updatedDevice.humidity}');
         _device = updatedDevice;
-        _hasDevice = updatedDevice.id != '0';
+        _hasDevice = updatedDevice.deviceId != '0' && updatedDevice.deviceId.isNotEmpty;
         notifyListeners();
       }, onError: (error) {
         log('❌ Supabase Stream Error: $error');
@@ -51,29 +51,73 @@ class IotProvider extends BaseProvider {
       try {
         final data = await _iotService.getStatus();
         log('📦 Backend Response Data: $data');
-        
-        _hasDevice = data['has_device'] ?? false;
         _message = data['message'];
 
-        final deviceData = data['device'];
-        if (_hasDevice && deviceData != null && deviceData['device_id'] != null) {
-          _initSupabaseListener(deviceData['device_id']);
-        } else {
-          log('⚠️ No active device found for this user according to backend.');
-          _deviceSubscription?.cancel();
-          _device = null;
-        }
-
-        if (data['last_logs'] != null) {
+        if (data['last_logs'] != null && (data['last_logs'] as List).isNotEmpty) {
           _logs = (data['last_logs'] as List)
               .map((i) => IrrigationLog.fromJson(i))
               .toList();
         }
       } catch (e) {
-        log('❌ Error in fetchStatus: $e');
-        _message = 'حدث خطأ أثناء تحميل البيانات';
+        log('❌ Error in fetchStatus (Backend): $e');
+        _message = 'استخدمنا البيانات المباشرة لتجاوز خطأ الخادم';
+      } finally {
+        const deviceId = 'ESP32-MASTER-001';
+        // For graduation project: Force device connection
+        _hasDevice = true;
+        
+        // Fetch initial data once from Supabase
+        await _fetchSupabaseData(deviceId);
+        
+        // Start real-time listener
+        _initSupabaseListener(deviceId);
       }
     }, showLoading: showLoading);
+  }
+
+  Future<void> _fetchSupabaseData(String deviceId) async {
+    log('📥 Fetching initial data from Supabase for: $deviceId');
+    
+    // 1. Fetch Device State
+    final initialDevice = await _supabaseIotService.getDevice(deviceId);
+    if (initialDevice != null) {
+      log('✅ Found initial device state in Supabase');
+      _device = initialDevice;
+      notifyListeners();
+    }
+
+    // 2. Fetch Relay Logs from Supabase (as fallback or addition)
+    final rawLogs = await _supabaseIotService.getRelayLogs(deviceId);
+    if (rawLogs.isNotEmpty) {
+      log('📜 Found ${rawLogs.length} relay logs in Supabase');
+      final supabaseLogs = rawLogs.map((json) {
+        final status = json['relay_status'] == true || json['relay_status'] == 1;
+        final reason = json['trigger_reason']?.toString() ?? '';
+        
+        String action = 'unknown';
+        if (reason == 'frontend-command') {
+          action = status ? 'manual_on' : 'manual_off';
+        } else if (reason == 'auto_threshold' || reason.contains('auto')) {
+          action = status ? 'auto_on' : 'auto_off';
+        } else {
+          action = status ? 'on' : 'off';
+        }
+
+        return IrrigationLog(
+          id: json['id'] as int? ?? 0,
+          action: action,
+          duration: 0, 
+          waterUsed: 0.0,
+          createdAt: DateTime.parse(json['created_at']),
+        );
+      }).toList();
+
+      // If we don't have logs from backend, use Supabase logs
+      if (_logs.isEmpty) {
+        _logs = supabaseLogs;
+      }
+      notifyListeners();
+    }
   }
 
   Future<bool> toggleIrrigation(bool status) async {
