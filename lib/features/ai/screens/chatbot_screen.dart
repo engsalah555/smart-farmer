@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/widgets/fade_in_slide.dart';
@@ -108,8 +109,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     setState(() => _selectedImage = null);
   }
 
-  String _cleanResponse(String text) =>
-      text.replaceAll('*', '').replaceAll('#', '').trim();
+  String _cleanResponse(String text) => text.trim();
 
   Future<void> _handleSendMessage() async {
     if (_isTyping) return;
@@ -195,7 +195,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 _selectedImage = null;
                 _messages.add(
                   ChatMessage(
-                    text: 'أهلاً بك في مساعدك الزراعي الذكي! كيف يمكنني مساعدتك اليوم؟',
+                    text:
+                        'أهلاً بك في مساعدك الزراعي الذكي! كيف يمكنني مساعدتك اليوم؟',
                     isUser: false,
                     timestamp: DateTime.now(),
                   ),
@@ -302,7 +303,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           const SizedBox(height: 32),
           _buildStarterGrid(),
           const SizedBox(height: 40),
-          
+
           // New: Prominent Clear/New Chat button in welcome state
           if (_messages.length > 1)
             FadeInSlide(
@@ -315,8 +316,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.error,
                   side: BorderSide(color: context.error.withValues(alpha: 0.3)),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
             ),
@@ -375,9 +381,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget _buildInputArea(BuildContext context) {
     // نستخدم MediaQuery للتأكد من عدم تداخل الأزرار مع شريط التنقل
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    
+
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, bottomPadding > 0 ? bottomPadding : 16),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        bottomPadding > 0 ? bottomPadding : 16,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -444,7 +455,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                               end: 16,
                             ),
                           ),
-                          style: TextStyle(color: context.textColor, fontSize: 15),
+                          style: TextStyle(
+                            color: context.textColor,
+                            fontSize: 15,
+                          ),
                           minLines: 1,
                           maxLines: 5,
                           textInputAction: TextInputAction.send,
@@ -533,7 +547,10 @@ class _ChatAppBar extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         'متصل نشط',
-                        style: TextStyle(color: context.textMuted, fontSize: 12),
+                        style: TextStyle(
+                          color: context.textMuted,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -610,20 +627,42 @@ class _MessageBubble extends StatelessWidget {
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: isUser ? context.primary : context.surface,
+                        color: isUser
+                            ? context.primary
+                            : context.cardBackground,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Text(
-                        message.text,
-                        style: TextStyle(
-                          color: isUser ? context.white : context.textColor,
-                          fontSize: 15,
-                          height: 1.6,
-                          fontWeight: isUser
-                              ? FontWeight.w500
-                              : FontWeight.normal,
-                        ),
-                      ),
+                      child: isUser
+                          ? Text(
+                              message.text,
+                              style: TextStyle(
+                                color: context.white,
+                                fontSize: 15,
+                                height: 1.6,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          : MarkdownBody(
+                              data: message.text,
+                              selectable: true,
+                              styleSheet: MarkdownStyleSheet(
+                                p: TextStyle(
+                                  color: context.textColor,
+                                  fontSize: 15,
+                                  height: 1.6,
+                                ),
+                                listBullet: TextStyle(
+                                  color: context.primary,
+                                  fontSize: 15,
+                                  height: 1.6,
+                                ),
+                                h1: TextStyle(color: context.textColor, fontSize: 20, fontWeight: FontWeight.bold),
+                                h2: TextStyle(color: context.textColor, fontSize: 18, fontWeight: FontWeight.bold),
+                                h3: TextStyle(color: context.textColor, fontSize: 16, fontWeight: FontWeight.bold),
+                                strong: TextStyle(color: context.textColor, fontWeight: FontWeight.bold),
+                                em: TextStyle(color: context.textColor, fontStyle: FontStyle.italic),
+                              ),
+                            ),
                     ),
                   Padding(
                     padding: const EdgeInsets.only(top: 4, left: 4, right: 4),

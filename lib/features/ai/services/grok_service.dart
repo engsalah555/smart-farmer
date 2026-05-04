@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// خدمة AI ذكية - تدعم Grok (xAI) و Groq (LPU)
 /// تكتشف تلقائياً نوع المفتاح وتستخدم الإعدادات المناسبة
@@ -86,7 +89,33 @@ class GrokService {
 
     // بناء محتوى الرسالة (دعم النص والصورة)
     if (imageBytes != null && imageBytes.isNotEmpty) {
-      final base64Image = base64Encode(imageBytes);
+      // ضغط الصورة لتجنب مشكلة حجم البيانات الكبير
+      Uint8List compressedBytes = Uint8List.fromList(imageBytes);
+      try {
+        final tempDir = await getTemporaryDirectory();
+        final srcPath = '${tempDir.path}/src_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final targetPath = '${tempDir.path}/chat_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+        await File(srcPath).writeAsBytes(imageBytes);
+        final result = await FlutterImageCompress.compressAndGetFile(
+          srcPath,
+          targetPath,
+          minWidth: 800,
+          minHeight: 800,
+          quality: 80,
+          format: CompressFormat.jpeg,
+        );
+
+        try { await File(srcPath).delete(); } catch (_) {}
+        if (result != null) {
+          compressedBytes = await result.readAsBytes();
+          try { await File(targetPath).delete(); } catch (_) {}
+        }
+      } catch (e) {
+        debugPrint('GrokService: Image compression failed: $e');
+      }
+
+      final base64Image = await compute(_encodeBase64, compressedBytes);
       String visionModel = _apiKey.contains('gsk') 
           ? 'llama-3.2-11b-vision-preview' // موديل الرؤية الأفضل في Groq حالياً
           : 'grok-2-vision-1212';
@@ -208,3 +237,6 @@ class GrokService {
     debugPrint('GrokService: Chat Reset');
   }
 }
+
+// دالة تعمل في isolate منفصل
+String _encodeBase64(List<int> bytes) => base64Encode(bytes);
