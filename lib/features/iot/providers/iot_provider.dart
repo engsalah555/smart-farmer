@@ -4,15 +4,15 @@ import 'package:smart_farm2/core/providers/base_provider.dart';
 import '../models/iot_device_model.dart';
 import '../models/irrigation_log_model.dart';
 import '../services/iot_service.dart';
-import '../services/firebase_iot_service.dart';
+import '../services/supabase_iot_service.dart';
 
 class IotProvider extends BaseProvider {
   final IotService _iotService;
-  final FirebaseIotService _firebaseIotService;
+  final SupabaseIotService _supabaseIotService;
   StreamSubscription? _deviceSubscription;
 
-  IotProvider(this._iotService, this._firebaseIotService) {
-    _initFirebaseListener();
+  IotProvider(this._iotService, this._supabaseIotService) {
+    log('🏗️ IotProvider Initialized');
   }
 
   IotDevice? _device;
@@ -25,35 +25,61 @@ class IotProvider extends BaseProvider {
   bool get hasDevice => _hasDevice;
   String? get message => _message;
 
-  void _initFirebaseListener() {
-    _deviceSubscription?.cancel();
-    _deviceSubscription = _firebaseIotService.getDeviceStream().listen((
-      updatedDevice,
-    ) {
-      _device = updatedDevice;
-      _hasDevice = updatedDevice.id != 0;
-      notifyListeners();
-    });
+  void _initSupabaseListener(String deviceId) {
+    log('📡 Initializing Supabase Listener for: $deviceId');
+    try {
+      _deviceSubscription?.cancel();
+      _deviceSubscription = _supabaseIotService.getDeviceStream(deviceId).listen((
+        updatedDevice,
+      ) {
+        log('🔄 Received data from Supabase: ${updatedDevice.id}');
+        _device = updatedDevice;
+        _hasDevice = updatedDevice.id != '0';
+        notifyListeners();
+      }, onError: (error) {
+        log('❌ Supabase Stream Error: $error');
+      });
+    } catch (e) {
+      log('❌ Failed to start Supabase listener: $e');
+    }
   }
 
+
   Future<void> fetchStatus({bool showLoading = true}) async {
-    // We still use this for logs and other non-realtime data from backend
+    log('🔍 Fetching IoT Status from Backend...');
     await execute(() async {
-      final data = await _iotService.getStatus();
-      // Only update logs and hasDevice from here if needed
-      if (data['last_logs'] != null) {
-        _logs = (data['last_logs'] as List)
-            .map((i) => IrrigationLog.fromJson(i))
-            .toList();
+      try {
+        final data = await _iotService.getStatus();
+        log('📦 Backend Response Data: $data');
+        
+        _hasDevice = data['has_device'] ?? false;
+        _message = data['message'];
+
+        final deviceData = data['device'];
+        if (_hasDevice && deviceData != null && deviceData['device_id'] != null) {
+          _initSupabaseListener(deviceData['device_id']);
+        } else {
+          log('⚠️ No active device found for this user according to backend.');
+          _deviceSubscription?.cancel();
+          _device = null;
+        }
+
+        if (data['last_logs'] != null) {
+          _logs = (data['last_logs'] as List)
+              .map((i) => IrrigationLog.fromJson(i))
+              .toList();
+        }
+      } catch (e) {
+        log('❌ Error in fetchStatus: $e');
+        _message = 'حدث خطأ أثناء تحميل البيانات';
       }
     }, showLoading: showLoading);
   }
 
   Future<bool> toggleIrrigation(bool status) async {
-    // Optimistic UI update already handled by Firebase listener usually,
-    // but we can also do it here for instant feedback
+    if (_device == null) return false;
     try {
-      await _firebaseIotService.toggleManualPump(status);
+      await _supabaseIotService.toggleManualPump(_device!.deviceId, status);
       return true;
     } catch (e) {
       log('Error toggling irrigation: $e');
@@ -62,8 +88,9 @@ class IotProvider extends BaseProvider {
   }
 
   Future<bool> toggleAutoIrrigation(bool auto) async {
+    if (_device == null) return false;
     try {
-      await _firebaseIotService.setMode(auto ? 'AUTO' : 'MANUAL');
+      await _supabaseIotService.setMode(_device!.deviceId, auto ? 'AUTO' : 'MANUAL');
       return true;
     } catch (e) {
       log('Error toggling auto irrigation: $e');
@@ -72,8 +99,9 @@ class IotProvider extends BaseProvider {
   }
 
   Future<bool> updateThreshold(int threshold) async {
+    if (_device == null) return false;
     try {
-      await _firebaseIotService.setThreshold(threshold);
+      await _supabaseIotService.setThreshold(_device!.deviceId, threshold);
       return true;
     } catch (e) {
       return false;

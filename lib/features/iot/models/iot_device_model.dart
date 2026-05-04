@@ -1,7 +1,7 @@
 import 'irrigation_schedule_model.dart';
 
 class IotDevice {
-  final int id;
+  final String id;
   final String name;
   final String status;
   final bool isIrrigationOn;
@@ -15,6 +15,7 @@ class IotDevice {
   final double? soilMoisture;
   final double? waterLevel;
   final double? rainLevel;
+  final int? autoThreshold;
 
   IotDevice({
     required this.id,
@@ -31,10 +32,11 @@ class IotDevice {
     this.soilMoisture,
     this.waterLevel,
     this.rainLevel,
+    this.autoThreshold,
   });
 
   IotDevice copyWith({
-    int? id,
+    String? id,
     String? name,
     String? status,
     bool? isIrrigationOn,
@@ -48,6 +50,7 @@ class IotDevice {
     double? soilMoisture,
     double? waterLevel,
     double? rainLevel,
+    int? autoThreshold,
   }) {
     return IotDevice(
       id: id ?? this.id,
@@ -64,12 +67,13 @@ class IotDevice {
       soilMoisture: soilMoisture ?? this.soilMoisture,
       waterLevel: waterLevel ?? this.waterLevel,
       rainLevel: rainLevel ?? this.rainLevel,
+      autoThreshold: autoThreshold ?? this.autoThreshold,
     );
   }
 
   factory IotDevice.fromJson(Map<String, dynamic> json) {
     return IotDevice(
-      id: json['id'] as int? ?? 0,
+      id: json['id']?.toString() ?? '',
       name: json['name'] as String? ?? 'جهاز غير معروف',
       status: json['status'] as String? ?? 'offline',
       isIrrigationOn: json['is_irrigation_on'] == true || json['is_irrigation_on'] == 1,
@@ -86,6 +90,7 @@ class IotDevice {
       soilMoisture: (json['soil_moisture'] as num?)?.toDouble(),
       waterLevel: (json['water_level'] as num?)?.toDouble(),
       rainLevel: (json['rain_level'] as num?)?.toDouble(),
+      autoThreshold: (json['auto_threshold'] as num?)?.toInt(),
     );
   }
 
@@ -105,6 +110,7 @@ class IotDevice {
       'soil_moisture': soilMoisture,
       'water_level': waterLevel,
       'rain_level': rainLevel,
+      'auto_threshold': autoThreshold,
     };
   }
 }

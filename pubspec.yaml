@@ -72,8 +72,7 @@ dependencies:
   # dart_pusher_channels: REMOVED - WebSocket not used
   lottie: ^3.3.3
   package_info_plus: ^9.0.1
-  firebase_core: ^4.7.0
-  firebase_database: ^12.3.0
+  supabase_flutter: ^2.12.4
 
 dev_dependencies:
 

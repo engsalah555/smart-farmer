@@ -22,29 +22,17 @@ import 'features/iot/providers/iot_provider.dart';
 import 'core/providers/admin_provider.dart';
 import 'core/routes/app_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-  try {
-    await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: dotenv.env['FIREBASE_API_KEY'] ?? '',
-        appId: dotenv.env['FIREBASE_APP_ID'] ?? '',
-        messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? '',
-        projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? '',
-        databaseURL: dotenv.env['FIREBASE_DATABASE_URL'] ?? '',
-      ),
-    );
-  } catch (e) {
-    if (e.toString().contains('duplicate-app')) {
-      debugPrint('Firebase already initialized');
-    } else {
-      debugPrint('Firebase initialization error: $e');
-    }
-  }
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
+  );
+
 
   // الخطوط غير مضمّنة محلياً — يجب إبقاء Runtime Fetching مفعلاً
   GoogleFonts.config.allowRuntimeFetching = true;
