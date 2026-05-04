@@ -66,7 +66,7 @@ class MainScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: const FixedCenterDockedFabLocation(),
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8.0,
@@ -155,3 +155,22 @@ class MainScreen extends StatelessWidget {
     );
   }
 }
+
+class FixedCenterDockedFabLocation extends FloatingActionButtonLocation {
+  const FixedCenterDockedFabLocation();
+
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    final double fabX = (scaffoldGeometry.scaffoldSize.width - scaffoldGeometry.floatingActionButtonSize.width) / 2.0;
+    final double contentBottom = scaffoldGeometry.contentBottom;
+    final double bottomSheetHeight = scaffoldGeometry.bottomSheetSize.height;
+    final double fabHeight = scaffoldGeometry.floatingActionButtonSize.height;
+
+    double fabY = contentBottom - fabHeight / 2.0;
+    if (bottomSheetHeight > 0.0) {
+      fabY -= bottomSheetHeight;
+    }
+    return Offset(fabX, fabY);
+  }
+}
+
