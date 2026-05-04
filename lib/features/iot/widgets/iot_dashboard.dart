@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants.dart';
@@ -6,6 +8,7 @@ import '../../../core/widgets/atoms/pro_max_icon_button.dart';
 import '../providers/iot_provider.dart';
 import '../models/iot_device_model.dart';
 import '../models/irrigation_log_model.dart';
+import '../models/irrigation_schedule_model.dart';
 import 'schedule_bottom_sheet.dart';
 
 import 'iot_landing_page.dart';
@@ -285,6 +288,11 @@ class IotDashboard extends StatelessWidget {
     bool isDark,
   ) {
     final isActive = status == 'active';
+    String formattedTime = "غير متوفر";
+    if (lastSyncAt != null) {
+      formattedTime = DateFormat('EEEE، hh:mm a', 'ar').format(lastSyncAt);
+    }
+
     return _PremiumCard(
       isDark: isDark,
       gradientColors: isActive
@@ -292,18 +300,7 @@ class IotDashboard extends StatelessWidget {
           : [const Color(0xFFED213A), const Color(0xFF93291E)],
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Colors.white24,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.wifi_rounded,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
+          _LiveStatusIndicator(isActive: isActive),
           const SizedBox(width: 18),
           Expanded(
             child: Column(
@@ -314,13 +311,12 @@ class IotDashboard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
-
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'آخر مزامنة: ${lastSyncAt?.toString().substring(0, 16) ?? "غير متوفر"}',
+                  'آخر مزامنة: $formattedTime',
                   style: const TextStyle(
                     fontSize: 13,
                     color: Colors.white70,
@@ -344,6 +340,27 @@ class IotDashboard extends StatelessWidget {
     bool? rain,
     bool isDark,
   ) {
+    double waterFill = 0.0;
+    if (water != null && water.isNotEmpty) {
+      final lowerWater = water.toLowerCase();
+      if (lowerWater.contains('high') || lowerWater.contains('full')) {
+        waterFill = 1.0;
+      } else if (lowerWater.contains('low') || lowerWater.contains('empty')) {
+        waterFill = 0.1; // Show at least a bit to indicate it's empty
+      } else if (lowerWater.contains('med')) {
+        waterFill = 0.5;
+      } else {
+        final cleanStr = water.replaceAll(RegExp(r'[^0-9.]'), '');
+        final parsed = double.tryParse(cleanStr);
+        if (parsed != null) {
+          // If it's a percentage (e.g. 75 or 75.5), convert to 0.0-1.0
+          waterFill = (parsed > 1.0) ? parsed / 100.0 : parsed;
+        }
+      }
+    }
+    // Ensure it's within bounds
+    waterFill = waterFill.clamp(0.0, 1.0);
+
     return Column(
       children: [
         Row(
@@ -401,13 +418,9 @@ class IotDashboard extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _buildSensorItem(
-                'خزان المياه',
-                water ?? "--",
-                Icons.waves_rounded,
-                const Color(0xFF4facfe),
-                const Color(0xFF00f2fe),
-                isDark,
+              child: _WaterTankWidget(
+                fillPercentage: waterFill,
+                isDark: isDark,
               ),
             ),
             const SizedBox(width: 16),
@@ -500,77 +513,149 @@ class IotDashboard extends StatelessWidget {
         ),
         if (autoIrrigation) ...[
           const SizedBox(height: 16),
-          _buildThresholdControl(context, provider.device?.autoThreshold ?? 30, isDark),
+          _ThresholdSlider(
+            initialThreshold: provider.device?.autoThreshold ?? 30,
+            isDark: isDark,
+            onThresholdChanged: (val) {
+              provider.updateThreshold(val);
+            },
+          ),
         ],
+        const SizedBox(height: 16),
+        _buildNextScheduleCard(context, isDark),
       ],
     );
   }
 
-  Widget _buildThresholdControl(BuildContext context, int threshold, bool isDark) {
-    return _PremiumCard(
-      isDark: isDark,
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'عتبة رطوبة التربة',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
+  Widget _buildNextScheduleCard(BuildContext context, bool isDark) {
+    return Selector<IotProvider, List<IrrigationSchedule>>(
+      selector: (_, p) => p.device?.schedules ?? [],
+      builder: (context, schedules, _) {
+        if (schedules.isEmpty) {
+          return _PremiumCard(
+            isDark: isDark,
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.schedule_rounded, color: Colors.grey),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: context.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '$threshold%',
-                  style: TextStyle(
-                    color: context.primary,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'الجدولة',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                          color: AppColors.getTextColor(isDark),
+                        ),
+                      ),
+                      const Text(
+                        'لا يوجد مواعيد مجدولة حالياً',
+                        style: TextStyle(
+                          fontSize: 13, 
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                TextButton(
+                  onPressed: () => _showScheduleSheet(context),
+                  style: TextButton.styleFrom(
+                    backgroundColor: context.primary.withValues(alpha: 0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'إضافة',
+                    style: TextStyle(
+                      color: context.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // Sort schedules to find the one closest to current time (simplified)
+        final now = DateTime.now();
+        final currentTimeStr = DateFormat('HH:mm').format(now);
+        
+        // Try to find the next one today, or just use the first
+        IrrigationSchedule s = schedules.firstWhere(
+          (sh) => sh.startTime.compareTo(currentTimeStr) > 0,
+          orElse: () => schedules.first,
+        );
+        return _PremiumCard(
+          isDark: isDark,
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF11998e), Color(0xFF38ef7d)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF38ef7d).withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.timer_rounded, color: Colors.white, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'الجدولة التالية',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                        color: AppColors.getTextColor(isDark),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${s.startTime} • ${s.days.join('، ')}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF11998e),
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit_calendar_rounded, color: Colors.grey),
+                onPressed: () => _showScheduleSheet(context),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: context.primary,
-              inactiveTrackColor: context.primary.withValues(alpha: 0.1),
-              thumbColor: context.primary,
-              overlayColor: context.primary.withValues(alpha: 0.1),
-            ),
-            child: Slider(
-              value: threshold.toDouble(),
-              min: 0,
-              max: 100,
-              divisions: 20,
-              label: '$threshold%',
-              onChanged: (val) {
-                // We could update locally first for responsiveness, 
-                // but for now we'll just wait for the provider update
-              },
-              onChangeEnd: (val) {
-                context.read<IotProvider>().updateThreshold(val.toInt());
-              },
-            ),
-          ),
-          const Text(
-            'سيتم تشغيل الري تلقائياً إذا انخفضت الرطوبة عن هذه القيمة',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -823,7 +908,7 @@ class IotDashboard extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          log.createdAt.toString().substring(11, 16),
+          DateFormat('hh:mm a', 'ar').format(log.createdAt),
           style: const TextStyle(
             fontSize: 12,
             color: Colors.grey,
@@ -872,6 +957,350 @@ class IotDashboard extends StatelessWidget {
       builder: (context) => const ScheduleBottomSheet(),
     );
   }
+}
+
+class _LiveStatusIndicator extends StatefulWidget {
+  final bool isActive;
+  const _LiveStatusIndicator({required this.isActive});
+
+  @override
+  State<_LiveStatusIndicator> createState() => _LiveStatusIndicatorState();
+}
+
+class _LiveStatusIndicatorState extends State<_LiveStatusIndicator> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+    _animation = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    if (widget.isActive) {
+      _controller.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didUpdateWidget(_LiveStatusIndicator oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      if (widget.isActive) {
+        _controller.repeat(reverse: true);
+      } else {
+        _controller.stop();
+        _controller.value = 1.0;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: widget.isActive ? 0.15 + (_animation.value * 0.1) : 0.1),
+            shape: BoxShape.circle,
+            boxShadow: widget.isActive ? [
+              BoxShadow(
+                color: Colors.white.withValues(alpha: _animation.value * 0.3),
+                blurRadius: 15 * _animation.value,
+                spreadRadius: 2 * _animation.value,
+              )
+            ] : [],
+          ),
+          child: Icon(
+            widget.isActive ? Icons.wifi_rounded : Icons.wifi_off_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ThresholdSlider extends StatefulWidget {
+  final int initialThreshold;
+  final bool isDark;
+  final Function(int) onThresholdChanged;
+
+  const _ThresholdSlider({
+    required this.initialThreshold,
+    required this.isDark,
+    required this.onThresholdChanged,
+  });
+
+  @override
+  State<_ThresholdSlider> createState() => _ThresholdSliderState();
+}
+
+class _ThresholdSliderState extends State<_ThresholdSlider> {
+  late double _currentValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentValue = widget.initialThreshold.toDouble();
+  }
+
+  @override
+  void didUpdateWidget(_ThresholdSlider oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialThreshold != widget.initialThreshold) {
+      _currentValue = widget.initialThreshold.toDouble();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _PremiumCard(
+      isDark: widget.isDark,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'عتبة رطوبة التربة',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: context.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_currentValue.toInt()}%',
+                  style: TextStyle(
+                    color: context.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: context.primary,
+              inactiveTrackColor: context.primary.withValues(alpha: 0.1),
+              thumbColor: context.primary,
+              overlayColor: context.primary.withValues(alpha: 0.1),
+            ),
+            child: Slider(
+              value: _currentValue,
+              min: 0,
+              max: 100,
+              divisions: 100,
+              label: '${_currentValue.toInt()}%',
+              onChanged: (val) {
+                setState(() {
+                  _currentValue = val;
+                });
+              },
+              onChangeEnd: (val) {
+                widget.onThresholdChanged(val.toInt());
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WaterTankWidget extends StatefulWidget {
+  final double fillPercentage;
+  final bool isDark;
+
+  const _WaterTankWidget({
+    required this.fillPercentage,
+    required this.isDark,
+  });
+
+  @override
+  State<_WaterTankWidget> createState() => _WaterTankWidgetState();
+}
+
+class _WaterTankWidgetState extends State<_WaterTankWidget> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const double tankHeight = 160.0;
+    final double clampedFill = widget.fillPercentage.clamp(0.0, 1.0);
+    
+    final Color waterColor = clampedFill > 0.25 
+        ? const Color(0xFF2196F3) 
+        : const Color(0xFFF44336);
+
+    return _PremiumCard(
+      isDark: widget.isDark,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          SizedBox(
+            height: tankHeight,
+            width: double.infinity,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: widget.isDark ? Colors.black38 : Colors.grey.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: widget.isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.08),
+                      width: 3,
+                    ),
+                  ),
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(21),
+                  child: AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, child) {
+                      return CustomPaint(
+                        size: const Size(double.infinity, tankHeight),
+                        painter: _WaterPainter(
+                          progress: clampedFill,
+                          waveValue: _controller.value,
+                          color: waterColor,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${(clampedFill * 100).toInt()}%',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
+                          color: clampedFill > 0.4 ? Colors.white : AppColors.getTextColor(widget.isDark),
+                          shadows: clampedFill > 0.4 ? [
+                            const Shadow(color: Colors.black38, blurRadius: 8, offset: Offset(0, 2))
+                          ] : [],
+                        ),
+                      ),
+                      Text(
+                        clampedFill > 0.8 ? 'ممتلئ' : (clampedFill < 0.2 ? 'منخفض' : 'جيد'),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: clampedFill > 0.4 ? Colors.white70 : Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'خزان المياه',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WaterPainter extends CustomPainter {
+  final double progress;
+  final double waveValue;
+  final Color color;
+
+  const _WaterPainter({
+    required this.progress,
+    required this.waveValue,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..shader = LinearGradient(
+        colors: [color.withValues(alpha: 0.8), color],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    final path = Path();
+    final yCenter = size.height * (1 - progress);
+    path.moveTo(0, yCenter);
+    for (double x = 0; x <= size.width; x++) {
+      final y = yCenter + 
+          math.sin((x / size.width * 2 * math.pi) + (waveValue * 2 * math.pi)) * 6 * (1 - progress).clamp(0.2, 1.0);
+      path.lineTo(x, y);
+    }
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    canvas.drawPath(path, paint);
+
+    final paint2 = Paint()..color = Colors.white.withValues(alpha: 0.2);
+    final path2 = Path();
+    path2.moveTo(0, yCenter);
+    for (double x = 0; x <= size.width; x++) {
+      final y = yCenter + 
+          math.cos((x / size.width * 2 * math.pi) + (waveValue * 2 * math.pi)) * 4;
+      path2.lineTo(x, y);
+    }
+    path2.lineTo(size.width, size.height);
+    path2.lineTo(0, size.height);
+    path2.close();
+    canvas.drawPath(path2, paint2);
+  }
+
+  @override
+  bool shouldRepaint(covariant _WaterPainter oldDelegate) => true;
 }
 
 class _PremiumCard extends StatelessWidget {
