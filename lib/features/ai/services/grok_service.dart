@@ -74,6 +74,7 @@ class GrokService {
   Stream<String> sendMessageStream(
     String message, {
     List<int>? imageBytes,
+    List<Map<String, String>> chatHistory = const [],
   }) async* {
     await _ensureInitialized();
 
@@ -85,6 +86,13 @@ class GrokService {
     final List<Map<String, dynamic>> messages = [];
     if (_systemInstruction != null && _systemInstruction!.isNotEmpty) {
       messages.add({'role': 'system', 'content': _systemInstruction});
+    }
+
+    for (var msg in chatHistory) {
+      messages.add({
+        'role': msg['role'],
+        'content': msg['content'],
+      });
     }
 
     // بناء محتوى الرسالة (دعم النص والصورة)
@@ -120,19 +128,15 @@ class GrokService {
           ? 'llama-3.2-11b-vision-preview' // موديل الرؤية الأفضل في Groq حالياً
           : 'grok-2-vision-1212';
           
-      // دمج تعليمات النظام مع المحتوى للموديلات التي ترفض System مع الصور
-      final fullText = '${_systemInstruction ?? ""}\n\n$message';
-      final List<Map<String, dynamic>> combinedUserContent = [
-        {'type': 'text', 'text': fullText},
-        {
-          'type': 'image_url',
-          'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}
-        }
-      ];
+      messages.add({
+        'role': 'user',
+        'content': [
+          if (message.isNotEmpty) {'type': 'text', 'text': message},
+          {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}}
+        ]
+      });
 
-      yield* _makeRequest(_currentBaseUrl, visionModel, [
-        {'role': 'user', 'content': combinedUserContent}
-      ]);
+      yield* _makeRequest(_currentBaseUrl, visionModel, messages);
     } else {
       messages.add({'role': 'user', 'content': message});
       

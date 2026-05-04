@@ -111,6 +111,23 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   String _cleanResponse(String text) => text.trim();
 
+  List<Map<String, String>> _buildChatHistory() {
+    final history = <Map<String, String>>[];
+    for (int i = 0; i < _messages.length; i++) {
+      final m = _messages[i];
+      if (m.text.isEmpty) continue;
+      history.add({
+        'role': m.isUser ? 'user' : 'assistant',
+        'content': m.text,
+      });
+    }
+    // Limit to last 10 messages to avoid token limit and maintain speed
+    if (history.length > 10) {
+      return history.sublist(history.length - 10);
+    }
+    return history;
+  }
+
   Future<void> _handleSendMessage() async {
     if (_isTyping) return;
     final String text = _messageController.text.trim();
@@ -120,6 +137,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     if (_selectedImage != null) {
       imageBytes = await _selectedImage!.readAsBytes();
     }
+
+    final history = _buildChatHistory();
 
     setState(() {
       _messages.add(
@@ -148,6 +167,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       await for (final chunk in _grokService.sendMessageStream(
         text,
         imageBytes: imageBytes,
+        chatHistory: history,
       )) {
         _botAccumulated += chunk;
         if (mounted && _botMessageIndex < _messages.length) {
