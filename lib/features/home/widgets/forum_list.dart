@@ -7,12 +7,15 @@ import '../../../core/constants.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 import 'package:go_router/go_router.dart';
+
 class ForumList extends StatelessWidget {
   const ForumList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final postIds = context.select<PostProvider, List<String>>((p) => p.postIds.take(2).toList());
+    final postIds = context.select<PostProvider, List<String>>(
+      (p) => p.postIds.take(2).toList(),
+    );
     final isLoading = context.select<PostProvider, bool>((p) => p.isLoading);
 
     if (isLoading) {
@@ -88,23 +91,20 @@ class ForumList extends StatelessWidget {
 
         // Forum Posts List (Lazy loading via SliverList)
         SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: context.hp(1)),
-                child: FadeInSlide(
-                  duration: const Duration(milliseconds: 500),
-                  // Cap delay to first 5 items to prevent performance issues on long lists
-                  delay: Duration(milliseconds: index < 5 ? 100 * index : 0),
-                  child: SocialMediaPost(
-                    postId: postIds[index],
-                  ),
-                ),
-              );
-            },
-            childCount: postIds.length,
-          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: context.hp(1)),
+              child: FadeInSlide(
+                duration: const Duration(milliseconds: 500),
+                // Cap delay to first 5 items to prevent performance issues on long lists
+                delay: Duration(milliseconds: index < 5 ? 100 * index : 0),
+                child: SocialMediaPost(postId: postIds[index]),
+              ),
+            );
+          }, childCount: postIds.length),
         ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: 30)),
       ],
     );
   }
