@@ -25,7 +25,7 @@ class HomeHeader extends StatelessWidget {
 
     final statusBarHeight = MediaQuery.of(context).padding.top;
     final double minHeight = statusBarHeight + context.hp(11).clamp(85, 105);
-    final double maxHeight = statusBarHeight + context.hp(38).clamp(300, 450);
+    final double maxHeight = statusBarHeight + context.hp(32).clamp(260, 380);
 
     return SliverPersistentHeader(
       pinned: true,
@@ -212,7 +212,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                 opacity: opacity,
                 child: Column(
                   children: [
-                    SizedBox(height: context.hp(2)),
+                    SizedBox(height: context.hp(1)),
                     Container(
                       constraints: BoxConstraints(
                         maxWidth: context.wp(90).clamp(300, 600),
@@ -231,7 +231,6 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                             )
                           : _buildWeatherInfo(context, weather),
                     ),
-                    SizedBox(height: context.hp(2)),
                   ],
                 ),
               ),
@@ -374,7 +373,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ],
         ),
-        SizedBox(height: context.hp(2.5)),
+        SizedBox(height: context.hp(1)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
