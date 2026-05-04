@@ -330,29 +330,91 @@ class MarketplaceProvider extends BaseProvider {
       {'id': 'all', 'label': 'الكل', 'icon': 'apps'}
     ];
     
-    if (_categories.isNotEmpty) {
-      result.addAll(_categories);
-    } else {
-      result.addAll([
-        {'id': 'seeds', 'label': 'بذور', 'icon': 'eco'},
-        {'id': 'fertilizers', 'label': 'أسمدة', 'icon': 'opacity'},
-        {'id': 'pesticides', 'label': 'مبيدات', 'icon': 'bug_report'},
-        {'id': 'crops', 'label': 'محاصيل', 'icon': 'grass'},
-        {'id': 'tools', 'label': 'معدات', 'icon': 'construction'},
-        {'id': 'nurseries', 'label': 'مشاتل', 'icon': 'yard'},
-      ]);
+    // Set to track normalized labels to prevent duplicates
+    final Set<String> seenLabels = {'الكل'};
+
+    // Helper to normalize category labels (Robust Arabic Normalization)
+    String normalize(String label) {
+      String l = label.trim();
+      
+      // Basic Arabic Unification
+      String unify(String s) {
+        return s.replaceAll('أ', 'ا')
+                .replaceAll('إ', 'ا')
+                .replaceAll('آ', 'ا')
+                .replaceAll('ة', 'ه')
+                .replaceAll('ى', 'ي')
+                .replaceAll('  ', ' '); // Remove double spaces
+      }
+
+      final unified = unify(l);
+      
+      // Mapping common variations to standard names using unified comparison
+      if (unified.contains('محصول') || unified.contains('محاصيل') || unified.contains('منتجات زراعي')) {
+        return 'منتجات زراعية';
+      }
+      if (unified.contains('معدات') || unified.contains('ادوات') || unified.contains('الات زراعي')) {
+        return 'معدات وأدوات';
+      }
+      if (unified.contains('بذر') || unified.contains('تقاوي')) {
+        return 'بذور زراعية';
+      }
+      if (unified.contains('مشتل') || unified.contains('نبات')) {
+        return 'مشاتل';
+      }
+      if (unified.contains('سماد') || unified.contains('اسمده') || unified.contains('مخصب')) {
+        return 'أسمدة';
+      }
+      if (unified.contains('مبيد') || unified.contains('حمايه')) {
+        return 'مبيدات زراعية';
+      }
+      if (unified.contains('ري') || unified.contains('طاقه')) {
+        return 'أنظمة ري وطاقة';
+      }
+      
+      return l; // Return original if no match, but Set will handle uniqueness
     }
 
-    final Set<String> fromStores = {};
-    for (var store in _stores) {
-      if (store.category.isNotEmpty && store.category != 'شامل') {
-        fromStores.add(store.category.trim());
+    // 1. Add categories from API (Metadata)
+    for (var cat in _categories) {
+      final label = normalize(cat['label'].toString());
+      if (!seenLabels.contains(label)) {
+        result.add({
+          ...cat,
+          'label': label,
+        });
+        seenLabels.add(label);
       }
     }
 
-    for (var storeCat in fromStores) {
-      if (!result.any((c) => c['label'] == storeCat)) {
-        result.add({'id': storeCat, 'label': storeCat, 'icon': 'store'});
+    // 2. Add fallback categories if API list is empty
+    if (_categories.isEmpty) {
+      final fallbacks = [
+        {'id': 'seeds', 'label': 'بذور زراعية', 'icon': 'eco'},
+        {'id': 'fertilizers', 'label': 'أسمدة', 'icon': 'opacity'},
+        {'id': 'pesticides', 'label': 'مبيدات زراعية', 'icon': 'bug_report'},
+        {'id': 'irrigation', 'label': 'أنظمة ري وطاقة', 'icon': 'solar_power'},
+        {'id': 'tools', 'label': 'معدات وأدوات', 'icon': 'construction'},
+        {'id': 'nurseries', 'label': 'مشاتل', 'icon': 'yard'},
+        {'id': 'products', 'label': 'منتجات زراعية', 'icon': 'shopping_basket'},
+      ];
+      for (var fb in fallbacks) {
+        final label = normalize(fb['label'].toString());
+        if (!seenLabels.contains(label)) {
+          result.add(fb);
+          seenLabels.add(label);
+        }
+      }
+    }
+
+    // 3. Add dynamic categories from loaded stores
+    for (var store in _stores) {
+      if (store.category.isNotEmpty && store.category != 'شامل') {
+        final label = normalize(store.category);
+        if (!seenLabels.contains(label)) {
+          result.add({'id': label, 'label': label, 'icon': 'store'});
+          seenLabels.add(label);
+        }
       }
     }
 

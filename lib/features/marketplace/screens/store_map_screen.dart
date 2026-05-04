@@ -27,12 +27,13 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
 
   final List<String> _categories = [
     'الكل',
-    'بذور',
-    'اسمدة',
-    'مبيدات',
-    'محاصيل',
-    'معدات',
-    'المشاتل',
+    'بذور زراعية',
+    'أسمدة',
+    'مبيدات زراعية',
+    'أنظمة ري وطاقة',
+    'معدات وأدوات',
+    'مشاتل',
+    'منتجات زراعية',
   ];
 
   @override
@@ -134,17 +135,19 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
 
   Color _getCategoryColor(String category) {
     switch (category) {
-      case 'بذور':
+      case 'بذور زراعية':
         return const Color(0xFF2ECC71); // Brand Primary
-      case 'اسمدة':
+      case 'أسمدة':
         return const Color(0xFFF1C40F); // Brand Accent
-      case 'مبيدات':
+      case 'مبيدات زراعية':
         return const Color(0xFFE74C3C); // Semantic Error/Danger
-      case 'محاصيل':
+      case 'أنظمة ري وطاقة':
+        return const Color(0xFF3498DB); // Blue for irrigation
+      case 'منتجات زراعية':
         return const Color(0xFF27AE60); // Darker Growth
-      case 'معدات':
+      case 'معدات وأدوات':
         return const Color(0xFF34495E); // Industrial/Steel
-      case 'المشاتل':
+      case 'مشاتل':
         return const Color(0xFF9B59B6); // Amethyst/Nursery
       default:
         return context.primary;
@@ -602,12 +605,13 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
-      case 'بذور': return Icons.grass_rounded;
-      case 'اسمدة': return Icons.science_rounded;
-      case 'مبيدات': return Icons.bug_report_rounded;
-      case 'محاصيل': return Icons.agriculture_rounded;
-      case 'معدات': return Icons.construction_rounded;
-      case 'المشاتل': return Icons.park_rounded;
+      case 'بذور زراعية': return Icons.grass_rounded;
+      case 'أسمدة': return Icons.science_rounded;
+      case 'مبيدات زراعية': return Icons.bug_report_rounded;
+      case 'أنظمة ري وطاقة': return Icons.water_drop_rounded;
+      case 'منتجات زراعية': return Icons.agriculture_rounded;
+      case 'معدات وأدوات': return Icons.construction_rounded;
+      case 'مشاتل': return Icons.park_rounded;
       default: return Icons.storefront_rounded;
     }
   }

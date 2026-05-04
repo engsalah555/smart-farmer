@@ -18,35 +18,47 @@ class PlantSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Theme.of(context).primaryColor;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 16, top: 8),
       child: Row(
         children: [
-          Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 24),
-          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: primaryColor.withValues(alpha: 0.15)),
+            ),
+            child: Icon(icon, color: primaryColor, size: 24),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Text(
               title,
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: isDark ? Colors.white : Colors.black.withValues(alpha: 0.8),
+                letterSpacing: -0.5,
               ),
             ),
           ),
           if (onSpeak != null)
-            IconButton(
-              onPressed: onSpeak,
-              icon: Icon(
-                Icons.volume_up_rounded,
-                color: isDark ? Colors.white54 : Colors.black54,
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
+                shape: BoxShape.circle,
               ),
-              tooltip: 'استمع للقراءة الصوتية',
-              iconSize: 24,
-              constraints: const BoxConstraints(
-                minWidth: 48,
-                minHeight: 48,
+              child: IconButton(
+                onPressed: onSpeak,
+                icon: Icon(
+                  Icons.volume_up_rounded,
+                  color: primaryColor.withValues(alpha: 0.8),
+                ),
+                tooltip: 'استمع للقراءة الصوتية',
+                iconSize: 22,
               ),
             ),
         ],

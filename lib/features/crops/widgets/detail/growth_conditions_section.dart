@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/crop_model.dart';
-import '../shared/plant_section_header.dart';
+import '../../../../core/constants.dart';
+import 'premium_section_wrapper.dart';
 import '../shared/plant_info_grid_tile.dart';
 
-/// Section 1: Growth Conditions
+/// Section 1: Growth Conditions (Refactored to Premium UI)
 class GrowthConditionsSection extends StatelessWidget {
   final Crop crop;
   final VoidCallback? onSpeak;
@@ -14,7 +15,6 @@ class GrowthConditionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final care = crop.careGuide;
     if (care == null) return const SizedBox.shrink();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final tiles = <Widget>[
       if (care.minTemp != null || care.maxTemp != null)
@@ -41,40 +41,34 @@ class GrowthConditionsSection extends StatelessWidget {
           label: 'الرطوبة النسبية',
           value: crop.humidityRange,
         ),
-      if (care.irrigationLevel != null)
-        PlantInfoGridTile(
-          icon: Icons.opacity_rounded,
-          label: 'مستوى الري',
-          value: care.irrigationLevel!,
-        ),
     ];
 
-    if (tiles.isEmpty && crop.growingConditions == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return PremiumSectionWrapper(
+      title: 'ظروف النمو البيئية',
+      subtitle: 'المناخ والبيئة المناسبة للمحصول',
+      icon: Icons.wb_cloudy_rounded,
+      themeColor: Colors.teal,
       children: [
-        PlantSectionHeader(
-          title: 'ظروف النمو البيئية',
-          icon: Icons.wb_cloudy_rounded,
-          onSpeak: onSpeak,
-        ),
         if (crop.growingConditions != null) ...[
           Text(
             crop.growingConditions!,
             style: TextStyle(
-              fontSize: 15,
-              color: isDark ? Colors.white70 : Colors.black87,
+              fontSize: 14,
+              color: context.textColor,
               height: 1.6,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
         ],
         if (tiles.isNotEmpty)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 2.2,
             children: tiles,
           ),
       ],

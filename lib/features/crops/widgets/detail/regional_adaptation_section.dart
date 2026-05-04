@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/crop_model.dart';
 import '../../../../core/constants.dart';
-import '../shared/plant_section_header.dart';
-import '../shared/fertilizer_calculator_sheet.dart';
+import 'premium_section_wrapper.dart';
 
+/// Section: Regional Adaptation (Refactored to Premium UI)
 class RegionalAdaptationSection extends StatelessWidget {
   final Crop crop;
 
@@ -14,28 +14,28 @@ class RegionalAdaptationSection extends StatelessWidget {
     final care = crop.careGuide;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return PremiumSectionWrapper(
+      title: 'التكيف الإقليمي والمحلي',
+      subtitle: 'دليل الزراعة حسب الأقاليم اليمنية',
+      icon: Icons.public_rounded,
+      themeColor: Colors.orange,
       children: [
-        const PlantSectionHeader(
-          title: 'التكيف الإقليمي والمحلي',
-          icon: Icons.public_rounded,
-        ),
-        const SizedBox(height: 12),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                context.primary.withValues(alpha: 0.1),
-                Colors.orange.withValues(alpha: 0.05),
+                context.primary.withValues(alpha: 0.08),
+                Colors.orange.withValues(alpha: 0.04),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: context.primary.withValues(alpha: 0.1)),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: context.primary.withValues(alpha: 0.1),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,14 +48,18 @@ class RegionalAdaptationSection extends StatelessWidget {
                       color: Colors.redAccent,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.flag_rounded, color: Colors.white, size: 14),
+                    child: const Icon(
+                      Icons.flag_rounded,
+                      color: Colors.white,
+                      size: 12,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   const Text(
                     'نصائح خاصة بالبيئة اليمنية',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                      fontSize: 14,
                       color: Colors.redAccent,
                     ),
                   ),
@@ -63,20 +67,44 @@ class RegionalAdaptationSection extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               _buildYemenAdvice(context, isDark),
-              if (care?.managementTips != null) ...[
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Divider(),
+            ],
+          ),
+        ),
+
+        if (care?.managementTips != null) ...[
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey[50],
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? Colors.white10 : Colors.grey[200]!,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline_rounded,
+                      size: 18,
+                      color: context.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'إرشادات الإدارة العامة',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'إرشادات الإدارة العامة:',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   care!.managementTips!,
                   style: TextStyle(
@@ -86,9 +114,9 @@ class RegionalAdaptationSection extends StatelessWidget {
                   ),
                 ),
               ],
-            ],
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
@@ -97,10 +125,11 @@ class RegionalAdaptationSection extends StatelessWidget {
     String advice = "";
     List<String> regions = [];
     
-    if (crop.category.contains('خضروات')) {
+    final category = crop.category;
+    if (category.contains('خضروات') || category.contains('منتجات زراعية')) {
       advice = "في المرتفعات اليمنية (صنعاء، ذمار)، يفضل الزراعة في البيوت المحمية خلال أشهر الشتاء لتجنب الضريب (الصقيع). أما في المناطق الساحلية (الحديدة، عدن)، يجب توفير تظليل جزئي خلال الصيف.";
       regions = ['المرتفعات', 'تهامة', 'لحج'];
-    } else if (crop.category.contains('فواكه')) {
+    } else if (category.contains('فواكه') || category.contains('أشجار')) {
       advice = "تنجح الفواكه الاستوائية بشكل ممتاز في تهامة ولحج. تأكد من جودة مياه الري خاصة في المناطق التي تعاني من الملوحة العالية مثل سواحل أبين والحديدة.";
       regions = ['تهامة', 'أبين', 'حضرموت'];
     } else {
@@ -123,23 +152,23 @@ class RegionalAdaptationSection extends StatelessWidget {
         const SizedBox(height: 16),
         Wrap(
           spacing: 8,
-          children: regions.map((r) => Chip(
-            label: Text(r, style: const TextStyle(fontSize: 10)),
-            backgroundColor: context.primary.withValues(alpha: 0.1),
-            side: BorderSide.none,
-            visualDensity: VisualDensity.compact,
+          runSpacing: 8,
+          children: regions.map((r) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: context.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: context.primary.withValues(alpha: 0.1)),
+            ),
+            child: Text(
+              r,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: context.primary,
+              ),
+            ),
           )).toList(),
-        ),
-        const SizedBox(height: 16),
-        OutlinedButton.icon(
-          onPressed: () => FertilizerCalculatorSheet.show(context, crop),
-          icon: const Icon(Icons.calculate_rounded, size: 18),
-          label: const Text('حاسبة السماد للمناخ المحلي'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: context.primary,
-            side: BorderSide(color: context.primary.withValues(alpha: 0.3)),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
         ),
       ],
     );

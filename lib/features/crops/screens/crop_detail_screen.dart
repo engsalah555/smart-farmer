@@ -14,7 +14,6 @@ import '../widgets/detail/management_rotation_section.dart';
 import '../widgets/detail/pests_harvest_sections.dart';
 import '../widgets/detail/uses_benefits_section.dart';
 import '../widgets/detail/smart_care_advisor.dart';
-import '../widgets/detail/visual_troubleshooting_section.dart';
 import '../widgets/detail/companion_plants_section.dart';
 import '../widgets/detail/regional_adaptation_section.dart';
 
@@ -499,13 +498,13 @@ class _GrowthTimelineSection extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: context.cardBackground,
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: context.border.withValues(alpha: 0.5)),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(color: context.border.withValues(alpha: 0.4)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -781,16 +780,16 @@ class _AboutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: context.cardBackground,
+        color: isDark ? context.cardBackground : Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: context.border.withValues(alpha: 0.5)),
+        border: Border.all(color: context.border.withValues(alpha: isDark ? 0.2 : 0.08)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -800,53 +799,77 @@ class _AboutCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: context.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
-                  Icons.eco_rounded,
+                  Icons.description_rounded,
                   color: context.primary,
-                  size: 22,
+                  size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
-              Text(
-                'نبذة عن النبتة',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20,
-                  color: context.textColor,
-                ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'نظرة عامة',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      color: context.textColor,
+                    ),
+                  ),
+                  Text(
+                    'تعرف على هذه النبتة بشكل أعمق',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textMuted,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
             crop.description,
             style: TextStyle(
-              fontSize: 16,
-              color: context.textColor.withValues(alpha: 0.8),
-              height: 1.7,
+              fontSize: 15,
+              color: context.textColor.withValues(alpha: 0.85),
+              height: 1.8,
+              letterSpacing: 0.2,
             ),
           ),
           if (crop.scientificDefinition != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: context.border.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
+                color: context.primary.withValues(alpha: 0.04),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: context.primary.withValues(alpha: 0.05)),
               ),
-              child: Text(
-                crop.scientificDefinition!,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: context.textMuted,
-                  fontStyle: FontStyle.italic,
-                  height: 1.5,
-                ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.auto_stories_rounded, size: 16, color: context.primary.withValues(alpha: 0.6)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      crop.scientificDefinition!,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: context.textMuted,
+                        fontStyle: FontStyle.italic,
+                        height: 1.6,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -871,37 +894,72 @@ class _PremiumSectionWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8, bottom: 20),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                color: context.primary.withValues(alpha: 0.5),
-                size: 20,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: context.textColor.withValues(alpha: 0.6),
-                  letterSpacing: 0.5,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Theme.of(context).primaryColor;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.01) : Colors.grey.withValues(alpha: 0.02),
+        borderRadius: BorderRadius.circular(48),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.01)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: primaryColor,
+                    size: 18,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Divider(color: context.border.withValues(alpha: 0.3)),
-              ),
-            ],
+                const SizedBox(width: 14),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.5),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Container(
+                    height: 1.5,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          primaryColor.withValues(alpha: 0.2),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        ...children,
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              children: children,
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
     );
   }
 }
+

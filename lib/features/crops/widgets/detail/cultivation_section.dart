@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/crop_model.dart';
 import '../../../../core/constants.dart';
-import '../shared/plant_section_header.dart';
+import 'premium_section_wrapper.dart';
 import '../shared/plant_info_grid_tile.dart';
 
-/// Section 2: Cultivation Details
+/// Section 2: Cultivation Details (Refactored to Premium UI)
 class CultivationSection extends StatelessWidget {
   final Crop crop;
   final VoidCallback? onSpeak;
@@ -57,84 +57,41 @@ class CultivationSection extends StatelessWidget {
         ),
     ];
 
-    if (tiles.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return PremiumSectionWrapper(
+      title: 'دليل الاستزراع والإنتاج',
+      subtitle: 'الخطوات والمواعيد المثالية للنمو',
+      icon: Icons.agriculture_rounded,
+      themeColor: context.primary,
       children: [
-        PlantSectionHeader(
-          title: 'دليل الاستزراع والإنتاج',
-          icon: Icons.agriculture_rounded,
-          onSpeak: onSpeak,
-        ),
-        
-        // Prominent Cultivation Method Card
         if (care.cultivationMethod != null) ...[
           Container(
-            margin: const EdgeInsets.only(bottom: 24),
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  context.primary.withValues(alpha: 0.12),
-                  context.primary.withValues(alpha: 0.05),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: context.primary.withValues(alpha: 0.2)),
-              boxShadow: [
-                BoxShadow(
-                  color: context.primary.withValues(alpha: 0.03),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              color: context.primary.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: context.primary.withValues(alpha: 0.1)),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: context.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Icon(Icons.psychology_rounded, color: context.primary, size: 28),
-                ),
-                const SizedBox(width: 20),
+                Icon(Icons.lightbulb_outline_rounded, color: context.primary, size: 20),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'طريقة الزراعة المثالية:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 14,
-                          color: context.primary,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        care.cultivationMethod!,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: context.textColor,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    care.cultivationMethod!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: context.textColor,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 24),
         ],
-
-        // Information Grid
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,

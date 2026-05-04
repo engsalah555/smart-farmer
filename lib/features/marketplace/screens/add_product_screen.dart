@@ -33,7 +33,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final _notesController = TextEditingController();
 
   String? _selectedCatalogId;
-  String _selectedCategory = 'بذور';
+  String _selectedCategory = 'بذور زراعية';
   String _selectedUnit = 'كيلوجرام';
 
   final List<String> _selectedImages = [];
@@ -85,7 +85,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     _selectedCategory = p.category;
     _selectedUnit = p.unit;
-    _selectedCatalogId = p.catalogId;
+    _selectedCatalogId = p.catalogId; // String? — already nullable, safe assignment
     _selectedPaymentMethods.addAll(p.paymentMethods);
     _selectedImages.addAll(p.images);
   }
@@ -253,7 +253,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               selectedCategory: _selectedCategory,
               selectedCatalogId: _selectedCatalogId,
               onCategoryChanged: (v) => setState(() => _selectedCategory = v),
-              onCatalogChanged: (v) => setState(() => _selectedCatalogId = v),
+              onCatalogChanged: (v) => setState(() => _selectedCatalogId = v), // v is String?
             ),
             const SizedBox(height: 24),
 

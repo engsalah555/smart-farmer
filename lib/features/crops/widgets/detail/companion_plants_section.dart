@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/crop_model.dart';
-import '../../../../core/constants.dart';
-import '../shared/plant_section_header.dart';
+import 'premium_section_wrapper.dart';
 
+/// Section: Companion Plants (Refactored to Premium UI)
 class CompanionPlantsSection extends StatelessWidget {
   final Crop crop;
 
@@ -18,25 +18,23 @@ class CompanionPlantsSection extends StatelessWidget {
 
     if (companions.isEmpty && combative.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return PremiumSectionWrapper(
+      title: 'نظام الرفقة النباتية',
+      subtitle: 'توافق المحاصيل والزراعة المتداخلة',
+      icon: Icons.groups_rounded,
+      themeColor: Colors.deepPurple,
       children: [
-        const PlantSectionHeader(
-          title: 'نظام الرفقة النباتية',
-          icon: Icons.groups_rounded,
-        ),
-        const SizedBox(height: 12),
         if (companions.isNotEmpty) ...[
-          _PlantRelationshipCard(
-            title: 'مرفقات جيدة (جيران جيدون)',
+          _RelationshipCard(
+            title: 'جيران جيدون (زراعة متوافقة)',
             items: companions,
             isPositive: true,
           ),
-          const SizedBox(height: 12),
+          if (combative.isNotEmpty) const SizedBox(height: 16),
         ],
         if (combative.isNotEmpty) ...[
-          _PlantRelationshipCard(
-            title: 'مرفقات سيئة (تجنب المجاورة)',
+          _RelationshipCard(
+            title: 'جيران سيئون (تجنب المجاورة)',
             items: combative,
             isPositive: false,
           ),
@@ -46,12 +44,12 @@ class CompanionPlantsSection extends StatelessWidget {
   }
 }
 
-class _PlantRelationshipCard extends StatelessWidget {
+class _RelationshipCard extends StatelessWidget {
   final String title;
   final List<String> items;
   final bool isPositive;
 
-  const _PlantRelationshipCard({
+  const _RelationshipCard({
     required this.title,
     required this.items,
     required this.isPositive,
@@ -59,28 +57,35 @@ class _PlantRelationshipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isPositive ? context.primary : Colors.redAccent;
+    final color = isPositive ? Colors.green : Colors.redAccent;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.15)),
+        color: isDark ? color.withValues(alpha: 0.1) : color.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                isPositive ? Icons.favorite_rounded : Icons.block_flipped,
-                color: color,
-                size: 18,
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isPositive ? Icons.favorite_rounded : Icons.block_flipped,
+                  color: color,
+                  size: 16,
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
                 title,
                 style: TextStyle(
@@ -91,45 +96,35 @@ class _PlantRelationshipCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: items.map((plant) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white10 : Colors.white,
-                  borderRadius: BorderRadius.circular(30),
+                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: color.withValues(alpha: 0.1),
+                    color: isDark ? Colors.white10 : Colors.grey.shade200,
                   ),
                   boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
+                    if (!isDark)
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
                   ],
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isPositive ? Icons.check_circle_outline : Icons.close_rounded,
-                      size: 14,
-                      color: color,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      plant,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  plant,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
                 ),
               );
             }).toList(),

@@ -96,6 +96,7 @@ class CropsProvider extends BaseProvider {
       );
 
       final cropData = {
+        'plant_id': plant.id,
         'name': plant.name,
         'crop_type': plant.category,
         'plantation_date': DateTime.now().toIso8601String().split('T')[0],

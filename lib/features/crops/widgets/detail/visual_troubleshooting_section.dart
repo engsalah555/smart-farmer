@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants.dart';
 import '../../../../core/models/crop_model.dart';
-import '../shared/plant_section_header.dart';
+import 'premium_section_wrapper.dart';
 
+/// Section: Visual Troubleshooting (Refactored to Premium UI)
 class VisualTroubleshootingSection extends StatefulWidget {
   final Crop crop;
   const VisualTroubleshootingSection({super.key, required this.crop});
@@ -19,15 +20,12 @@ class _VisualTroubleshootingSectionState extends State<VisualTroubleshootingSect
     final pestsText = widget.crop.pestsAndDiseases ?? widget.crop.careGuide?.pestsAndDiseases;
     if (pestsText == null || pestsText.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return PremiumSectionWrapper(
+      title: 'دليل تشخيص المشاكل',
+      subtitle: 'تعرف على الأعراض الشائعة وطرق علاجها',
+      icon: Icons.biotech_rounded,
+      themeColor: Colors.teal,
       children: [
-        const PlantSectionHeader(
-          title: 'دليل المشاكل والآفات',
-          icon: Icons.bug_report_rounded,
-        ),
-        const SizedBox(height: 16),
-        
         // Problem Cards Area with AnimatedSize for smooth expansion
         AnimatedSize(
           duration: const Duration(milliseconds: 500),
@@ -123,7 +121,7 @@ class _VisualTroubleshootingSectionState extends State<VisualTroubleshootingSect
   Widget _buildHorizontalList() {
     final items = _getProblems();
     return SizedBox(
-      height: 170,
+      height: 180,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -171,8 +169,6 @@ class _VisualTroubleshootingSectionState extends State<VisualTroubleshootingSect
   }
 
   List<_ProblemItem> _getProblems() {
-    // In a real app, this would be parsed from the crop's pests field
-    // For now, we provide a robust set of common agricultural problems
     return [
       _ProblemItem(
         title: 'نقص النيتروجين',

@@ -19,7 +19,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   bool isLogin = true; // Default to Login
   String userType = 'user'; // 'user' or 'seller'
-  String storeType = 'محاصيل'; // Changed to match dropdown options
+  String storeType = 'منتجات زراعية'; // Changed to match dropdown options
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -583,28 +583,32 @@ class _AuthScreenState extends State<AuthScreen> {
             style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
             items: [
               DropdownMenuItem(
-                value: 'بذور',
-                child: Text('بذور', style: context.font14),
+                value: 'بذور زراعية',
+                child: Text('بذور زراعية', style: context.font14),
               ),
               DropdownMenuItem(
-                value: 'اسمدة',
-                child: Text('اسمدة', style: context.font14),
+                value: 'أسمدة',
+                child: Text('أسمدة', style: context.font14),
               ),
               DropdownMenuItem(
-                value: 'مبيدات',
-                child: Text('مبيدات', style: context.font14),
+                value: 'مبيدات زراعية',
+                child: Text('مبيدات زراعية', style: context.font14),
               ),
               DropdownMenuItem(
-                value: 'محاصيل',
-                child: Text('محاصيل', style: context.font14),
+                value: 'أنظمة ري وطاقة',
+                child: Text('أنظمة ري وطاقة', style: context.font14),
               ),
               DropdownMenuItem(
-                value: 'معدات',
-                child: Text('معدات', style: context.font14),
+                value: 'معدات وأدوات',
+                child: Text('معدات وأدوات', style: context.font14),
               ),
               DropdownMenuItem(
-                value: 'المشاتل',
-                child: Text('المشاتل', style: context.font14),
+                value: 'مشاتل',
+                child: Text('مشاتل', style: context.font14),
+              ),
+              DropdownMenuItem(
+                value: 'منتجات زراعية',
+                child: Text('منتجات زراعية', style: context.font14),
               ),
             ],
             onChanged: (value) {
