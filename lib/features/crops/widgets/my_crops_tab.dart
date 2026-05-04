@@ -219,7 +219,7 @@ class _MyCropsTabState extends State<MyCropsTab> {
             ),
             child: Text(
               isSearch ? 'انتقل للدليل' : 'استكشف الدليل الآن',
-              style: context.font16,
+              style: context.font16.copyWith(color: context.white),
             ),
           ),
         ],
