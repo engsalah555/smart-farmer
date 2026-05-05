@@ -57,95 +57,96 @@ class _CropDetailScreenState extends State<CropDetailScreen> {
     final c = widget.crop;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      body: Consumer<CropsProvider>(
-        builder: (context, provider, _) {
-          final isAdded = _isAlreadyAdded(provider);
-          return CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              _PremiumHeroAppBar(
-                crop: c,
-                isDark: isDark,
-                isAdding: _isAdding,
-                isAdded: isAdded,
-                onAdd: _addToMyCrops,
-                onRemove: () =>
-                    _showRemoveConfirmation(context, provider, widget.crop),
+      backgroundColor: context.backgroundColor,
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          Selector<CropsProvider, bool>(
+            selector: (_, p) => _isAlreadyAdded(p),
+            builder: (context, isAdded, _) => _PremiumHeroAppBar(
+              crop: c,
+              isDark: isDark,
+              isAdding: _isAdding,
+              isAdded: isAdded,
+              onAdd: _addToMyCrops,
+              onRemove: () => _showRemoveConfirmation(
+                context,
+                context.read<CropsProvider>(),
+                widget.crop,
               ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    // 1. Overview & About
-                    if (c.description.isNotEmpty) ...[
-                      _AboutCard(crop: c, isDark: isDark),
-                      const SizedBox(height: 48),
-                    ],
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                // 1. Overview & About
+                if (c.description.isNotEmpty) ...[
+                  _AboutCard(crop: c, isDark: isDark),
+                  const SizedBox(height: 48),
+                ],
 
-                    // 2. Agricultural Heart (Cultivation, Soil)
-                    _PremiumSectionWrapper(
-                      title: 'الدليل الزراعي',
-                      icon: Icons.agriculture_rounded,
-                      children: [
-                        CultivationSection(crop: c),
-                        const SizedBox(height: 40),
-                        SoilNutritionSection(crop: c),
-                      ],
-                    ),
-                    const SizedBox(height: 56),
-
-                    // 3. Growth & Health
-                    _PremiumSectionWrapper(
-                      title: 'النمو والصحة',
-                      icon: Icons.health_and_safety_rounded,
-                      children: [
-                        _GrowthTimelineSection(crop: c),
-                        const SizedBox(height: 40),
-                        PestsSection(crop: c),
-                      ],
-                    ),
-                    const SizedBox(height: 56),
-
-                    // 4. Ecology & Rotation
-                    _PremiumSectionWrapper(
-                      title: 'البيئة والدورة الزراعية',
-                      icon: Icons.eco_rounded,
-                      children: [
-                        RegionalAdaptationSection(crop: c),
-                        const SizedBox(height: 40),
-                        CompanionPlantsSection(crop: c),
-                        const SizedBox(height: 40),
-                        ManagementRotationSection(crop: c),
-                      ],
-                    ),
-                    const SizedBox(height: 56),
-
-                    // 5. Results & Benefits
-                    _PremiumSectionWrapper(
-                      title: 'الحصاد والفوائد',
-                      icon: Icons.auto_awesome_rounded,
-                      children: [
-                        HarvestSection(crop: c),
-                        const SizedBox(height: 40),
-                        UsesBenefitsSection(crop: c),
-                      ],
-                    ),
-                    const SizedBox(height: 56),
-
-                    // 6. Support & Tools
-                    SmartCareAdvisor(crop: c),
-                    const SizedBox(height: 48),
-
-                    // 7. Marketplace CTA
-                    _MarketplaceCtaSection(crop: c),
-                    const SizedBox(height: 60),
-                  ]),
+                // 2. Agricultural Heart (Cultivation, Soil)
+                _PremiumSectionWrapper(
+                  title: _Strings.agriGuide,
+                  icon: Icons.agriculture_rounded,
+                  children: [
+                    CultivationSection(crop: c),
+                    const SizedBox(height: 40),
+                    SoilNutritionSection(crop: c),
+                  ],
                 ),
-              ),
-            ],
-          );
-        },
+                const SizedBox(height: 56),
+
+                // 3. Growth & Health
+                _PremiumSectionWrapper(
+                  title: _Strings.growthHealth,
+                  icon: Icons.health_and_safety_rounded,
+                  children: [
+                    _GrowthTimelineSection(crop: c),
+                    const SizedBox(height: 40),
+                    PestsSection(crop: c),
+                  ],
+                ),
+                const SizedBox(height: 56),
+
+                // 4. Ecology & Rotation
+                _PremiumSectionWrapper(
+                  title: _Strings.ecologyRotation,
+                  icon: Icons.eco_rounded,
+                  children: [
+                    RegionalAdaptationSection(crop: c),
+                    const SizedBox(height: 40),
+                    CompanionPlantsSection(crop: c),
+                    const SizedBox(height: 40),
+                    ManagementRotationSection(crop: c),
+                  ],
+                ),
+                const SizedBox(height: 56),
+
+                // 5. Results & Benefits
+                _PremiumSectionWrapper(
+                  title: _Strings.resultsBenefits,
+                  icon: Icons.auto_awesome_rounded,
+                  children: [
+                    HarvestSection(crop: c),
+                    const SizedBox(height: 40),
+                    UsesBenefitsSection(crop: c),
+                  ],
+                ),
+                const SizedBox(height: 56),
+
+                // 6. Support & Tools
+                SmartCareAdvisor(crop: c),
+                const SizedBox(height: 48),
+
+                // 7. Marketplace CTA
+                _MarketplaceCtaSection(crop: c),
+                const SizedBox(height: 60),
+              ]),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -225,10 +226,12 @@ class _PremiumHeroAppBar extends StatelessWidget {
           onTap: () => Navigator.canPop(context)
               ? Navigator.pop(context)
               : context.go('/home'),
-          size: 48,
-          iconSize: 20,
-          backgroundColor: Colors.black.withValues(alpha: 0.3),
-          color: Colors.white,
+          size: 44,
+          iconSize: 18,
+          backgroundColor: context.black.withValues(
+            alpha: context.opacityMedium,
+          ),
+          color: context.white,
         ),
       ),
       actions: [
@@ -238,10 +241,12 @@ class _PremiumHeroAppBar extends StatelessWidget {
             child: ProMaxIconButton(
               icon: Icons.delete_sweep_rounded,
               onTap: onRemove,
-              size: 48,
-              iconSize: 22,
-              backgroundColor: Colors.redAccent.withValues(alpha: 0.8),
-              color: Colors.white,
+              size: 44,
+              iconSize: 20,
+              backgroundColor: context.error.withValues(
+                alpha: context.opacityHigh,
+              ),
+              color: context.white,
             ),
           ),
         const SizedBox(width: 8),
@@ -263,14 +268,18 @@ class _PremiumHeroAppBar extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     isDark
-                        ? AppColors.darkBackground.withValues(alpha: 0.6)
-                        : Colors.black45,
+                        ? context.darkBackground.withValues(alpha: 0.6)
+                        : context.black.withValues(alpha: 0.45),
                     Colors.transparent,
                     Colors.transparent,
                     isDark
-                        ? AppColors.darkBackground.withValues(alpha: 0.8)
-                        : Colors.black54,
-                    isDark ? AppColors.darkBackground : Colors.black87,
+                        ? context.darkBackground.withValues(
+                            alpha: context.opacityHigh,
+                          )
+                        : context.black.withValues(alpha: 0.54),
+                    isDark
+                        ? context.darkBackground
+                        : context.black.withValues(alpha: 0.87),
                   ],
                   stops: const [0.0, 0.3, 0.6, 0.85, 1.0],
                 ),
@@ -368,90 +377,128 @@ class _AddButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isAdded) {
-      return PopupMenuButton<String>(
-        onSelected: (val) {
-          if (val == 'remove') onRemove();
-        },
-        itemBuilder: (context) => [
-          const PopupMenuItem(
-            value: 'remove',
-            child: Row(
-              children: [
-                Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20),
-                SizedBox(width: 8),
-                Text('إزالة من مزرعتي'),
-              ],
-            ),
-          ),
-        ],
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: context.success.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white24),
-          ),
-          child: const Row(
-            children: [
-              Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
-              SizedBox(width: 8),
-              Text(
-                'في مزرعتي',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-              SizedBox(width: 4),
-              Icon(Icons.arrow_drop_down, color: Colors.white70, size: 18),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return GestureDetector(
-      onTap: isAdding ? null : onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: context.primary.withValues(alpha: 0.95),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: context.primary.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            if (isAdding)
-              const SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            else
-              const Icon(Icons.add_rounded, color: Colors.white, size: 22),
-            const SizedBox(width: 8),
-            const Text(
-              'أضف لمحاصيلي',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (child, anim) => FadeTransition(
+        opacity: anim,
+        child: ScaleTransition(scale: anim, child: child),
       ),
+      child: isAdded
+          ? PopupMenuButton<String>(
+              key: const ValueKey('added'),
+              onSelected: (val) {
+                if (val == 'remove') onRemove();
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'remove',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Text('إزالة من مزرعتي'),
+                    ],
+                  ),
+                ),
+              ],
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: context.success.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.white24),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'في مزرعتي',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white70,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : Material(
+              key: const ValueKey('not-added'),
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: isAdding ? null : onTap,
+                borderRadius: BorderRadius.circular(30),
+                splashColor: context.white.withValues(alpha: 0.2),
+                child: Ink(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.primary.withValues(
+                      alpha: context.opacityStrong,
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: context.primary.withValues(
+                          alpha: context.opacityMedium,
+                        ),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      if (isAdding)
+                        const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      else
+                        const Icon(
+                          Icons.add_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'أضف لمحاصيلي',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
     );
   }
 }
@@ -499,10 +546,16 @@ class _GrowthTimelineSection extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.cardBackground,
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: context.border.withValues(alpha: 0.4)),
+            border: Border.all(
+              color: context.border.withValues(
+                alpha: context.opacityMedium * 2,
+              ),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                color: context.black.withValues(
+                  alpha: isDark ? context.opacityMedium : context.opacitySubtle,
+                ),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -654,7 +707,7 @@ class _MarketplaceCtaSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 16, right: 4),
           child: Text(
-            'تجهيزات الزراعة',
+            _Strings.farmingSupplies,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -667,8 +720,8 @@ class _MarketplaceCtaSection extends StatelessWidget {
             Expanded(
               flex: 3,
               child: _BentoCard(
-                title: 'البذور والشتلات',
-                subtitle: 'أجود الأنواع',
+                title: _Strings.seedsSeedlings,
+                subtitle: _Strings.bestQuality,
                 icon: Icons.spa_rounded,
                 color: context.primary,
                 onTap: () => context.go('/marketplace'),
@@ -678,8 +731,8 @@ class _MarketplaceCtaSection extends StatelessWidget {
             Expanded(
               flex: 2,
               child: _BentoCard(
-                title: 'حاسبة الأسمدة',
-                subtitle: 'تغذية كاملة',
+                title: _Strings.fertilizerCalculator,
+                subtitle: _Strings.fullNutrition,
                 icon: Icons.calculate_rounded,
                 color: Colors.blueAccent,
                 onTap: () => context.push('/fertilizer_calculator'),
@@ -720,49 +773,59 @@ class _BentoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: color.withValues(alpha: 0.2)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Ink(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: context.opacityLow),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: color.withValues(alpha: context.opacityMedium),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: context.opacityMedium),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: color, size: 20),
                   ),
-                  child: Icon(icon, color: color, size: 20),
-                ),
-                if (isFullWidth) ...[
-                  const Spacer(),
-                  Icon(Icons.arrow_forward_ios_rounded, color: color, size: 14),
+                  if (isFullWidth) ...[
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: color,
+                      size: 14,
+                    ),
+                  ],
                 ],
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: isFullWidth ? 16 : 14,
-                color: context.textColor,
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(fontSize: 12, color: context.textMuted),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: isFullWidth ? 16 : 14,
+                  color: context.textColor,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 12, color: context.textMuted),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -784,7 +847,9 @@ class _AboutCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? context.cardBackground : Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: context.border.withValues(alpha: isDark ? 0.2 : 0.08)),
+        border: Border.all(
+          color: context.border.withValues(alpha: isDark ? 0.2 : 0.08),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
@@ -801,7 +866,7 @@ class _AboutCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: context.primary.withValues(alpha: 0.1),
+                  color: context.primary.withValues(alpha: context.opacityLow),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -815,7 +880,7 @@ class _AboutCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'نظرة عامة',
+                    _Strings.overview,
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -823,7 +888,7 @@ class _AboutCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'تعرف على هذه النبتة بشكل أعمق',
+                    _Strings.learnMore,
                     style: TextStyle(
                       fontSize: 12,
                       color: context.textMuted,
@@ -851,12 +916,18 @@ class _AboutCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: context.primary.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: context.primary.withValues(alpha: 0.05)),
+                border: Border.all(
+                  color: context.primary.withValues(alpha: 0.05),
+                ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.auto_stories_rounded, size: 16, color: context.primary.withValues(alpha: 0.6)),
+                  Icon(
+                    Icons.auto_stories_rounded,
+                    size: 16,
+                    color: context.primary.withValues(alpha: 0.6),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -900,61 +971,69 @@ class _PremiumSectionWrapper extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.01) : Colors.grey.withValues(alpha: 0.02),
+        color: isDark
+            ? context.white.withValues(alpha: context.opacitySubtle / 5)
+            : context.black.withValues(alpha: context.opacitySubtle / 2.5),
         borderRadius: BorderRadius.circular(48),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.01)),
+        border: Border.all(
+          color: isDark
+              ? context.white.withValues(alpha: context.opacitySubtle / 2)
+              : context.black.withValues(alpha: context.opacitySubtle / 5),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: primaryColor,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.5),
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Container(
-                    height: 1.5,
+          Semantics(
+            header: true,
+            label: title,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          primaryColor.withValues(alpha: 0.2),
-                          Colors.transparent,
-                        ],
+                      color: primaryColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(icon, color: primaryColor, size: 18),
+                  ),
+                  const SizedBox(width: 14),
+                  Text(
+                    title.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: isDark
+                          ? context.white.withValues(alpha: 0.5)
+                          : context.black.withValues(alpha: 0.5),
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Container(
+                      height: 1.5,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            primaryColor.withValues(
+                              alpha: context.opacityMedium,
+                            ),
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              children: children,
-            ),
+            child: Column(children: children),
           ),
           const SizedBox(height: 24),
         ],
@@ -963,3 +1042,18 @@ class _PremiumSectionWrapper extends StatelessWidget {
   }
 }
 
+// ─── Localization Shim ──────────────────────────────────────────────────────
+
+class _Strings {
+  static const String agriGuide = 'الدليل الزراعي';
+  static const String growthHealth = 'النمو والصحة';
+  static const String ecologyRotation = 'البيئة والدورة الزراعية';
+  static const String resultsBenefits = 'الحصاد والفوائد';
+  static const String farmingSupplies = 'تجهيزات الزراعة';
+  static const String seedsSeedlings = 'البذور والشتلات';
+  static const String bestQuality = 'أجود الأنواع';
+  static const String fertilizerCalculator = 'حاسبة الأسمدة';
+  static const String fullNutrition = 'تغذية كاملة';
+  static const String overview = 'نظرة عامة';
+  static const String learnMore = 'تعرف على هذه النبتة بشكل أعمق';
+}

@@ -27,13 +27,16 @@ class PremiumSectionWrapper extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? color.withValues(alpha: 0.05) : Colors.white,
+        color: isDark ? color.withValues(alpha: context.opacitySubtle / 2) : context.black.withValues(alpha: context.opacitySubtle / 5),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: color.withValues(alpha: 0.12), width: 1.5),
+        border: Border.all(
+          color: isDark ? color.withValues(alpha: context.opacityMedium) : color.withValues(alpha: context.opacityLow),
+          width: 1.5,
+        ),
         boxShadow: [
           if (!isDark)
             BoxShadow(
-              color: color.withValues(alpha: 0.05),
+              color: color.withValues(alpha: context.opacitySubtle),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -47,7 +50,7 @@ class PremiumSectionWrapper extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withValues(alpha: context.opacityLow),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(icon, color: color, size: 22),
@@ -62,7 +65,7 @@ class PremiumSectionWrapper extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w900,
                         fontSize: 18,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: context.textColor,
                       ),
                     ),
                     if (subtitle != null)
@@ -71,7 +74,7 @@ class PremiumSectionWrapper extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: color.withValues(alpha: 0.6),
+                          color: color.withValues(alpha: context.opacityHigh),
                         ),
                       ),
                   ],

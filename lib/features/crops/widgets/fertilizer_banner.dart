@@ -23,7 +23,8 @@ class FertilizerCalculatorBanner extends StatelessWidget {
             border: Border.all(color: Colors.white10),
             boxShadow: [
               BoxShadow(
-                color: context.primary.withValues(alpha: 0.3),
+                color: context.primary
+                    .withValues(alpha: context.opacityMedium * 1.5),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -38,7 +39,8 @@ class FertilizerCalculatorBanner extends StatelessWidget {
                 child: Icon(
                   Icons.science_outlined,
                   size: 140,
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color:
+                      context.white.withValues(alpha: context.opacitySubtle * 1.6),
                 ),
               ),
               Row(
@@ -46,7 +48,9 @@ class FertilizerCalculatorBanner extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: context.white.withValues(
+                        alpha: (context.opacityLow + context.opacityMedium) / 2,
+                      ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.white24),
                     ),
@@ -74,7 +78,8 @@ class FertilizerCalculatorBanner extends StatelessWidget {
                         Text(
                           'نظام التوصيات العلمية المبني على نوع المحصول والتربة',
                           style: AppTypography.bodySmall(isDark: false).copyWith(
-                            color: Colors.white.withValues(alpha: 0.7),
+                            color: context.white
+                                .withValues(alpha: context.opacityHigh / 1.15),
                             fontWeight: FontWeight.bold,
                             fontSize: 11,
                           ),
