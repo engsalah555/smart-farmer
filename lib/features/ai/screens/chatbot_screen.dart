@@ -163,7 +163,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     try {
       await for (final chunk in _grokService.sendMessageStream(
         text,
-        imageBytes: imageBytes,
         chatHistory: history,
       )) {
         _botAccumulated += chunk;

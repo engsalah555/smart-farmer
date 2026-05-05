@@ -48,11 +48,11 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
 
     _resultCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 600),
     );
     _resultFade = CurvedAnimation(parent: _resultCtrl, curve: Curves.easeOut);
     _resultSlide = Tween<Offset>(
-      begin: const Offset(0, 0.08),
+      begin: const Offset(0, 0.06),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _resultCtrl, curve: Curves.easeOut));
   }
@@ -68,7 +68,6 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
     try {
       XFile? file;
       if (source == ImageSource.camera) {
-        // Use custom camera view for better stability
         final cameras = await availableCameras();
         if (cameras.isEmpty) {
           if (mounted) {
@@ -81,9 +80,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
         if (!mounted) return;
         file = await Navigator.push<XFile>(
           context,
-          MaterialPageRoute(
-            builder: (_) => CameraView(cameras: cameras),
-          ),
+          MaterialPageRoute(builder: (_) => CameraView(cameras: cameras)),
         );
       } else {
         file = await _picker.pickImage(
@@ -96,6 +93,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
 
       if (file == null) return;
       final bytes = await file.readAsBytes();
+      _pulseCtrl.stop();
       setState(() {
         _image = file;
         _imageBytes = bytes;
@@ -128,6 +126,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
 
   void _reset() {
     _resultCtrl.reset();
+    _pulseCtrl.repeat(reverse: true);
     setState(() {
       _image = null;
       _imageBytes = null;
@@ -135,18 +134,18 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
     });
   }
 
+  bool get _isError => _result?.diseaseType == 'خطأ في التشخيص';
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = context.background;
+    final isDark = context.isDark;
     final surface = context.surface;
-    final textColor = context.textColor;
 
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: context.background,
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(isDark, textColor),
+          _buildAppBar(),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -154,14 +153,22 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 children: [
                   _buildImageArea(isDark, surface),
                   const SizedBox(height: 24),
-                  if (_isLoading) _buildShimmerResults(isDark, surface),
+                  if (_isLoading) _buildShimmerResults(),
                   if (!_isLoading && _result == null) _buildPickButtons(),
-                  if (!_isLoading && _result != null)
+                  if (!_isLoading && _result != null && _isError)
                     FadeTransition(
                       opacity: _resultFade,
                       child: SlideTransition(
                         position: _resultSlide,
-                        child: _buildResults(isDark, surface, textColor),
+                        child: _buildErrorCard(surface),
+                      ),
+                    ),
+                  if (!_isLoading && _result != null && !_isError)
+                    FadeTransition(
+                      opacity: _resultFade,
+                      child: SlideTransition(
+                        position: _resultSlide,
+                        child: _buildResults(surface),
                       ),
                     ),
                   const SizedBox(height: 32),
@@ -174,9 +181,10 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
     );
   }
 
-  Widget _buildAppBar(bool isDark, Color textColor) {
+  // ── App Bar — flat surface, no decorative gradient ──
+  Widget _buildAppBar() {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 100,
       floating: false,
       pinned: true,
       backgroundColor: context.surface,
@@ -184,56 +192,40 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
-          color: textColor,
+          color: context.textColor,
           size: 20,
         ),
+        tooltip: 'رجوع',
         onPressed: () => context.canPop() ? context.pop() : context.go('/home'),
       ),
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           'الفحص الذكي للنباتات',
           style: TextStyle(
-            color: textColor,
+            color: context.textColor,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
         centerTitle: true,
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                context.primary.withValues(alpha: 0.12),
-                AppColors.accent.withValues(alpha: 0.06),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
 
+  // ── Image area — responsive height ──
   Widget _buildImageArea(bool isDark, Color surface) {
+    final h = (MediaQuery.of(context).size.height * 0.3).clamp(200.0, 320.0);
+
     return Container(
-      height: 280,
+      height: h,
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: context.primary.withValues(alpha: isDark ? 0.15 : 0.08),
-            blurRadius: 24,
-            spreadRadius: 0,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: _image != null
               ? context.primary.withValues(alpha: 0.4)
               : context.border,
-          width: 1.5,
+          width: 1,
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -245,20 +237,20 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
                 if (_isLoading)
                   Container(
                     color: context.black.withValues(alpha: 0.45),
-                    child: const Center(
+                    child: Center(
                       child: CircularProgressIndicator(
-                        color: Colors.white,
+                        color: context.white,
                         strokeWidth: 3,
                       ),
                     ),
                   ),
               ],
             )
-          : _buildPlaceholder(isDark),
+          : _buildPlaceholder(),
     );
   }
 
-  Widget _buildPlaceholder(bool isDark) {
+  Widget _buildPlaceholder() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -267,17 +259,12 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  context.primary.withValues(alpha: 0.18),
-                  context.primary.withValues(alpha: 0.04),
-                ],
-              ),
+              color: context.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.biotech_rounded,
-              size: 64,
+              size: 56,
               color: context.primary,
             ),
           ),
@@ -293,7 +280,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
         ),
         const SizedBox(height: 8),
         Text(
-          'سيقوم الذكاء الاصطناعي بتشخيص\nحالة النبتة وتقديم تقرير طبي شامل',
+          'سيقوم الذكاء الاصطناعي بتشخيص\nحالة النبتة وتقديم تقرير شامل',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13,
@@ -305,34 +292,97 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
     );
   }
 
-  Widget _buildShimmerResults(bool isDark, Color surface) {
+  // ── Shimmer — uses token system ──
+  Widget _buildShimmerResults() {
     return Shimmer.fromColors(
-      baseColor: surface,
-      highlightColor: surface.withValues(alpha: 0.5),
+      baseColor: context.shimmerBase,
+      highlightColor: context.shimmerHighlight,
       child: Column(
         children: [
           Container(
-            height: 160,
+            height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(32),
+              color: context.white,
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
           const SizedBox(height: 16),
           ...List.generate(
-            3,
-            (index) => Padding(
+            2,
+            (i) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Container(
-                height: 100,
+                height: 80,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
+                  color: context.white,
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Error card ──
+  Widget _buildErrorCard(Color surface) {
+    final r = _result!;
+    return Semantics(
+      label: 'خطأ في التشخيص: ${r.diseaseCauses}',
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: context.error.withValues(alpha: 0.25)),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.error_outline_rounded,
+                  color: context.error,
+                  size: 40,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'تعذر إتمام التشخيص',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  r.diseaseCauses,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.6,
+                    color: context.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          _ActionButton(
+            label: 'إعادة المحاولة',
+            icon: Icons.refresh_rounded,
+            filled: true,
+            onTap: _analyze,
+          ),
+          const SizedBox(height: 12),
+          _ActionButton(
+            label: 'فحص نبتة أخرى',
+            icon: Icons.camera_alt_rounded,
+            filled: false,
+            onTap: _reset,
           ),
         ],
       ),
@@ -342,238 +392,265 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen>
   Widget _buildPickButtons() {
     return Column(
       children: [
-        _GradientButton(
+        _ActionButton(
           label: 'فتح الكاميرا والتصوير',
           icon: Icons.camera_alt_rounded,
+          filled: true,
           onTap: () => _pickImage(ImageSource.camera),
         ),
-        const SizedBox(height: 14),
-        _OutlineButton(
+        const SizedBox(height: 12),
+        _ActionButton(
           label: 'اختيار من معرض الصور',
           icon: Icons.photo_library_rounded,
+          filled: false,
           onTap: () => _pickImage(ImageSource.gallery),
         ),
       ],
     );
   }
 
-  Widget _buildResults(bool isDark, Color surface, Color textColor) {
+  // ── Results — varied layout, no identical cards ──
+  Widget _buildResults(Color surface) {
     final r = _result!;
-    return Column(
-      children: [
-        // ── بطاقة الحالة العامة ──
-        _StatusCard(result: r, isDark: isDark),
-        const SizedBox(height: 16),
-
-        // ── بطاقات التشخيص التفصيلية ──
-        if (!r.isHealthy) ...[
-          _DiagnosisCard(
-            icon: Icons.coronavirus_rounded,
-            iconColor: context.error,
-            title: 'نوع المرض',
-            content: r.diseaseType,
-            isDark: isDark,
-            surface: surface,
-          ),
-          const SizedBox(height: 12),
-          _DiagnosisCard(
-            icon: Icons.warning_amber_rounded,
-            iconColor: context.warning,
-            title: 'أسباب الإصابة',
-            content: r.diseaseCauses,
-            isDark: isDark,
-            surface: surface,
-          ),
-          const SizedBox(height: 12),
-          _DiagnosisCard(
-            icon: Icons.medical_services_rounded,
-            iconColor: context.success,
-            title: 'خطة العلاج',
-            content: r.treatmentMethods,
-            isDark: isDark,
-            surface: surface,
-          ),
-          const SizedBox(height: 12),
-          _DiagnosisCard(
-            icon: Icons.shield_rounded,
-            iconColor: context.primary,
-            title: 'نصائح الوقاية',
-            content: r.preventionTips.isEmpty
-                ? 'لا توجد نصائح إضافية.'
-                : r.preventionTips.map((e) => '• $e').join('\n'),
-            isDark: isDark,
-            surface: surface,
-          ),
-          const SizedBox(height: 24),
-        ],
-
-        // ── أزرار الإجراء ──
-        _GradientButton(
-          label: 'فحص نبتة أخرى',
-          icon: Icons.refresh_rounded,
-          onTap: _reset,
-        ),
-        const SizedBox(height: 14),
-        _OutlineButton(
-          label: 'إعادة التصوير',
-          icon: Icons.camera_alt_rounded,
-          onTap: () => _pickImage(ImageSource.camera),
-        ),
-      ],
-    );
-  }
-}
-
-// ─── Status Card ───────────────────────────────────────────────────────────────
-class _StatusCard extends StatelessWidget {
-  final PlantDiagnosisResult result;
-  final bool isDark;
-
-  const _StatusCard({required this.result, required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    final isHealthy = result.isHealthy;
-    final (gradStart, gradEnd, statusText, statusIcon) = isHealthy
-        ? (
-            context.success,
-            context.success.withValues(alpha: 0.8),
-            'النبتة سليمة وصحية 🌿',
-            Icons.check_circle_rounded,
-          )
-        : (
-            context.error,
-            context.error.withValues(alpha: 0.8),
-            'تم اكتشاف إصابة مرضية',
-            Icons.healing_rounded,
-          );
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            gradStart,
-            gradEnd,
-            isHealthy
-                ? context.success.withValues(alpha: 0.6)
-                : _getSeverityColor(context, result.severity)
-                    .withValues(alpha: 0.6),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          stops: const [0.0, 0.5, 1.0],
-        ),
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: gradStart.withValues(alpha: 0.5),
-            blurRadius: 30,
-            spreadRadius: 2,
-            offset: const Offset(0, 12),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
-          width: 1.5,
-        ),
-      ),
+    return Semantics(
+      label: 'نتيجة التشخيص',
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.25),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.4),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      spreadRadius: 2,
+          _StatusCard(result: r),
+
+          if (!r.isHealthy) ...[
+            const SizedBox(height: 20),
+
+            // Disease + causes — single section
+            _buildSection(
+              icon: Icons.coronavirus_rounded,
+              iconColor: context.error,
+              title: r.diseaseType,
+              surface: surface,
+              child: Text(
+                r.diseaseCauses,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.7,
+                  color: context.textSecondary,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Treatment plan
+            _buildSection(
+              icon: Icons.medical_services_rounded,
+              iconColor: context.success,
+              title: 'خطة العلاج',
+              surface: surface,
+              child: Text(
+                r.treatmentMethods,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.7,
+                  color: context.textSecondary,
+                ),
+              ),
+            ),
+
+            // Prevention tips — inline list, no card
+            if (r.preventionTips.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.shield_outlined,
+                      size: 18,
+                      color: context.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'نصائح الوقاية',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: context.textColor,
+                      ),
                     ),
                   ],
                 ),
-                child: Icon(statusIcon, color: Colors.white, size: 36),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(height: 8),
+              ...r.preventionTips.map(
+                (tip) => Padding(
+                  padding: const EdgeInsets.only(bottom: 6, right: 4, left: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '•  ',
+                        style: TextStyle(color: context.primary, fontSize: 14),
+                      ),
+                      Expanded(
+                        child: Text(
+                          tip,
+                          style: TextStyle(
+                            fontSize: 13,
+                            height: 1.5,
+                            color: context.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 24),
+          ],
+
+          _ActionButton(
+            label: 'فحص نبتة أخرى',
+            icon: Icons.refresh_rounded,
+            filled: true,
+            onTap: _reset,
+          ),
+          const SizedBox(height: 12),
+          _ActionButton(
+            label: 'إعادة التصوير',
+            icon: Icons.camera_alt_rounded,
+            filled: false,
+            onTap: () => _pickImage(ImageSource.camera),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Reusable section — replaces identical _DiagnosisCard ──
+  Widget _buildSection({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required Color surface,
+    required Widget child,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.border, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: iconColor, size: 20),
+              const SizedBox(width: 10),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      result.plantName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      statusText,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.95),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: context.textColor,
+                  ),
                 ),
               ),
             ],
           ),
-          if (!isHealthy) ...[
-            const SizedBox(height: 16),
-            const Divider(color: Colors.white24, height: 1),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  _getSeverityIcon(result.severity),
-                  color: Colors.white70,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'مستوى الخطورة: ${result.severity.label}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ],
+          const SizedBox(height: 12),
+          child,
         ],
       ),
     );
   }
+}
 
-  Color _getSeverityColor(BuildContext context, DiagnosisSeverity severity) {
-    switch (severity) {
-      case DiagnosisSeverity.low:
-        return context.primary;
-      case DiagnosisSeverity.medium:
-        return context.warning;
-      case DiagnosisSeverity.high:
-        return context.error;
-      case DiagnosisSeverity.unknown:
-        return context.textSecondary;
-    }
+// ─── Status Card — solid color, no glassmorphism ────────────────────────────────
+class _StatusCard extends StatelessWidget {
+  final PlantDiagnosisResult result;
+
+  const _StatusCard({required this.result});
+
+  @override
+  Widget build(BuildContext context) {
+    final isHealthy = result.isHealthy;
+    final color = isHealthy ? context.success : context.error;
+
+    return Semantics(
+      label:
+          'حالة النبات: ${isHealthy ? "سليمة" : "مصابة، ${result.severity.label}"}',
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(
+                  isHealthy
+                      ? Icons.check_circle_rounded
+                      : Icons.healing_rounded,
+                  color: context.white,
+                  size: 32,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      Text(
+                        isHealthy
+                            ? 'النبتة سليمة وصحية'
+                            : 'تم اكتشاف إصابة مرضية',
+                        style: TextStyle(
+                          color: context.white.withValues(alpha: 0.9),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (!isHealthy) ...[
+              const SizedBox(height: 12),
+              Divider(color: context.white.withValues(alpha: 0.2), height: 1),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _getSeverityIcon(result.severity),
+                    color: context.white.withValues(alpha: 0.8),
+                    size: 16,
+                    semanticLabel: 'مستوى الخطورة',
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'مستوى الخطورة: ${result.severity.label}',
+                    style: TextStyle(
+                      color: context.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 
   IconData _getSeverityIcon(DiagnosisSeverity severity) {
@@ -584,200 +661,70 @@ class _StatusCard extends StatelessWidget {
         return Icons.warning_amber_rounded;
       case DiagnosisSeverity.high:
         return Icons.report_problem_rounded;
+      case DiagnosisSeverity.critical:
+        return Icons.dangerous_rounded;
       case DiagnosisSeverity.unknown:
         return Icons.help_outline_rounded;
     }
   }
 }
 
-// ─── Diagnosis Card ─────────────────────────────────────────────────────────────
-class _DiagnosisCard extends StatelessWidget {
+// ─── Action Button — Material+InkWell, semantic, no gradient ────────────────────
+class _ActionButton extends StatelessWidget {
+  final String label;
   final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String content;
-  final bool isDark;
-  final Color surface;
+  final bool filled;
+  final VoidCallback onTap;
 
-  const _DiagnosisCard({
+  const _ActionButton({
+    required this.label,
     required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.content,
-    required this.isDark,
-    required this.surface,
+    required this.filled,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [surface, iconColor.withValues(alpha: 0.03)],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: iconColor.withValues(alpha: 0.25),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? context.black.withValues(alpha: 0.3)
-                : iconColor.withValues(alpha: 0.08),
-            blurRadius: 20,
-            spreadRadius: 0,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      iconColor.withValues(alpha: 0.2),
-                      iconColor.withValues(alpha: 0.05),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+    final radius = BorderRadius.circular(14);
+
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: filled ? context.primary : Colors.transparent,
+        borderRadius: radius,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: filled
+                ? null
+                : BoxDecoration(
+                    borderRadius: radius,
+                    border: Border.all(color: context.primary, width: 1.5),
                   ),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: iconColor.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: filled ? context.white : context.primary,
+                  size: 20,
                 ),
-                child: Icon(icon, color: iconColor, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
+                const SizedBox(width: 10),
+                Text(
+                  label,
                   style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 17,
-                    letterSpacing: -0.1,
-                    color: iconColor,
+                    color: filled ? context.white : context.primary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            content,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.7,
-              color: context.textSecondary,
+              ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Gradient Button ────────────────────────────────────────────────────────────
-class _GradientButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _GradientButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [context.primary, AppColors.accent],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: context.primary.withValues(alpha: 0.4),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.white, size: 22),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Outline Button ─────────────────────────────────────────────────────────────
-class _OutlineButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _OutlineButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: context.primary, width: 1.8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: context.primary, size: 22),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: TextStyle(
-                color: context.primary,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
       ),
     );

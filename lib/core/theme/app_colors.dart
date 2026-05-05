@@ -84,7 +84,7 @@ extension ThemeColors on BuildContext {
   Color get background => AppColors.getBackground(isDark);
   Color get surface => AppColors.getSurface(isDark);
   Color get textPrimary => AppColors.getTextColor(isDark);
-  Color get textSecondary => AppColors.textSecondary;
+  Color get textSecondary => isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
   Color get textMuted => AppColors.textMuted;
   Color get error => AppColors.error;
   Color get success => AppColors.success;

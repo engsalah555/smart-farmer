@@ -10,116 +10,213 @@ class CameraView extends StatefulWidget {
   State<CameraView> createState() => _CameraViewState();
 }
 
-class _CameraViewState extends State<CameraView> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
+  CameraController? _controller;
   bool _isTakingPicture = false;
+  bool _isInitializing = true;
+  String? _errorMessage;
   int _selectedCameraIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initCamera(_selectedCameraIndex);
   }
 
-  void _initCamera(int index) {
-    _controller = CameraController(
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final ctrl = _controller;
+    if (ctrl == null || !ctrl.value.isInitialized) return;
+
+    if (state == AppLifecycleState.inactive) {
+      ctrl.dispose();
+      _controller = null;
+    } else if (state == AppLifecycleState.resumed) {
+      _initCamera(_selectedCameraIndex);
+    }
+  }
+
+  Future<void> _initCamera(int index) async {
+    setState(() {
+      _isInitializing = true;
+      _errorMessage = null;
+    });
+
+    final oldController = _controller;
+    if (oldController != null) {
+      _controller = null;
+      await oldController.dispose();
+    }
+
+    final controller = CameraController(
       widget.cameras[index],
-      ResolutionPreset.high,
+      ResolutionPreset.medium,
       enableAudio: false,
+      imageFormatGroup: ImageFormatGroup.jpeg,
     );
-    _initializeControllerFuture = _controller.initialize();
+
+    try {
+      await controller.initialize();
+      if (!mounted) {
+        controller.dispose();
+        return;
+      }
+      setState(() {
+        _controller = controller;
+        _isInitializing = false;
+      });
+    } catch (e) {
+      debugPrint('Camera init error: $e');
+      if (!mounted) return;
+      setState(() {
+        _isInitializing = false;
+        _errorMessage = 'تعذر تشغيل الكاميرا: $e';
+      });
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    _controller?.dispose();
     super.dispose();
   }
 
   Future<void> _toggleCamera() async {
     if (widget.cameras.length < 2) return;
-    setState(() {
-      _selectedCameraIndex = (_selectedCameraIndex + 1) % widget.cameras.length;
-      _isTakingPicture = false;
-    });
-    _controller.dispose();
-    _initCamera(_selectedCameraIndex);
-    setState(() {});
+    _selectedCameraIndex =
+        (_selectedCameraIndex + 1) % widget.cameras.length;
+    await _initCamera(_selectedCameraIndex);
+  }
+
+  Future<void> _takePicture() async {
+    final ctrl = _controller;
+    if (ctrl == null || !ctrl.value.isInitialized || _isTakingPicture) return;
+
+    try {
+      setState(() => _isTakingPicture = true);
+      final image = await ctrl.takePicture();
+      if (mounted) {
+        Navigator.of(context).pop(image);
+      }
+    } catch (e) {
+      debugPrint('Take picture error: $e');
+      if (mounted) {
+        setState(() => _isTakingPicture = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل التقاط الصورة: $e')),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                // ── Camera Preview ──
-                Center(child: CameraPreview(_controller)),
+      body: _buildBody(context),
+    );
+  }
 
-                // ── UI Overlay ──
-                _buildOverlay(context),
+  Widget _buildBody(BuildContext context) {
+    if (_isInitializing) {
+      return const Center(
+        child: CircularProgressIndicator(color: Colors.white),
+      );
+    }
 
-                // ── Top Controls ──
-                Positioned(
-                  top: MediaQuery.of(context).padding.top + 10,
-                  left: 20,
-                  right: 20,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _CircleIconButton(
-                        icon: Icons.close_rounded,
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      if (widget.cameras.length > 1)
-                        _CircleIconButton(
-                          icon: Icons.flip_camera_ios_rounded,
-                          onPressed: _toggleCamera,
-                        ),
-                    ],
-                  ),
+    if (_errorMessage != null) {
+      return _buildErrorView(context);
+    }
+
+    final ctrl = _controller;
+    if (ctrl == null || !ctrl.value.isInitialized) {
+      return _buildErrorView(context);
+    }
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Center(child: CameraPreview(ctrl)),
+        _buildOverlay(context),
+        _buildTopControls(context),
+        _buildBottomControls(),
+      ],
+    );
+  }
+
+  Widget _buildErrorView(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.videocam_off_rounded, color: Colors.white38, size: 64),
+          const SizedBox(height: 16),
+          Text(
+            _errorMessage ?? 'تعذر تشغيل الكاميرا',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton.icon(
+                onPressed: () => _initCamera(_selectedCameraIndex),
+                icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+                label: const Text(
+                  'إعادة المحاولة',
+                  style: TextStyle(color: Colors.white),
                 ),
-
-                // ── Bottom Controls (Shutter) ──
-                Positioned(
-                  bottom: 50,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: _isTakingPicture
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : _ShutterButton(
-                            onTap: () async {
-                              try {
-                                setState(() => _isTakingPicture = true);
-                                await _initializeControllerFuture;
-                                final image = await _controller.takePicture();
-                                if (context.mounted) {
-                                  Navigator.of(context).pop(image);
-                                }
-                              } catch (e) {
-                                debugPrint('Take picture error: $e');
-                              } finally {
-                                if (mounted) {
-                                  setState(() => _isTakingPicture = false);
-                                }
-                              }
-                            },
-                          ),
-                  ),
+              ),
+              const SizedBox(width: 16),
+              TextButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close_rounded, color: Colors.white54),
+                label: const Text(
+                  'إغلاق',
+                  style: TextStyle(color: Colors.white54),
                 ),
-              ],
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopControls(BuildContext context) {
+    return Positioned(
+      top: MediaQuery.of(context).padding.top + 10,
+      left: 20,
+      right: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _CircleIconButton(
+            icon: Icons.close_rounded,
+            onPressed: () => Navigator.pop(context),
+          ),
+          if (widget.cameras.length > 1)
+            _CircleIconButton(
+              icon: Icons.flip_camera_ios_rounded,
+              onPressed: _toggleCamera,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomControls() {
+    return Positioned(
+      bottom: 50,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: _isTakingPicture
+            ? const CircularProgressIndicator(color: Colors.white)
+            : _ShutterButton(onTap: _takePicture),
       ),
     );
   }
@@ -148,7 +245,6 @@ class _CameraViewState extends State<CameraView> {
             ),
             child: Stack(
               children: [
-                // Corners
                 _buildCorner(0, 0),
                 _buildCorner(null, 0),
                 _buildCorner(0, null),
