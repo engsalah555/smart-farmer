@@ -6,7 +6,7 @@ export 'theme/app_typography.dart';
 export 'theme/app_decorations.dart';
 
 class AppConstants {
-  static const String appName = 'زرعة';
+  static const String appName = 'زرعــة';
   static final String ipAddress = dotenv.env['IP_ADDRESS'] ?? '[IP_ADDRESS]';
 
   /// يقرأ عنوان الـ API من ملف .env تلقائياً.
