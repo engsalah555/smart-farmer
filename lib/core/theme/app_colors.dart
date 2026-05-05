@@ -33,13 +33,15 @@ class AppColors {
   static const Color textMuted = Color(0xFF6B7B6B);
 
   // --- Dark Mode Palette (Enhanced) ---
-  static const Color darkBackground = Color(0xFF0F1410); // Deep rich forest-slate
-  static const Color darkSurface = Color(0xFF19201B);    // Elevated surface
-  static const Color darkCard = Color(0xFF1E2620);       // Rich card background
-  static const Color darkBorder = Color(0xFF263028);     // Defined borders
+  static const Color darkBackground = Color(
+    0xFF0F1410,
+  ); // Deep rich forest-slate
+  static const Color darkSurface = Color(0xFF19201B); // Elevated surface
+  static const Color darkCard = Color(0xFF1E2620); // Rich card background
+  static const Color darkBorder = Color(0xFF263028); // Defined borders
   static const Color darkTextPrimary = Color(0xFFE8F2E9); // Minty soft white
   static const Color darkTextSecondary = Color(0xFF94A696); // Sage/Slate mix
-  static const Color darkAccent = Color(0xFF2ECC71);     // Vibrant Action Green
+  static const Color darkAccent = Color(0xFF2ECC71); // Vibrant Action Green
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -50,20 +52,25 @@ class AppColors {
   static const Color warning = Color(0xFFD99A0B);
   static const Color info = Color(0xFF3B7DD8);
 
+  // --- Opacity Tokens ---
+  static const double opacitySubtle = 0.05;
+  static const double opacityLow = 0.1;
+  static const double opacityMedium = 0.2;
+  static const double opacityHigh = 0.8;
+  static const double opacityStrong = 0.9;
+
   // --- Functional Methods ---
-  static Color border(bool isDark) => isDark
-      ? darkBorder
-      : textMuted.withValues(alpha: 0.3);
+  static Color border(bool isDark) =>
+      isDark ? darkBorder : textMuted.withValues(alpha: 0.3);
 
   static Color getBackground(bool isDark) =>
       isDark ? darkBackground : background;
   static Color getSurface(bool isDark) => isDark ? darkSurface : surface;
   static Color getTextColor(bool isDark) =>
       isDark ? darkTextPrimary : textPrimary;
-  static Color glass(bool isDark) =>
-      isDark 
-          ? const Color(0xFFFFFFFF).withValues(alpha: 0.05)
-          : const Color(0xFF000000).withValues(alpha: 0.05);
+  static Color glass(bool isDark) => isDark
+      ? const Color(0xFFFFFFFF).withValues(alpha: 0.05)
+      : const Color(0xFF000000).withValues(alpha: 0.05);
 
   // --- Shimmer Colors ---
   static const Color shimmerBaseLight = Color(0xFFE2E8E1);
@@ -71,8 +78,10 @@ class AppColors {
   static const Color shimmerBaseDark = Color(0xFF2A332A);
   static const Color shimmerHighlightDark = Color(0xFF384538);
 
-  static Color shimmerBase(bool isDark) => isDark ? shimmerBaseDark : shimmerBaseLight;
-  static Color shimmerHighlight(bool isDark) => isDark ? shimmerHighlightDark : shimmerHighlightLight;
+  static Color shimmerBase(bool isDark) =>
+      isDark ? shimmerBaseDark : shimmerBaseLight;
+  static Color shimmerHighlight(bool isDark) =>
+      isDark ? shimmerHighlightDark : shimmerHighlightLight;
 }
 
 extension ThemeColors on BuildContext {
@@ -84,7 +93,8 @@ extension ThemeColors on BuildContext {
   Color get background => AppColors.getBackground(isDark);
   Color get surface => AppColors.getSurface(isDark);
   Color get textPrimary => AppColors.getTextColor(isDark);
-  Color get textSecondary => isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+  Color get textSecondary =>
+      isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
   Color get textMuted => AppColors.textMuted;
   Color get error => AppColors.error;
   Color get success => AppColors.success;
@@ -112,6 +122,12 @@ extension ThemeColors on BuildContext {
   Color get shimmerBase => AppColors.shimmerBase(isDark);
   Color get shimmerHighlight => AppColors.shimmerHighlight(isDark);
   Color get glass => AppColors.glass(isDark);
-  Color get backgroundColor => isDark ? AppColors.darkBackground : AppColors.background;
+  double get opacitySubtle => AppColors.opacitySubtle;
+  double get opacityLow => AppColors.opacityLow;
+  double get opacityMedium => AppColors.opacityMedium;
+  double get opacityHigh => AppColors.opacityHigh;
+  double get opacityStrong => AppColors.opacityStrong;
+  Color get backgroundColor =>
+      isDark ? AppColors.darkBackground : AppColors.background;
   Color get hintColor => Theme.of(this).hintColor;
 }

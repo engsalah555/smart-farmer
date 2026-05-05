@@ -21,12 +21,12 @@ class PlantInfoGridTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.shade50,
+        color: isDark ? context.white.withValues(alpha: context.opacitySubtle / 2) : context.black.withValues(alpha: context.opacitySubtle / 5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+          color: isDark ? context.white.withValues(alpha: context.opacitySubtle) : context.black.withValues(alpha: context.opacitySubtle / 2.5),
         ),
       ),
       child: Row(
@@ -35,7 +35,7 @@ class PlantInfoGridTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (iconColor ?? context.primary).withValues(alpha: 0.1),
+              color: (iconColor ?? context.primary).withValues(alpha: context.opacityLow),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(

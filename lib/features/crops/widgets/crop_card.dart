@@ -105,7 +105,9 @@ class _CropCardState extends State<CropCard>
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.4),
+                                  context.black.withValues(
+                                    alpha: context.opacityMedium * 2,
+                                  ),
                                 ],
                               ),
                             ),
@@ -155,9 +157,7 @@ class _CropCardState extends State<CropCard>
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: isDark
-                                  ? AppColors.darkTextPrimary
-                                  : AppColors.textPrimary,
+                              color: context.textColor,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -173,7 +173,8 @@ class _CropCardState extends State<CropCard>
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: context.primary.withValues(alpha: 0.1),
+                                  color: context.primary
+                                      .withValues(alpha: context.opacityLow),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
@@ -231,7 +232,7 @@ class _CropCardState extends State<CropCard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.5),
+        color: context.black.withValues(alpha: context.opacityHigh / 1.6),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(

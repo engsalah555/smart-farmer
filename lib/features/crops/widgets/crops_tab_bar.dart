@@ -24,14 +24,15 @@ class CropsTabBar extends StatelessWidget {
         child: Container(
           height: 70,
           decoration: BoxDecoration(
-            color: isDark ? AppColors.darkBackground : AppColors.background,
+            color: context.backgroundColor,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.black.withValues(alpha: 0.03),
+                  ? context.white.withValues(alpha: context.opacitySubtle)
+                  : context.black
+                      .withValues(alpha: context.opacitySubtle / 1.6),
               borderRadius: BorderRadius.circular(15),
             ),
             child: TabBar(

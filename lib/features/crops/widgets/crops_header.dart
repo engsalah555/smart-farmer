@@ -38,7 +38,7 @@ class CropsHeader extends StatelessWidget {
         background: Container(
           decoration: BoxDecoration(
             color: isDark
-                ? context.primary.withValues(alpha: 0.8)
+                ? context.primary.withValues(alpha: context.opacityHigh)
                 : context.primary,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(AppDecorations.headerRadius),
@@ -46,7 +46,8 @@ class CropsHeader extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: context.primary.withValues(alpha: 0.3),
+                color: context.primary
+                    .withValues(alpha: context.opacityMedium * 1.5),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
                 spreadRadius: -5,
@@ -61,7 +62,7 @@ class CropsHeader extends StatelessWidget {
                 child: Icon(
                   Icons.eco_rounded,
                   size: 180,
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: context.white.withValues(alpha: context.opacitySubtle * 1.6),
                 ),
               ),
               Padding(
@@ -86,7 +87,7 @@ class CropsHeader extends StatelessWidget {
                     Text(
                       'رعاية لنمو مثالي',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: context.white.withValues(alpha: context.opacityStrong),
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -102,7 +103,9 @@ class CropsHeader extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
+            color: context.white.withValues(
+              alpha: (context.opacityLow + context.opacityMedium) / 2,
+            ),
             shape: BoxShape.circle,
           ),
           child: IconButton(
