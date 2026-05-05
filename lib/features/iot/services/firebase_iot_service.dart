@@ -7,11 +7,10 @@ import '../models/iot_device_model.dart';
 class FirebaseIotService {
   final _db = FirebaseDatabase.instanceFor(
     app: Firebase.app("smart-farmer"),
-    databaseURL: "https://smartfarmdb-9c4f6-default-rtdb.europe-west1.firebasedatabase.app",
+    databaseURL:
+        "https://smartfarmdb-9c4f6-default-rtdb.europe-west1.firebasedatabase.app",
   );
-  
-  final _sensorsPath = 'SmartFarm/Sensors';
-  final _statusPath = 'SmartFarm/Status';
+
   final _settingsPath = 'SmartFarm/Settings';
 
   FirebaseIotService();
@@ -30,7 +29,7 @@ class FirebaseIotService {
       final status = Map<dynamic, dynamic>.from(data['Status'] ?? {});
       final settings = Map<dynamic, dynamic>.from(data['Settings'] ?? {});
 
-      log('🔥 FIREBASE REALTIME DATA: $data');
+      log('📊 RAW SENSORS: $sensors');
 
       return IotDevice(
         id: '1',
@@ -44,9 +43,10 @@ class FirebaseIotService {
         temperature: (sensors['Temp'] as num?)?.toDouble(),
         humidity: (sensors['Hum'] as num?)?.toDouble(),
         soilMoisture: (sensors['Soil'] as num?)?.toDouble(),
-        waterLevel: "${sensors['Water']}%",
+        waterLevel: sensors['Water'] != null ? "${sensors['Water']}%" : "--",
         rainDetected: (sensors['Rain'] as num? ?? 0) > 40,
         autoThreshold: (settings['AutoThreshold'] as num?)?.toInt() ?? 30,
+        rainLevel: (sensors['Rain'] as num?)?.toDouble(),
       );
     });
   }
@@ -56,7 +56,7 @@ class FirebaseIotService {
     try {
       final snapshot = await _db.ref('SmartFarm').get();
       if (!snapshot.exists) return null;
-      
+
       final data = snapshot.value as Map<dynamic, dynamic>;
       final sensors = Map<dynamic, dynamic>.from(data['Sensors'] ?? {});
       final status = Map<dynamic, dynamic>.from(data['Status'] ?? {});
@@ -77,6 +77,7 @@ class FirebaseIotService {
         waterLevel: "${sensors['Water']}%",
         rainDetected: (sensors['Rain'] as num? ?? 0) > 40,
         autoThreshold: (settings['AutoThreshold'] as num?)?.toInt() ?? 30,
+        rainLevel: (sensors['Rain'] as num?)?.toDouble(),
       );
     } catch (e) {
       log('❌ Error fetching device from Firebase: $e');

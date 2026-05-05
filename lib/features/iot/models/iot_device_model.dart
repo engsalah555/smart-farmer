@@ -17,6 +17,8 @@ class IotDevice {
   final String? waterLevel;
   final bool? rainDetected;
   final int? autoThreshold;
+  final double? rainLevel;
+
 
   IotDevice({
     required this.id,
@@ -35,7 +37,9 @@ class IotDevice {
     this.waterLevel,
     this.rainDetected,
     this.autoThreshold,
+    this.rainLevel,
   });
+
 
   IotDevice copyWith({
     String? id,
@@ -54,7 +58,9 @@ class IotDevice {
     String? waterLevel,
     bool? rainDetected,
     int? autoThreshold,
+    double? rainLevel,
   }) {
+
     return IotDevice(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -72,7 +78,9 @@ class IotDevice {
       waterLevel: waterLevel ?? this.waterLevel,
       rainDetected: rainDetected ?? this.rainDetected,
       autoThreshold: autoThreshold ?? this.autoThreshold,
+      rainLevel: rainLevel ?? this.rainLevel,
     );
+
   }
 
   factory IotDevice.fromJson(Map<String, dynamic> json) {
@@ -96,8 +104,10 @@ class IotDevice {
       waterLevel: json['water_level']?.toString(),
       rainDetected: json['rain_detected'] == true || json['rain_detected'] == 1,
       autoThreshold: (json['auto_threshold'] as num?)?.toInt(),
+      rainLevel: (json['rain_level'] as num?)?.toDouble(),
     );
   }
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -117,6 +127,8 @@ class IotDevice {
       'water_level': waterLevel,
       'rain_detected': rainDetected,
       'auto_threshold': autoThreshold,
+      'rain_level': rainLevel,
     };
   }
+
 }

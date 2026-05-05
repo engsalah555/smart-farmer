@@ -35,8 +35,9 @@ class IotProvider extends BaseProvider {
       _deviceSubscription = _firebaseIotService.getDeviceStream(deviceId).listen((
         updatedDevice,
       ) {
-        log('🔄 Received data from Firebase: ID=${updatedDevice.id}, Temp=${updatedDevice.temperature}, Hum=${updatedDevice.humidity}');
+        log('🔄 Received: Temp=${updatedDevice.temperature}, Soil=${updatedDevice.soilMoisture}, Water=${updatedDevice.waterLevel}, Rain=${updatedDevice.rainLevel}%');
         _device = updatedDevice;
+
         _hasDevice = updatedDevice.deviceId != '0' && updatedDevice.deviceId.isNotEmpty;
         notifyListeners();
       }, onError: (error) {
@@ -96,7 +97,6 @@ class IotProvider extends BaseProvider {
     log('🖱️ Toggle Irrigation Clicked: $status');
     try {
       // Optimistic update for better UI response
-      final previousState = _device!.isIrrigationOn;
       _device = _device!.copyWith(isIrrigationOn: status);
       notifyListeners();
 

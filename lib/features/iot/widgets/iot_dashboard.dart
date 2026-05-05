@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants.dart';
 import '../../../core/widgets/atoms/pro_max_icon_button.dart';
 import '../providers/iot_provider.dart';
-import '../models/iot_device_model.dart';
 import '../models/irrigation_log_model.dart';
 import 'schedule_bottom_sheet.dart';
 
@@ -17,10 +16,10 @@ class IotDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final isLoading = context.select<IotProvider, bool>((p) => p.isLoading);
-    final device = context.select<IotProvider, IotDevice?>((p) => p.device);
-    final hasDevice = context.select<IotProvider, bool>((p) => p.hasDevice);
+    final provider = context.watch<IotProvider>();
+    final device = provider.device;
+    final isLoading = provider.isLoading;
+    final hasDevice = provider.hasDevice;
 
     if (isLoading && device == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -31,106 +30,71 @@ class IotDashboard extends StatelessWidget {
     }
     if (device == null) return const IotLandingPage();
 
-    return Scaffold(
-      backgroundColor: AppColors.getBackground(isDark),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          Selector<IotProvider, String>(
-            selector: (_, p) => p.device?.name ?? 'لوحة التحكم',
-            builder: (context, name, _) =>
-                _buildSliverAppBar(context, name, isDark),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 10.0,
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: AppColors.getBackground(isDark),
+          body: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              _buildSliverAppBar(context, device.name, isDark),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 10.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildStatusCard(
+                        device.status,
+                        device.lastSyncAt,
+                        device.deviceId,
+                        isDark,
+                      ),
+                      const SizedBox(height: 28),
+                      _buildSectionTitle('المؤشرات الحيوية', isDark),
+                      const SizedBox(height: 16),
+                      _buildSensorReadings(
+                        device.temperature,
+                        device.humidity,
+                        device.soilMoisture,
+                        device.soilTemperature,
+                        device.waterLevel,
+                        device.rainDetected,
+                        device.rainLevel,
+                        isDark,
+                      ),
+                      const SizedBox(height: 28),
+                      _buildSectionTitle('التحكم الذكي', isDark),
+                      const SizedBox(height: 16),
+                      _buildMainControls(
+                        context,
+                        device.isIrrigationOn,
+                        device.autoIrrigation,
+                        isDark,
+                      ),
+                      const SizedBox(height: 28),
+                      _buildSectionTitle('إحصائيات الاستهلاك', isDark),
+                      const SizedBox(height: 16),
+                      _buildStatsSection(device.waterConsumption, isDark),
+                      const SizedBox(height: 28),
+                      _buildSectionTitle('سجل النشاط', isDark),
+                      const SizedBox(height: 16),
+                      _buildRecentLogs(provider.logs, isDark),
+                      const SizedBox(height: 100),
+                    ],
+                  ),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Selector<IotProvider, (String, DateTime?)>(
-                    selector: (_, p) =>
-                        (p.device?.status ?? '', p.device?.lastSyncAt),
-                    builder: (context, data, _) => _buildStatusCard(
-                      data.$1,
-                      data.$2,
-                      device.deviceId,
-                      isDark,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle('المؤشرات الحيوية', isDark),
-                  const SizedBox(height: 16),
-                  Selector<
-                    IotProvider,
-                    (double?, double?, double?, double?, String?, bool?)
-                  >(
-                    selector: (_, p) => (
-                      p.device?.temperature,
-                      p.device?.humidity,
-                      p.device?.soilMoisture,
-                      p.device?.soilTemperature,
-                      p.device?.waterLevel,
-                      p.device?.rainDetected,
-                    ),
-                    builder: (context, sensors, _) => _buildSensorReadings(
-                      sensors.$1,
-                      sensors.$2,
-                      sensors.$3,
-                      sensors.$4,
-                      sensors.$5,
-                      sensors.$6,
-                      isDark,
-                    ),
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle('التحكم الذكي', isDark),
-                  const SizedBox(height: 16),
-                  Selector<IotProvider, (bool, bool)>(
-                    selector: (_, p) => (
-                      p.device?.isIrrigationOn ?? false,
-                      p.device?.autoIrrigation ?? false,
-                    ),
-                    builder: (context, modes, _) =>
-                        _buildMainControls(context, modes.$1, modes.$2, isDark),
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle('إحصائيات الاستهلاك', isDark),
-                  const SizedBox(height: 16),
-                  Selector<IotProvider, double>(
-                    selector: (_, p) => p.device?.waterConsumption ?? 0.0,
-                    builder: (context, consumption, _) =>
-                        _buildStatsSection(consumption, isDark),
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle('سجل النشاط', isDark),
-                  const SizedBox(height: 16),
-                  Selector<IotProvider, int>(
-                    selector: (_, p) => p.logs.length,
-                    builder: (context, _, child) => _buildRecentLogs(
-                      context.read<IotProvider>().logs,
-                      isDark,
-                    ),
-                  ),
-
-                  const SizedBox(height: 100),
-                ],
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
-      floatingActionButton: _buildFab(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: _buildFab(context),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+        ),
+      ],
     );
   }
 
@@ -342,10 +306,13 @@ class IotDashboard extends StatelessWidget {
     double? soilTemp,
     String? water,
     bool? rain,
+    double? rainLevel,
     bool isDark,
   ) {
     return Column(
       children: [
+        _buildWaterRainCard(water, rain, rainLevel, isDark),
+        const SizedBox(height: 20),
         Row(
           children: [
             Expanded(
@@ -397,33 +364,182 @@ class IotDashboard extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        Row(
+      ],
+    );
+  }
+
+  Widget _buildWaterRainCard(
+    String? water,
+    bool? rain,
+    double? rainLevel,
+    bool isDark,
+  ) {
+    String safeWaterStr = water?.replaceAll('%', '').trim() ?? '0';
+    if (safeWaterStr == '--') safeWaterStr = '0';
+    final waterDouble = double.tryParse(safeWaterStr) ?? 0.0;
+    final waterPercent = (waterDouble / 100.0).clamp(0.0, 1.0);
+    
+    final isLowWater = waterDouble <= 20.0;
+    final isRaining = rain == true;
+    final rainVal = rainLevel?.round() ?? 0;
+
+    final waterColor = isLowWater ? const Color(0xFFDC4545) : const Color(0xFF2ECC71); // Status error / Action green
+    final rainColor = isRaining ? Colors.blue : Colors.grey;
+
+    return Semantics(
+      label: 'مستوى المياه والطقس',
+      value: 'مستوى المياه ${waterDouble.toInt()} بالمئة، الطقس ${isRaining ? "ممطر" : "صافي"}',
+      child: _PremiumCard(
+        isDark: isDark,
+        padding: const EdgeInsets.all(24),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Water Level Indicator
             Expanded(
-              child: _buildSensorItem(
-                'خزان المياه',
-                water ?? "--",
-                Icons.waves_rounded,
-                const Color(0xFF4facfe),
-                const Color(0xFF00f2fe),
-                isDark,
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.water_drop_rounded,
+                        color: waterColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'مستوى المياه',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '${waterDouble.toInt()}%',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.getTextColor(isDark),
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 8,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white10 : Colors.black12,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0, end: waterPercent),
+                      duration: const Duration(milliseconds: 1000),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, child) {
+                        return FractionallySizedBox(
+                          alignment: Alignment.centerRight,
+                          widthFactor: value,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: waterColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isLowWater ? 'مستوى منخفض' : 'المستوى آمن',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: waterColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 16),
+            Container(
+              height: 90,
+              width: 1,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              color: isDark ? Colors.white10 : Colors.black12,
+            ),
+            // Rain Status
             Expanded(
-              child: _buildSensorItem(
-                'حالة المطر',
-                rain == true ? 'ممطر' : 'صافي',
-                rain == true ? Icons.umbrella_rounded : Icons.wb_sunny_rounded,
-                const Color(0xFF6a11cb),
-                const Color(0xFF2575fc),
-                isDark,
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        isRaining ? Icons.umbrella_rounded : Icons.wb_sunny_rounded,
+                        color: rainColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'الطقس',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              isRaining ? 'ممطر' : 'صافي',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.getTextColor(isDark),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'الهطول: $rainVal%',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.getTextColor(isDark),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 
@@ -500,13 +616,21 @@ class IotDashboard extends StatelessWidget {
         ),
         if (autoIrrigation) ...[
           const SizedBox(height: 16),
-          _buildThresholdControl(context, provider.device?.autoThreshold ?? 30, isDark),
+          _buildThresholdControl(
+            context,
+            provider.device?.autoThreshold ?? 30,
+            isDark,
+          ),
         ],
       ],
     );
   }
 
-  Widget _buildThresholdControl(BuildContext context, int threshold, bool isDark) {
+  Widget _buildThresholdControl(
+    BuildContext context,
+    int threshold,
+    bool isDark,
+  ) {
     return _PremiumCard(
       isDark: isDark,
       padding: const EdgeInsets.all(18),
@@ -518,13 +642,13 @@ class IotDashboard extends StatelessWidget {
             children: [
               const Text(
                 'عتبة رطوبة التربة',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: context.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -554,7 +678,7 @@ class IotDashboard extends StatelessWidget {
               divisions: 20,
               label: '$threshold%',
               onChanged: (val) {
-                // We could update locally first for responsiveness, 
+                // We could update locally first for responsiveness,
                 // but for now we'll just wait for the provider update
               },
               onChangeEnd: (val) {
@@ -564,10 +688,7 @@ class IotDashboard extends StatelessWidget {
           ),
           const Text(
             'سيتم تشغيل الري تلقائياً إذا انخفضت الرطوبة عن هذه القيمة',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ],
       ),

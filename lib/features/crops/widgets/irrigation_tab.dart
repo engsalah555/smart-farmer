@@ -61,6 +61,24 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
           ),
           const SizedBox(height: 24),
 
+          // Water and Rain Card
+          Selector<IotProvider, (String?, bool?, double?)>(
+            selector: (_, provider) => (
+              provider.device?.waterLevel,
+              provider.device?.rainDetected,
+              provider.device?.rainLevel,
+            ),
+            builder: (context, data, _) {
+              return _buildWaterRainCard(
+                data.$1,
+                data.$2,
+                data.$3,
+                widget.isDark,
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+
           // Environment Stats Row
           Row(
             children: [
@@ -140,6 +158,7 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
               ),
             ),
           ),
+          const SizedBox(height: 100), // مسافة إضافية لتجنب شريط التنقل السفلي
         ],
       ),
     );
@@ -248,39 +267,39 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
           ),
           const SizedBox(height: 24),
           // Technical Gauge
-          Stack(
-            children: [
-              Container(
-                height: 8,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: context.isDark
-                      ? Colors.white10
-                      : Colors.black.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(4),
-                ),
+          Semantics(
+            label: 'مؤشر رطوبة التربة',
+            value: '${soilMoisture.toStringAsFixed(1)} بالمئة',
+            child: Container(
+              height: 8,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: context.isDark
+                    ? Colors.white10
+                    : Colors.black.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(4),
               ),
-              AnimatedContainer(
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(
+                  begin: 0,
+                  end: (soilMoisture / 100).clamp(0.0, 1.0),
+                ),
                 duration: const Duration(milliseconds: 1000),
-                height: 8,
-                width:
-                    (MediaQuery.of(context).size.width - 88) *
-                    (soilMoisture / 100),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [primaryColor.withValues(alpha: 0.7), primaryColor],
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                curve: Curves.easeOutCubic,
+                builder: (context, value, child) {
+                  return FractionallySizedBox(
+                    alignment: Alignment.centerRight,
+                    widthFactor: value,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            ],
+            ),
           ),
           const SizedBox(height: 24),
           Row(
@@ -493,6 +512,191 @@ class _IrrigationControlTabState extends State<IrrigationControlTab> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWaterRainCard(
+    String? water,
+    bool? rain,
+    double? rainLevel,
+    bool isDark,
+  ) {
+    String safeWaterStr = water?.replaceAll('%', '').trim() ?? '0';
+    if (safeWaterStr == '--') safeWaterStr = '0';
+    final waterDouble = double.tryParse(safeWaterStr) ?? 0.0;
+    final waterPercent = (waterDouble / 100.0).clamp(0.0, 1.0);
+
+    final isLowWater = waterDouble <= 20.0;
+    final isRaining = rain == true;
+    final rainVal = rainLevel?.round() ?? 0;
+
+    final waterColor = isLowWater ? context.error : context.primary;
+    final rainColor = isRaining ? Colors.blue : context.textMuted;
+
+    return Semantics(
+      label: 'مستوى المياه والطقس',
+      value:
+          'مستوى المياه ${waterDouble.toInt()} بالمئة، الطقس ${isRaining ? "ممطر" : "صافي"}',
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: context.surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: context.border),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Water Level Indicator
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.water_drop_rounded,
+                        color: waterColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'مستوى المياه',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '${waterDouble.toInt()}%',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: context.textPrimary,
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 6,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: context.border,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0, end: waterPercent),
+                      duration: const Duration(milliseconds: 1000),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, child) {
+                        return FractionallySizedBox(
+                          alignment: Alignment.centerRight,
+                          widthFactor: value,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: waterColor,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isLowWater ? 'مستوى منخفض' : 'المستوى آمن',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: waterColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 80,
+              width: 1,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              color: context.border,
+            ),
+            // Rain Status
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        isRaining
+                            ? Icons.umbrella_rounded
+                            : Icons.wb_sunny_rounded,
+                        color: rainColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'الطقس',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              isRaining ? 'ممطر' : 'صافي',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: context.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.border.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'فرصة الهطول: $rainVal%',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: context.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
