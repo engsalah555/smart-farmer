@@ -23,6 +23,7 @@ import 'core/providers/admin_provider.dart';
 import 'core/routes/app_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,19 @@ void main() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
+
+  await Firebase.initializeApp(
+    name: "smart-farmer",
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyCLEUS1V6uNAAA_9Y-jiubEVb1SUchNGmY",
+      appId: "1:100000000000:android:000000000000", // Generic appId
+      messagingSenderId: "100000000000",
+      projectId: "smartfarmdb-9c4f6",
+      databaseURL:
+          "https://smartfarmdb-9c4f6-default-rtdb.europe-west1.firebasedatabase.app",
+    ),
+  );
+
 
   // الخطوط غير مضمّنة محلياً — يجب إبقاء Runtime Fetching مفعلاً
   GoogleFonts.config.allowRuntimeFetching = true;
