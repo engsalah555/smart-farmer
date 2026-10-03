@@ -1,42 +1,39 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-/// ساعة رقمية بنبض نيون تتغير ألوانها حسب وقت اليوم (ليلاً/نهاراً)
+/// ساعة رقمية عصرية وواضحة بتصميم كبسولة أنيق بدون ظلال ضبابية
 class DigitalClock extends StatefulWidget {
   final Color? color;
   final double fontSize;
-  
+  final bool showShadow;
+  final bool showIcon;
+  final EdgeInsetsGeometry? padding;
+  final BoxDecoration? decoration;
+
   const DigitalClock({
     super.key,
     this.color,
-    this.fontSize = 16,
+    this.fontSize = 13,
+    this.showShadow = false,
+    this.showIcon = true,
+    this.padding,
+    this.decoration,
   });
 
   @override
   State<DigitalClock> createState() => _DigitalClockState();
 }
 
-class _DigitalClockState extends State<DigitalClock> with SingleTickerProviderStateMixin {
+class _DigitalClockState extends State<DigitalClock> {
   late DateTime _now;
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
-  late StreamSubscription _timerSubscription;
+  late StreamSubscription<int> _timerSubscription;
 
   @override
   void initState() {
     super.initState();
     _now = DateTime.now();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
-    
-    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-
-    // تحديث كل ثانية للساعة
-    _timerSubscription = Stream.periodic(const Duration(seconds: 1)).listen((_) {
+    _timerSubscription =
+        Stream.periodic(const Duration(seconds: 1), (i) => i).listen((_) {
       if (mounted) {
         setState(() {
           _now = DateTime.now();
@@ -47,74 +44,77 @@ class _DigitalClockState extends State<DigitalClock> with SingleTickerProviderSt
 
   @override
   void dispose() {
-    _pulseController.dispose();
     _timerSubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isNight = _now.hour >= 18 || _now.hour < 6;
-    final Color themeColor = widget.color ?? (isNight ? Colors.blueAccent : Colors.white);
-    
+    final Color contentColor = widget.color ?? Colors.white;
+
     final String period = _now.hour < 12 ? 'ص' : 'م';
     int hour = _now.hour > 12 ? _now.hour - 12 : _now.hour;
     if (hour == 0) hour = 12;
     final String hourStr = hour.toString().padLeft(2, '0');
     final String minuteStr = _now.minute.toString().padLeft(2, '0');
 
-    return AnimatedBuilder(
-      animation: _pulseAnimation,
-      builder: (context, child) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: themeColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+    return Container(
+      padding: widget.padding ??
+          const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+      decoration: widget.decoration ??
+          BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.18),
+            borderRadius: BorderRadius.circular(22),
             border: Border.all(
-              color: themeColor.withValues(alpha: 0.2),
+              color: Colors.white.withValues(alpha: 0.32),
+              width: 1.0,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: themeColor.withValues(alpha: 0.2 * _pulseAnimation.value),
-                blurRadius: 10 * _pulseAnimation.value,
-                spreadRadius: 1,
-              ),
-            ],
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$hourStr:$minuteStr',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: widget.fontSize,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: 'monospace',
-                  letterSpacing: 1,
-                  shadows: [
-                    Shadow(
-                      color: themeColor,
-                      blurRadius: 8 * _pulseAnimation.value,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                period,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: widget.fontSize * 0.75,
-                  fontWeight: FontWeight.bold,
-                  
-                ),
-              ),
-            ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (widget.showIcon) ...[
+            Icon(
+              Icons.schedule_rounded,
+              size: widget.fontSize * 1.12,
+              color: contentColor.withValues(alpha: 0.95),
+            ),
+            const SizedBox(width: 5),
+          ],
+          Text(
+            '$hourStr:$minuteStr',
+            style: TextStyle(
+              color: contentColor,
+              fontSize: widget.fontSize,
+              fontWeight: FontWeight.w800,
+              fontFeatures: const [FontFeature.tabularFigures()],
+              letterSpacing: 0.8,
+            ),
           ),
-        );
-      },
+          const SizedBox(width: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5.5, vertical: 1.5),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.22),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.28),
+                width: 0.5,
+              ),
+            ),
+            child: Text(
+              period,
+              style: TextStyle(
+                color: contentColor,
+                fontSize: widget.fontSize * 0.72,
+                fontWeight: FontWeight.w800,
+                height: 1.1,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_farm2/features/community/widgets/social_media_post.dart';
 import 'package:smart_farm2/features/community/providers/post_provider.dart';
@@ -37,49 +38,82 @@ class ForumList extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.fromLTRB(
-              context.wp(5),
+              context.wp(4.5).clamp(16.0, 24.0),
               context.hp(1),
-              context.wp(5),
-              context.hp(2),
+              context.wp(4.5).clamp(16.0, 24.0),
+              context.hp(1.5),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // Optical alignment
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  'المنتدى الزراعي',
-                  style: TextStyle(
-                    fontSize: context.sp(20).clamp(18, 26),
-                    fontWeight: FontWeight.w900,
-                    color: isDark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.textPrimary,
-                    letterSpacing: -0.5,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'المنتدى الزراعي',
+                      style: TextStyle(
+                        fontSize: context.sp(18).clamp(16, 22),
+                        fontWeight: FontWeight.w900,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'تجارب ومناقشات مجتمع المزارعين',
+                      style: TextStyle(
+                        fontSize: context.sp(11).clamp(10, 13),
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
                 Semantics(
                   label: 'عرض كل منشورات المنتدى',
                   button: true,
                   child: InkWell(
-                    onTap: () => context.push('/forum'),
-                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      context.push('/forum');
+                    },
+                    borderRadius: BorderRadius.circular(14),
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: context.wp(4).clamp(12.0, 20.0),
-                        vertical: context.hp(0.6).clamp(4.0, 10.0),
+                        horizontal: context.wp(3.5).clamp(10.0, 16.0),
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
                         color: (context.primary).withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Text(
-                        'عرض الكل',
-                        style: TextStyle(
-                          fontSize: context.sp(13).clamp(11, 16),
-                          fontWeight: FontWeight.bold,
-                          color: context.primary,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: context.primary.withValues(alpha: 0.25),
+                          width: 1,
                         ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'عرض الكل',
+                            style: TextStyle(
+                              fontSize: context.sp(12).clamp(11, 14),
+                              fontWeight: FontWeight.bold,
+                              color: context.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 11,
+                            color: context.primary,
+                          ),
+                        ],
                       ),
                     ),
                   ),

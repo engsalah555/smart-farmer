@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/widgets/app_fonts.dart';
 import '../../../core/widgets/fade_in_slide.dart';
 
 import '../../../core/constants.dart';
@@ -84,27 +83,42 @@ class _HomeAlertsState extends State<HomeAlerts> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.wp(5), vertical: context.hp(1)),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.wp(4.5).clamp(16.0, 24.0),
+              vertical: context.hp(0.8),
+            ),
             child: Semantics(
               label: 'تنبيهات نشطة',
               child: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: context.wp(5)),
-                  SizedBox(width: context.wp(2)),
+                  Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 20),
+                  const SizedBox(width: 8),
                   Text(
                     'التنبيهات العاجلة',
-                    style: context.font18.bold.copyWith(color: AppColors.getTextColor(isDark)),
+                    style: TextStyle(
+                      fontSize: context.sp(17).clamp(16, 20),
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    ),
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppColors.error.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.error.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: AppColors.error.withValues(alpha: 0.25),
+                        width: 1,
+                      ),
                     ),
                     child: Text(
-                      '${_alerts.length} تنبيه',
-                      style: context.font12.bold.copyWith(color: AppColors.error),
+                      '${_alerts.length} تنبيه نشط',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.error,
+                      ),
                     ),
                   ),
                 ],
@@ -116,7 +130,9 @@ class _HomeAlertsState extends State<HomeAlerts> {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: context.wp(4)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.wp(4.5).clamp(16.0, 24.0) - 6,
+              ),
               itemCount: _alerts.length,
               itemBuilder: (context, index) {
                 final alert = _alerts[index];
@@ -135,17 +151,10 @@ class _HomeAlertsState extends State<HomeAlerts> {
                             : Color.alphaBlend(severityColor.withValues(alpha: 0.05), AppColors.white),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: isDark ? AppColors.darkBorder : severityColor.withValues(alpha: 0.2),
+                          color: severityColor
+                              .withValues(alpha: isDark ? 0.35 : 0.22),
                           width: 1.5,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: isDark ? AppColors.black.withValues(alpha: 0.2) : severityColor.withValues(alpha: 0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                            spreadRadius: -4,
-                          ),
-                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
