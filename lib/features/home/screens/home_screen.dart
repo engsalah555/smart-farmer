@@ -25,7 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final homeProvider = context.read<HomeProvider>();
       final postProvider = context.read<PostProvider>();
 
-      if (homeProvider.posts.isEmpty && !homeProvider.isLoading) {
+      if ((homeProvider.posts.isEmpty || homeProvider.weatherData == null) &&
+          !homeProvider.isLoading &&
+          !homeProvider.isWeatherLoading) {
         homeProvider.init();
       }
 
@@ -47,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onRefresh: () async {
             await Future.wait([
               context.read<HomeProvider>().init(),
+              context.read<PostProvider>().fetchPosts(),
               context.read<AuthProvider>().refreshProfile(),
             ]);
           },

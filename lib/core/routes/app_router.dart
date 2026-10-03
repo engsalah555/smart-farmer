@@ -43,7 +43,7 @@ import '../../features/auth/screens/merchant_verification_screen.dart';
 import '../../features/crops/screens/fertilizer_calculator_screen.dart';
 import '../../features/community/screens/user_activity_screen.dart';
 import '../models/post_model.dart';
-import '../../features/iot/screens/iot_status_screen.dart';
+import '../../features/iot/screens/smart_farm_screen.dart';
 import '../../features/ai/screens/chatbot_screen.dart';
 import '../../features/home/screens/weather_detail_screen.dart';
 import '../../features/profile/screens/admin_users_screen.dart';
@@ -57,12 +57,12 @@ class AppRouter {
 
   static final GlobalKey<NavigatorState> _shellNavigatorHome =
       GlobalKey<NavigatorState>(debugLabel: 'shellHome');
-  static final GlobalKey<NavigatorState> _shellNavigatorMarket =
-      GlobalKey<NavigatorState>(debugLabel: 'shellMarket');
+  static final GlobalKey<NavigatorState> _shellNavigatorSmartFarm =
+      GlobalKey<NavigatorState>(debugLabel: 'shellSmartFarm');
   static final GlobalKey<NavigatorState> _shellNavigatorCrops =
       GlobalKey<NavigatorState>(debugLabel: 'shellCrops');
-  static final GlobalKey<NavigatorState> _shellNavigatorProfile =
-      GlobalKey<NavigatorState>(debugLabel: 'shellProfile');
+  static final GlobalKey<NavigatorState> _shellNavigatorMarket =
+      GlobalKey<NavigatorState>(debugLabel: 'shellMarket');
 
   // Auth provider reference — injected once after app starts.
   static AuthProvider? _authProvider;
@@ -264,7 +264,11 @@ class AppRouter {
       ),
       GoRoute(
         path: '/iot',
-        builder: (context, state) => const IotStatusScreen(),
+        builder: (context, state) => const SmartFarmScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/weather',
@@ -293,11 +297,11 @@ class AppRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: _shellNavigatorMarket,
+            navigatorKey: _shellNavigatorSmartFarm,
             routes: [
               GoRoute(
-                path: '/marketplace',
-                builder: (context, state) => const MarketplaceScreen(),
+                path: '/smart_farm',
+                builder: (context, state) => const SmartFarmScreen(),
               ),
             ],
           ),
@@ -311,11 +315,11 @@ class AppRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: _shellNavigatorProfile,
+            navigatorKey: _shellNavigatorMarket,
             routes: [
               GoRoute(
-                path: '/profile',
-                builder: (context, state) => const ProfileScreen(),
+                path: '/marketplace',
+                builder: (context, state) => const MarketplaceScreen(),
               ),
             ],
           ),

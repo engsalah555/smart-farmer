@@ -20,7 +20,9 @@ class HomeHeader extends StatelessWidget {
     final weather = context.select<HomeProvider, WeatherModel?>(
       (p) => p.weatherData,
     );
-    final isLoading = context.select<HomeProvider, bool>((p) => p.isLoading);
+    final isWeatherLoading = context.select<HomeProvider, bool>(
+      (p) => p.isWeatherLoading,
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final statusBarHeight = MediaQuery.of(context).padding.top;
@@ -34,7 +36,7 @@ class HomeHeader extends StatelessWidget {
         maxHeight: maxHeight,
         user: user,
         weather: weather,
-        isLoading: isLoading,
+        isWeatherLoading: isWeatherLoading,
         isDark: isDark,
       ),
     );
@@ -46,7 +48,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double maxHeight;
   final dynamic user;
   final WeatherModel? weather;
-  final bool isLoading;
+  final bool isWeatherLoading;
   final bool isDark;
 
   _HomeHeaderDelegate({
@@ -54,7 +56,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.maxHeight,
     required this.user,
     required this.weather,
-    required this.isLoading,
+    required this.isWeatherLoading,
     required this.isDark,
   });
 
@@ -129,55 +131,71 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          Semantics(
-                            label: 'اسم المستخدم: $userName',
-                            child: Text(
-                              'مرحباً , $userName',
-                              style: TextStyle(
-                                color: isDark
-                                    ? AppColors.darkTextPrimary
-                                    : AppColors.white,
-                                fontSize: context.sp(20).clamp(18, 26),
-                                fontWeight: FontWeight.bold,
+                  child: InkWell(
+                    onTap: () => context.push('/profile'),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Semantics(
+                              label: 'اسم المستخدم: $userName',
+                              child: Text(
+                                'مرحباً , $userName',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.white,
+                                  fontSize: context.sp(20).clamp(18, 26),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          if (user?.isVerified ?? false) ...[
-                            SizedBox(width: context.wp(1.5)),
-                            Icon(
-                              Icons.verified,
-                              color: isDark
-                                  ? AppColors.primaryDark
-                                  : AppColors.white,
-                              size: context.sp(18).clamp(16, 22),
-                            ),
+                            if (user?.isVerified ?? false) ...[
+                              SizedBox(width: context.wp(1.5)),
+                              Icon(
+                                Icons.verified,
+                                color: isDark
+                                    ? AppColors.primaryDark
+                                    : AppColors.white,
+                                size: context.sp(18).clamp(16, 22),
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
-                      SizedBox(height: context.hp(0.5)),
-                      Text(
-                        userRole,
-                        style: TextStyle(
-                          color: context.white,
-                          fontSize: context.sp(14).clamp(12, 18),
-                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-                    ],
+                        SizedBox(height: context.hp(0.5)),
+                        Text(
+                          userRole,
+                          style: TextStyle(
+                            color: context.white,
+                            fontSize: context.sp(14).clamp(12, 18),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(width: context.wp(2)),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Semantics(
+                      label: 'الملف الشخصي',
+                      button: true,
+                      child: ProMaxIconButton(
+                        icon: Icons.person_outline_rounded,
+                        onTap: () => context.push('/profile'),
+                        iconSize: context.wp(5.5).clamp(24, 28),
+                        color: context.textPrimary,
+                        backgroundColor: context.cardBackground,
+                      ),
+                    ),
+                    SizedBox(width: context.wp(2)),
                     Semantics(
                       label: 'التنبيهات',
                       button: true,
@@ -218,7 +236,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                         maxWidth: context.wp(90).clamp(300, 600),
                       ),
                       padding: EdgeInsets.symmetric(horizontal: context.wp(2)),
-                      child: isLoading
+                      child: (weather == null && isWeatherLoading)
                           ? SizedBox(
                               height: context.hp(12),
                               child: const Center(
@@ -437,7 +455,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
         oldDelegate.minHeight != minHeight ||
         oldDelegate.user != user ||
         oldDelegate.weather != weather ||
-        oldDelegate.isLoading != isLoading ||
+        oldDelegate.isWeatherLoading != isWeatherLoading ||
         oldDelegate.isDark != isDark;
   }
 }

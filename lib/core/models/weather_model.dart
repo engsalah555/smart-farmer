@@ -38,6 +38,48 @@ class WeatherModel {
     this.hourlyData = const [],
   });
 
+  Map<String, dynamic> toJson() => {
+        'temperature': temperature,
+        'weatherCode': weatherCode,
+        'cityName': cityName,
+        'humidity': humidity,
+        'lastUpdated': lastUpdated.toIso8601String(),
+        'apparentTemperature': apparentTemperature,
+        'precipitation': precipitation,
+        'rain': rain,
+        'cloudCover': cloudCover,
+        'windSpeed': windSpeed,
+        'isDay': isDay,
+        'dailyForecasts': dailyForecasts.map((e) => e.toJson()).toList(),
+        'hourlyData': hourlyData.map((e) => e.toJson()).toList(),
+      };
+
+  factory WeatherModel.fromJson(Map<String, dynamic> json) => WeatherModel(
+        temperature: (json['temperature'] as num).toDouble(),
+        weatherCode: (json['weatherCode'] as num).toInt(),
+        cityName: json['cityName'] as String? ?? 'غير متوفر',
+        humidity: (json['humidity'] as num).toInt(),
+        lastUpdated: json['lastUpdated'] != null
+            ? DateTime.parse(json['lastUpdated'] as String)
+            : DateTime.now(),
+        apparentTemperature: (json['apparentTemperature'] as num?)?.toDouble(),
+        precipitation: (json['precipitation'] as num?)?.toDouble(),
+        rain: (json['rain'] as num?)?.toDouble(),
+        cloudCover: (json['cloudCover'] as num?)?.toInt(),
+        windSpeed: (json['windSpeed'] as num?)?.toDouble(),
+        isDay: json['isDay'] as bool? ?? true,
+        dailyForecasts: (json['dailyForecasts'] as List?)
+                ?.map((e) =>
+                    DailyForecast.fromJson(Map<String, dynamic>.from(e as Map)))
+                .toList() ??
+            const [],
+        hourlyData: (json['hourlyData'] as List?)
+                ?.map((e) =>
+                    HourlyData.fromJson(Map<String, dynamic>.from(e as Map)))
+                .toList() ??
+            const [],
+      );
+
   /// وصف حالة الطقس بالعربية
   String get conditionText {
     switch (weatherCode) {
@@ -112,6 +154,39 @@ class DailyForecast {
     this.uvIndexMax,
     this.windSpeedMax,
   });
+
+  Map<String, dynamic> toJson() => {
+        'date': date.toIso8601String(),
+        'weatherCode': weatherCode,
+        'tempMax': tempMax,
+        'sunrise': sunrise,
+        'sunset': sunset,
+        'sunshineDuration': sunshineDuration,
+        'daylightDuration': daylightDuration,
+        'precipitationProbability': precipitationProbability,
+        'precipitationHours': precipitationHours,
+        'precipitationSum': precipitationSum,
+        'rainSum': rainSum,
+        'uvIndexMax': uvIndexMax,
+        'windSpeedMax': windSpeedMax,
+      };
+
+  factory DailyForecast.fromJson(Map<String, dynamic> json) => DailyForecast(
+        date: DateTime.parse(json['date'] as String),
+        weatherCode: (json['weatherCode'] as num).toInt(),
+        tempMax: (json['tempMax'] as num).toDouble(),
+        sunrise: json['sunrise'] as String?,
+        sunset: json['sunset'] as String?,
+        sunshineDuration: (json['sunshineDuration'] as num?)?.toDouble(),
+        daylightDuration: (json['daylightDuration'] as num?)?.toDouble(),
+        precipitationProbability:
+            (json['precipitationProbability'] as num?)?.toInt(),
+        precipitationHours: (json['precipitationHours'] as num?)?.toDouble(),
+        precipitationSum: (json['precipitationSum'] as num?)?.toDouble(),
+        rainSum: (json['rainSum'] as num?)?.toDouble(),
+        uvIndexMax: (json['uvIndexMax'] as num?)?.toDouble(),
+        windSpeedMax: (json['windSpeedMax'] as num?)?.toDouble(),
+      );
 
   /// وصف حالة الطقس باختصار
   String get conditionText {
@@ -258,6 +333,35 @@ class HourlyData {
     this.precipitation,
     this.rain,
   });
+
+  Map<String, dynamic> toJson() => {
+        'time': time.toIso8601String(),
+        'temperature': temperature,
+        'humidity': humidity,
+        'dewPoint': dewPoint,
+        'apparentTemperature': apparentTemperature,
+        'precipitationProbability': precipitationProbability,
+        'weatherCode': weatherCode,
+        'evapotranspiration': evapotranspiration,
+        'soilTemperature': soilTemperature,
+        'precipitation': precipitation,
+        'rain': rain,
+      };
+
+  factory HourlyData.fromJson(Map<String, dynamic> json) => HourlyData(
+        time: DateTime.parse(json['time'] as String),
+        temperature: (json['temperature'] as num).toDouble(),
+        humidity: (json['humidity'] as num).toInt(),
+        dewPoint: (json['dewPoint'] as num?)?.toDouble(),
+        apparentTemperature: (json['apparentTemperature'] as num?)?.toDouble(),
+        precipitationProbability:
+            (json['precipitationProbability'] as num?)?.toInt(),
+        weatherCode: (json['weatherCode'] as num).toInt(),
+        evapotranspiration: (json['evapotranspiration'] as num?)?.toDouble(),
+        soilTemperature: (json['soilTemperature'] as num?)?.toDouble(),
+        precipitation: (json['precipitation'] as num?)?.toDouble(),
+        rain: (json['rain'] as num?)?.toDouble(),
+      );
 
   /// الساعة بتنسيق عربي (12-ساعة)
   String get hourLabel {

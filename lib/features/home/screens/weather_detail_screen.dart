@@ -39,7 +39,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
     return Consumer<HomeProvider>(
       builder: (context, provider, _) {
         final weather = provider.weatherData;
-        final isLoading = provider.isLoading;
+        final isLoading = provider.isWeatherLoading && weather == null;
 
         return Scaffold(
           body: isLoading

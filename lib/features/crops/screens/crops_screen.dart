@@ -4,7 +4,6 @@ import '../widgets/crops_sliver_app_bar.dart';
 import '../widgets/crops_sticky_header.dart';
 import '../widgets/my_crops_tab.dart';
 import '../widgets/crops_guide_tab.dart';
-import '../widgets/irrigation_tab.dart';
 
 class CropsScreen extends StatefulWidget {
   final Function(int)? onBack;
@@ -24,7 +23,7 @@ class _CropsScreenState extends State<CropsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text;
@@ -58,7 +57,7 @@ class _CropsScreenState extends State<CropsScreen>
                 setState(() => _searchQuery = value);
               },
               tabController: _tabController,
-              tabs: const ['محاصيلي', 'دليل النبات', 'التحكم بالري'],
+              tabs: const ['محاصيلي', 'دليل النبات'],
               onTabTap: (index) {
                 _tabController.animateTo(index);
               },
@@ -74,7 +73,6 @@ class _CropsScreenState extends State<CropsScreen>
               searchQuery: _searchQuery,
             ),
             CropsGuideTab(isDark: isDark, searchQuery: _searchQuery),
-            IrrigationControlTab(isDark: isDark),
           ],
         ),
       ),

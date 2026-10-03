@@ -14,42 +14,51 @@ class HomeProvider extends BaseProvider {
 
   List<PostModel> _posts = [];
   WeatherModel? _weatherData;
+  bool _isWeatherLoading = false;
 
   List<PostModel> get posts => _posts;
   WeatherModel? get weatherData => _weatherData;
+  bool get isWeatherLoading => _isWeatherLoading;
 
-  Future<void> fetchWeather() async {
-    await execute(
-      () async {
-        _weatherData = await _weatherService.getCurrentWeather();
-        notifyListeners();
-      },
-      showLoading: true,
-      errorMessage: 'فشل في جلب بيانات الطقس',
-    );
+  Future<void> fetchWeather({bool showLoading = true}) async {
+    if (showLoading) {
+      _isWeatherLoading = true;
+      notifyListeners();
+    }
+
+    try {
+      final weather = await _weatherService.getCurrentWeather();
+      if (weather != null) {
+        _weatherData = weather;
+        _saveCache();
+      }
+    } catch (e) {
+      debugPrint('Home weather fetch error: $e');
+    } finally {
+      if (showLoading) {
+        _isWeatherLoading = false;
+      }
+      notifyListeners();
+    }
   }
 
   Future<void> init() async {
     // Phase 1: Load Stale Data (Cache) for Instant UI
     await _loadCache();
 
-    // Phase 2: Revalidate (Batch API Request)
+    // Phase 2: Revalidate concurrently without blocking each other
+    await Future.wait([
+      _loadPosts(),
+      fetchWeather(showLoading: _weatherData == null),
+    ]);
+  }
+
+  Future<void> _loadPosts() async {
     await execute(
       () async {
-        // Fetch Weather and Batch Data in parallel
-        final results = await Future.wait([
-          _weatherService.getCurrentWeather(),
-          _homeService.getHomeBatchData(),
-        ]);
-
-        _weatherData = results[0] as WeatherModel?;
-        final batchData = results[1] as HomeBatchData;
-
+        final batchData = await _homeService.getHomeBatchData();
         _posts = batchData.posts.take(2).toList();
-
-        // Save to cache for next time
         _saveCache();
-
         notifyListeners();
       },
       showLoading: _posts.isEmpty,
@@ -66,7 +75,15 @@ class HomeProvider extends BaseProvider {
             .toList();
       }
 
-      if (_posts.isNotEmpty) {
+      final cachedWeather =
+          await _persistence.get('offline_cache', 'home_weather');
+      if (cachedWeather != null) {
+        _weatherData = WeatherModel.fromJson(
+          Map<String, dynamic>.from(cachedWeather as Map),
+        );
+      }
+
+      if (_posts.isNotEmpty || _weatherData != null) {
         notifyListeners();
       }
     } catch (e) {
@@ -81,6 +98,14 @@ class HomeProvider extends BaseProvider {
         'home_posts',
         _posts.map((p) => p.toJson()).toList(),
       );
+
+      if (_weatherData != null) {
+        _persistence.save(
+          'offline_cache',
+          'home_weather',
+          _weatherData!.toJson(),
+        );
+      }
     } catch (e) {
       debugPrint('Home cache save error: $e');
     }

@@ -8,9 +8,9 @@ class MainScreen extends StatelessWidget {
   const MainScreen({super.key, required this.navigationShell});
 
   // UI Bottom Bar Indices:
-  // 0: Home, 1: Marketplace, 2: Space (Scanner FAB), 3: Crops, 4: Profile
+  // 0: Home, 1: Smart Farm, 2: Space (Scanner FAB), 3: Crops, 4: Marketplace
   // StatefulShellRoute Branches Indices:
-  // 0: Home, 1: Marketplace, 2: Crops, 3: Profile
+  // 0: Home, 1: Smart Farm, 2: Crops, 3: Marketplace
 
   int _uiIndexToBranchIndex(int uiIndex) {
     if (uiIndex == 0) return 0;
@@ -86,23 +86,23 @@ class MainScreen extends StatelessWidget {
               ),
               _buildNavItem(
                 context,
-                Icons.eco_rounded,
-                'المحاصيل',
-                3,
+                Icons.water_drop_rounded,
+                'مزرعتي',
+                1,
                 currentUiIndex,
               ),
               const SizedBox(width: 48), // Space for FAB
               _buildNavItem(
                 context,
-                Icons.shopping_bag_rounded,
-                'المتجر',
-                1,
+                Icons.eco_rounded,
+                'المحاصيل',
+                3,
                 currentUiIndex,
               ),
               _buildNavItem(
                 context,
-                Icons.person_rounded,
-                'حسابي',
+                Icons.shopping_bag_rounded,
+                'المتجر',
                 4,
                 currentUiIndex,
               ),

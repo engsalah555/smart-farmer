@@ -9,39 +9,55 @@ class WeatherService {
 
   Future<WeatherModel?> getCurrentWeather() async {
     try {
-      double lat, lon;
-      String cityName = 'موقعي الحالي';
+      double lat = 15.3694;
+      double lon = 44.1910;
+      String cityName = 'صنعاء، اليمن';
+      bool hasRealLocation = false;
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      try {
+        LocationPermission permission = await Geolocator.checkPermission();
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+        }
+
+        if (serviceEnabled &&
+            permission != LocationPermission.denied &&
+            permission != LocationPermission.deniedForever) {
+          Position? position;
+          // 1. Try to get last known position first (instant)
+          try {
+            position = await Geolocator.getLastKnownPosition();
+          } catch (_) {}
+
+          // 2. If no cached position, request current position with a strict 3-second limit
+          if (position == null) {
+            try {
+              position = await Geolocator.getCurrentPosition(
+                locationSettings: const LocationSettings(
+                  accuracy: LocationAccuracy.low,
+                  distanceFilter: 100,
+                  timeLimit: Duration(seconds: 3),
+                ),
+              ).timeout(const Duration(seconds: 3));
+            } catch (_) {}
+          }
+
+          if (position != null) {
+            lat = position.latitude;
+            lon = position.longitude;
+            cityName = 'موقعي الحالي';
+            hasRealLocation = true;
+          }
+        }
+      } catch (locErr) {
+        debugPrint('Location error, using fallback: $locErr');
       }
 
-      if (!serviceEnabled ||
-          permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        // Fallback to Sana'a, Yemen if location is disabled or denied
-        lat = 15.3694;
-        lon = 44.1910;
-        cityName = 'صنعاء، اليمن';
-        debugPrint(
-          'Using fallback location: Sanaa (serviceEnabled: $serviceEnabled, permission: $permission)',
-        );
-      } else {
-        Position position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.low,
-            distanceFilter: 100,
-          ),
-        );
-        lat = position.latitude;
-        lon = position.longitude;
-      }
-
-      // ─── اسم المدينة عبر Nominatim (only if not fallback) ─────────────────
-      if (cityName == 'موقعي الحالي') {
+      // ─── Parallel fetching: Weather API + Reverse Geocoding ───────────────
+      Future<String> fetchCityName() async {
+        if (!hasRealLocation) return cityName;
         try {
           final geoResponse = await _dio.get(
             'https://nominatim.openstreetmap.org/reverse',
@@ -52,15 +68,15 @@ class WeatherService {
               'accept-language': 'ar',
             },
             options: Options(
-              headers: {'User-Agent': 'Zarea-Agricultural-Assistant-App '},
-              sendTimeout: const Duration(seconds: 10),
-              receiveTimeout: const Duration(seconds: 10),
+              headers: {'User-Agent': 'Zarea-Agricultural-Assistant-App'},
+              sendTimeout: const Duration(seconds: 2),
+              receiveTimeout: const Duration(seconds: 2),
             ),
-          );
+          ).timeout(const Duration(seconds: 2));
+
           if (geoResponse.data != null && geoResponse.data['address'] != null) {
             final address = geoResponse.data['address'];
-            cityName =
-                address['city'] ??
+            return address['city'] ??
                 address['town'] ??
                 address['village'] ??
                 address['suburb'] ??
@@ -68,12 +84,12 @@ class WeatherService {
                 'موقعي الحالي';
           }
         } catch (e) {
-          debugPrint('Reverse geocoding failed: $e');
+          debugPrint('Reverse geocoding skipped or timed out: $e');
         }
+        return 'موقعي الحالي';
       }
 
-      // ─── بيانات الطقس الكاملة عبر Open-Meteo ──────────────────────────────
-      final weatherResponse = await _dio.get(
+      final weatherFuture = _dio.get(
         'https://api.open-meteo.com/v1/forecast',
         queryParameters: {
           'latitude': lat,
@@ -93,7 +109,19 @@ class WeatherService {
           'past_days': '0',
           'forecast_days': '7',
         },
+        options: Options(
+          sendTimeout: const Duration(seconds: 6),
+          receiveTimeout: const Duration(seconds: 6),
+        ),
       );
+
+      final results = await Future.wait([
+        weatherFuture,
+        fetchCityName(),
+      ]);
+
+      final weatherResponse = results[0] as Response;
+      cityName = results[1] as String;
 
       if (weatherResponse.data == null) return null;
       final data = weatherResponse.data as Map<String, dynamic>;
