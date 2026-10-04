@@ -96,10 +96,10 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       fontFamily: AppTypography.fontFamily,
-      primaryColor: AppColors.darkAccent,
+      primaryColor: AppColors.darkPrimary,
       scaffoldBackgroundColor: AppColors.darkBackground,
       colorScheme: ColorScheme.dark(
-        primary: AppColors.darkAccent,
+        primary: AppColors.darkPrimary,
         onPrimary: Colors.white,
         secondary: AppColors.darkAccent,
         onSecondary: Colors.white,
@@ -141,7 +141,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style:
             ElevatedButton.styleFrom(
-              backgroundColor: AppColors.darkAccent,
+              backgroundColor: AppColors.darkPrimary,
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(

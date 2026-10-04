@@ -2,7 +2,8 @@
 name: Smart Farmer 2
 description: Aerospace-grade agricultural intelligence interface.
 colors:
-  primary: "#69A14B"
+  primary: "#236E3C"
+  primary-dark: "#1E6038"
   primary-action: "#2ECC71"
   neutral-bg: "#FDFDFC"
   neutral-dark-bg: "#0F1410"
@@ -79,7 +80,7 @@ The aesthetic communicates professional competence through "Tech-forward precisi
 The palette is a "Committed" strategy where a vibrant action emerald carries the focus against a deep, rich forest-neutral background.
 
 ### Primary
-- **Precision Emerald** (#69A14B): The brand anchor. Used for secondary actions and branding.
+- **Weather Emerald** (#236E3C / #1E6038): The brand anchor derived from the home weather hero card. Rich, organic botanical emerald green.
 - **Action Green** (#2ECC71): The "Action" color in dark mode. High visibility for primary CTAs and status-normal signals.
 
 ### Neutral

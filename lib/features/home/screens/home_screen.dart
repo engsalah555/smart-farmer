@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: BoxDecoration(),
         child: RefreshIndicator(
-          color: AppColors.primary,
+          color: context.primary,
           backgroundColor: Theme.of(context).cardColor,
           onRefresh: () async {
             await Future.wait([

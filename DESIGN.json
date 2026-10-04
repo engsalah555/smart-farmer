@@ -4,7 +4,7 @@
   "title": "Design System: Smart Farmer 2",
   "extensions": {
     "colorMeta": {
-      "primary": { "role": "primary", "displayName": "Precision Emerald", "canonical": "oklch(60% 0.15 145)", "tonalRamp": ["#2D4520", "#4F7A38", "#69A14B", "#76C748", "#E8F2E9"] },
+      "primary": { "role": "primary", "displayName": "Weather Emerald", "canonical": "oklch(52% 0.14 145)", "tonalRamp": ["#0C2E19", "#144527", "#1E6038", "#236E3C", "#2E8B4E", "#76C748"] },
       "primary-action": { "role": "primary", "displayName": "Action Green", "canonical": "oklch(75% 0.2 145)", "tonalRamp": ["#1A3324", "#2E5C41", "#2ECC71", "#58D68D", "#D5F5E3"] },
       "neutral-dark-bg": { "role": "neutral", "displayName": "Void Forest", "canonical": "oklch(15% 0.01 145)", "tonalRamp": ["#080A08", "#0F1410", "#19201B", "#263028", "#E8F2E9"] }
     },

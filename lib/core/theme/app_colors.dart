@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // --- Core Brand Colors ---
-  // Brand hue: ~110 (green). Tinted neutrals converge here.
-  static const Color primary = Color(0xFF69A14B);
-  static const Color accent = Color(0xFF76C748);
-  static const Color secondary = Color(0xFF4A9B2B);
+  // --- Core Brand Colors (Aligned with Home Screen Weather Card) ---
+  // Brand Primary: Rich Botanical & Emerald Green
+  static const Color primary = Color(0xFF236E3C); // Weather card rich primary green (Light)
+  static const Color darkPrimary = Color(0xFF1E6038); // Weather card rich emerald green (Dark)
+  static const Color accent = Color(0xFF76C748); // Weather card lime accent (°C / Indicators)
+  static const Color secondary = Color(0xFF2E8B4E); // Weather card fresh foliage green
 
-  static const Color primaryDeep = Color(0xFF4F7A38);
+  static const Color primaryDeep = Color(0xFF1E6038); // Weather card rich emerald
   static const Color primaryMain = primary;
-  static const Color primaryDark = Color(0xFF2D4520);
+  static const Color primaryDark = Color(0xFF144527); // Weather card deep forest green
   static const Color deepGreen = primaryDeep;
   static const Color vibrantGreen = accent;
 
@@ -87,7 +88,7 @@ class AppColors {
 extension ThemeColors on BuildContext {
   bool get isDark => Theme.of(this).brightness == Brightness.dark;
 
-  Color get primary => isDark ? AppColors.darkAccent : AppColors.primary;
+  Color get primary => isDark ? AppColors.darkPrimary : AppColors.primary;
   Color get accent => isDark ? AppColors.darkAccent : AppColors.accent;
   Color get secondary => AppColors.secondary;
   Color get background => AppColors.getBackground(isDark);
@@ -102,6 +103,7 @@ extension ThemeColors on BuildContext {
   Color get info => AppColors.info;
   Color get border => AppColors.border(isDark);
   Color get darkAccent => AppColors.darkAccent;
+  Color get darkPrimary => AppColors.darkPrimary;
   Color get primaryDeep => AppColors.primaryDeep;
   Color get primaryDark => AppColors.primaryDark;
 

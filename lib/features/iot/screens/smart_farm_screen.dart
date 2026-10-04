@@ -1,11 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants.dart';
-import '../../../core/widgets/atoms/pro_max_icon_button.dart';
 import '../../crops/widgets/irrigation_tab.dart';
 import '../providers/iot_provider.dart';
 
@@ -54,9 +51,6 @@ class _SmartFarmScreenState extends State<SmartFarmScreen> {
     return Consumer<IotProvider>(
       builder: (context, iotProvider, _) {
         final device = iotProvider.device;
-        final isConnected =
-            device != null && device.status.toLowerCase() != 'offline';
-        final canPop = context.canPop();
 
         return SliverAppBar(
           expandedHeight: 76.0,
@@ -93,41 +87,6 @@ class _SmartFarmScreenState extends State<SmartFarmScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                if (canPop) ...[
-                  ProMaxIconButton(
-                    icon: Icons.arrow_back_ios_new_rounded,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      context.pop();
-                    },
-                    size: 38,
-                    iconSize: 16,
-                    color: context.textPrimary,
-                    backgroundColor: isDark
-                        ? Colors.white.withValues(alpha: 0.06)
-                        : Colors.black.withValues(alpha: 0.04),
-                  ),
-                  const SizedBox(width: 12),
-                ] else ...[
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: context.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: context.primary.withValues(alpha: 0.25),
-                        width: 1,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.eco_rounded,
-                      color: context.primary,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                ],
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,76 +116,9 @@ class _SmartFarmScreenState extends State<SmartFarmScreen> {
                     ],
                   ),
                 ),
-                // Connection Status Chip with glowing indicator
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: (isConnected ? context.primary : context.error)
-                        .withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: (isConnected ? context.primary : context.error)
-                          .withValues(alpha: 0.25),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isConnected
-                              ? const Color(0xFF2ECC71)
-                              : const Color(0xFFDC4545),
-                          boxShadow: [
-                            BoxShadow(
-                              color: (isConnected
-                                      ? const Color(0xFF2ECC71)
-                                      : const Color(0xFFDC4545))
-                                  .withValues(alpha: 0.6),
-                              blurRadius: 6,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        isConnected ? 'متصل' : 'غير متصل',
-                        style: GoogleFonts.cairo(
-                          color: isConnected
-                              ? (isDark
-                                  ? const Color(0xFF2ECC71)
-                                  : context.primary)
-                              : const Color(0xFFDC4545),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Quick Refresh Button
-                ProMaxIconButton(
-                  icon: Icons.refresh_rounded,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    context.read<IotProvider>().fetchStatus(showLoading: true);
-                  },
-                  size: 38,
-                  iconSize: 18,
-                  color: context.textPrimary,
-                  backgroundColor: isDark
-                      ? Colors.white.withValues(alpha: 0.06)
-                      : Colors.black.withValues(alpha: 0.04),
-                ),
               ],
             ),
+
           ),
         );
       },
