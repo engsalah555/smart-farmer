@@ -52,29 +52,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: const [0.0, 0.35, 1.0],
-            colors: isDark
-                ? [
-                    context.primary.withValues(alpha: 0.08),
-                    Theme.of(context).scaffoldBackgroundColor,
-                    Theme.of(context).scaffoldBackgroundColor,
-                  ]
-                : [
-                    context.primary.withValues(alpha: 0.04),
-                    Theme.of(context).scaffoldBackgroundColor,
-                    Theme.of(context).scaffoldBackgroundColor,
-                  ],
-          ),
-        ),
+        decoration: BoxDecoration(),
         child: RefreshIndicator(
           color: AppColors.primary,
           backgroundColor: Theme.of(context).cardColor,
@@ -94,9 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // ─── 1. الشريط العلوي الزجاجي الثابت (Sticky Glass Top Bar) ────
               const HomeTopBar(),
 
-              SliverToBoxAdapter(
-                child: SizedBox(height: context.hp(1.6)),
-              ),
+              SliverToBoxAdapter(child: SizedBox(height: context.hp(1.6))),
 
               // ─── 2. بطاقة الطقس والمناخ الذكية (Climate Hero Card) ────────
               const SliverToBoxAdapter(
@@ -107,27 +86,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SliverToBoxAdapter(
-                child: SizedBox(height: context.hp(1.6)),
-              ),
+              SliverToBoxAdapter(child: SizedBox(height: context.hp(1.6))),
 
               // ─── 3. التنبيهات العاجلة (Urgent Alerts Carousel) ──────────────
-              const SliverToBoxAdapter(
-                child: HomeAlerts(),
-              ),
+              const SliverToBoxAdapter(child: HomeAlerts()),
 
-              SliverToBoxAdapter(
-                child: SizedBox(height: context.hp(1.6)),
-              ),
+              SliverToBoxAdapter(child: SizedBox(height: context.hp(1.6))),
 
               // ─── 4. المنتدى الزراعي (Community Discussions Feed) ───────────
               const ForumList(),
 
               // مساحة سفلية لاستيعاب شريط التنقل السفلي والزر العائم (FAB)
               SliverToBoxAdapter(
-                child: SizedBox(
-                  height: context.hp(14).clamp(95.0, 135.0),
-                ),
+                child: SizedBox(height: context.hp(14).clamp(95.0, 135.0)),
               ),
             ],
           ),
@@ -136,4 +107,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

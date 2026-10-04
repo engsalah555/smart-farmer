@@ -32,8 +32,9 @@ class ProfileHeader extends StatelessWidget {
           borderColor: context.primary.withValues(alpha: 0.2),
         ),
         const SizedBox(height: 16),
-        Row(
+        Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 8,
           children: [
             Text(name, style: AppTypography.h2(isDark: isDark)),
             if (customTitle != null && customTitle!.isNotEmpty) ...[
@@ -44,18 +45,22 @@ class ProfileHeader extends StatelessWidget {
                   color: context.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
-                  customTitle!,
-                  style: AppTypography.bodySmall(isDark: isDark).copyWith(
-                    color: context.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  children: [
+                    Text(
+                      customTitle!,
+                      style: AppTypography.bodySmall(isDark: isDark).copyWith(
+                        color: context.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (isVerified) ...[
+                      const SizedBox(width: 8),
+                      Icon(Icons.verified, color: context.primary, size: 20),
+                    ],
+                  ],
                 ),
               ),
-            ],
-            if (isVerified) ...[
-              const SizedBox(width: 8),
-              Icon(Icons.verified, color: context.primary, size: 20),
             ],
           ],
         ),
